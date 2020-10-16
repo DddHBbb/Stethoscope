@@ -74,7 +74,8 @@ void audio_play(void)
 	strcpy((char*)pname,"0:/MUSIC/");						//复制路径(目录)
 	strcat((char*)pname,(const char*)wavfileinfo->fname);	//将文件名接在后面
 	wav_play_song(pname); 			 		//播放这个音频文件
-											   		    
+						
+	f_closedir(&wavdir);
 	myfree(SRAMIN,wavfileinfo);			//释放内存			    
 	myfree(SRAMIN,pname);				//释放内存			    
 
