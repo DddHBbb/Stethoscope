@@ -111,15 +111,42 @@ u32 wav_buffill(u8 *buf,u16 size,u8 bits)
 //WAV播放时,SAI DMA传输回调函数
 void wav_sai_dma_tx_callback(void) 
 {   
-	if(DMA2_Stream3->CR&(1<<19))	wavwitchbuf=0;
-	else 													wavwitchbuf=1;
+	u16 i;
+	if(DMA2_Stream3->CR&(1<<19))
+	{
+		wavwitchbuf=0;
+		if((audiodev.status&0X01)==0)
+		{
+			for(i=0;i<WAV_SAI_TX_DMA_BUFSIZE;i++)//暂停
+			{
+				audiodev.saibuf1[i]=0;//填充0
+			}
+		}
+	}else 
+	{
+		wavwitchbuf=1;
+		if((audiodev.status&0X01)==0)
+		{
+			for(i=0;i<WAV_SAI_TX_DMA_BUFSIZE;i++)//暂停
+			{
+				audiodev.saibuf2[i]=0;//填充0
+			}
+		}
+	}
 	wavtransferend=1;
 } 
+//得到当前播放时间
+//fx:文件指针
+//wavx:wav播放控制器
+void wav_get_curtime(FIL*fx,__wavctrl *wavx)
+{
+	long long fpos;  	
+ 	wavx->totsec=wavx->datasize/(wavx->bitrate/8);	//歌曲总长度(单位:秒) 
+	fpos=fx->fptr-wavx->datastart; 					//得到当前文件播放到的地方 
+	wavx->cursec=fpos*wavx->totsec/wavx->datasize;	//当前播放到第多少秒了?	
+}
 //播放某个WAV文件
 //fname:wav文件路径.
-//返回值:
-//KEY0_PRES:下一曲
-//KEY1_PRES:上一曲
 //其他:错误
 u8 wav_play_song(u8* fname)
 {
@@ -164,22 +191,20 @@ u8 wav_play_song(u8* fname)
 					wavtransferend=0;
 					if(fillnum!=WAV_SAI_TX_DMA_BUFSIZE)//播放结束
 					{
-						res=0XFF;
-						f_close(audiodev.file);
 						break;
 					} 
  					if(wavwitchbuf)
 						fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf2
 					else 
 						fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
-					while(1)
-					{
-						if((audiodev.status&0X01)==0)
-						{
-							for(int i=0;i<100000000;i++);
-						}
-						else break;
-					}
+//					while(1)
+//					{
+//						if((audiodev.status&0X01)==0)
+//						{
+//							for(int i=0;i<100000000;i++);
+//						}
+//						else break;
+//					}
 				}
 			
 				audio_stop(); 

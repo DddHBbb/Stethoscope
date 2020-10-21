@@ -66,25 +66,13 @@ void rt_hw_board_init()
 {
     /* System Clock Update */
     SystemCoreClockUpdate();
-    
 		HAL_Init();                     //初始化HAL库   
     Stm32_Clock_Init(384,25,2,8);   //设置时钟,180Mhz
 		HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-  	    
-		W25QXX_Init();				    //初始化W25Q256
-		WM8978_Init();				    //初始化WM8978
-		WM8978_HPvol_Set(40,40);	    //耳机音量设置
-		WM8978_SPKvol_Set(10);		    //喇叭音量设置
-    my_mem_init(SRAMIN);            //初始化内部内存池
-    my_mem_init(SRAMCCM);           //初始化内部CCM内存池
-    exfuns_init();		            //为fatfs相关变量申请内存  
-    f_mount(fs[0],"0:",1);          //挂载SD卡 
-		f_mount(fs[1],"1:",1);          //挂载SPI FLASH. 
-		uart_init(115200);  //初始化USART	     
+  	uart_init(115200);  						//初始化USART	
 		ALL_GPIO_init();
-		font_init();
 	   /* System Tick Configuration */
-		
+
    _SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT

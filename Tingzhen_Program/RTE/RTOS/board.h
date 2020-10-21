@@ -26,6 +26,7 @@
 #include "wm8978.h"	 
 #include "audioplay.h"
 #include "GPIOConfig.h"
+#include "oled.h"
 /*
 *************************************************************************
 *                               º¯ÊýÉùÃ÷

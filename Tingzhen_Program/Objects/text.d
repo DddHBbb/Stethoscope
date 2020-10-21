@@ -1,5 +1,5 @@
 .\objects\text.o: TEXT\text.c
-.\objects\text.o: TEXT\fontupd.h
+.\objects\text.o: .\HARDWARE\OLED\oled.h
 .\objects\text.o: .\SYSTEM\sys.h
 .\objects\text.o: .\SYSTEM\stm32f4xx.h
 .\objects\text.o: .\SYSTEM\stm32f429xx.h
@@ -45,6 +45,7 @@
 .\objects\text.o: .\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h
 .\objects\text.o: .\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_smartcard.h
 .\objects\text.o: .\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_wwdg.h
+.\objects\text.o: TEXT\fontupd.h
 .\objects\text.o: .\HARDWARE\W25QXX\w25qxx.h
 .\objects\text.o: TEXT\text.h
 .\objects\text.o: D:\Deuce\MDK5\ARM\ARMCC\Bin\..\include\string.h

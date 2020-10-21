@@ -68,14 +68,13 @@ void audio_play(void)
 	//audio_get_tnum("0:/MUSIC"); //得到总有效文件数
 	wavfileinfo=(FILINFO*)mymalloc(SRAMIN,sizeof(FILINFO));	//申请内存
   pname=mymalloc(SRAMIN,_MAX_LFN*2+1);					//为带路径的文件名分配内存
-  f_opendir(&wavdir,(const TCHAR*)"0:/MUSIC"); 	//打开目录
+  f_opendir(&wavdir,(const TCHAR*)"0:/SYSTEM/MUSIC"); 	//打开目录
 	f_readdir(&wavdir,wavfileinfo);       				//读取目录下的一个文件
 	 
-	strcpy((char*)pname,"0:/MUSIC/");						//复制路径(目录)
+	strcpy((char*)pname,"0:/SYSTEM/MUSIC/");						//复制路径(目录)
 	strcat((char*)pname,(const char*)wavfileinfo->fname);	//将文件名接在后面
 	wav_play_song(pname); 			 		//播放这个音频文件
-						
-	f_closedir(&wavdir);
+											   		    
 	myfree(SRAMIN,wavfileinfo);			//释放内存			    
 	myfree(SRAMIN,pname);				//释放内存			    
 

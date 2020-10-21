@@ -3,12 +3,12 @@
 #include "sys.h"
 
 //IO方向设置
-#define SDA_IN()  {GPIOH->MODER&=~(3<<(5*2));GPIOH->MODER|=0<<5*2;}	//PH5输入模式
-#define SDA_OUT() {GPIOH->MODER&=~(3<<(5*2));GPIOH->MODER|=1<<5*2;} //PH5输出模式
+#define SDA_IN()  {GPIOE->MODER&=~(3<<(15*2));GPIOE->MODER|=0<<15*2;}	//PH5输入模式
+#define SDA_OUT() {GPIOE->MODER&=~(3<<(15*2));GPIOE->MODER|=1<<15*2;} //PH5输出模式
 //IO操作
-#define IIC_SCL   PHout(4) //SCL
-#define IIC_SDA   PHout(5) //SDA
-#define READ_SDA  PHin(5)  //输入SDA
+#define IIC_SCL   PEout(14) //SCL
+#define IIC_SDA   PEout(15) //SDA
+#define READ_SDA  PEin(15)  //输入SDA
 
 //IIC所有操作函数
 void IIC_Init(void);                //初始化IIC的IO口				 

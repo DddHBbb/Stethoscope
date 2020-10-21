@@ -11,6 +11,7 @@
 /***********************函数声明区*******************************/
 static void Wav_Player_Task(void* parameter);
 static void USB_Transfer_Task(void* parameter);
+static void OLED_Display_Task(void* parameter);
 /***********************声明返回区*******************************/
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 extern vu8 USB_STATUS_REG;		//USB状态
@@ -18,14 +19,14 @@ extern vu8 bDeviceState;		//USB连接 情况
 /***********************全局变量区*******************************/
 static rt_thread_t Wav_Player = RT_NULL;
 static rt_thread_t USB_Transfer = RT_NULL;
+static rt_thread_t OLED_Display = RT_NULL;
 
 static rt_mutex_t USBorAudioUsingSDIO_Mutex = RT_NULL;
-
 /****************************************************************/
 
 
  /****************************************
-  * @brief  ADC采集处理函数
+  * @brief  WAV音频播放函数
   * @param  无
   * @retval 无
   ***************************************/
@@ -36,11 +37,15 @@ void Wav_Player_Task(void* parameter)
 		rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);
 		audio_play();
 		rt_mutex_release(USBorAudioUsingSDIO_Mutex);
-			printf("laile");
+		printf("laile");
 		rt_thread_delay(1000); //1s
 	}
 }
-
+ /****************************************
+  * @brief  USB大容量存储函数
+  * @param  无
+  * @retval 无
+  ***************************************/
 void USB_Transfer_Task(void* parameter)
 {		
 	while(1)
@@ -61,24 +66,47 @@ void USB_Transfer_Task(void* parameter)
 					myfree(SRAMIN,MSC_BOT_Data);
 					break;
 				}
-				rt_thread_delay(1000);  //100ms
+				rt_thread_delay(100);  //100ms
 			}
 		}
 			rt_thread_delay(100);  //10ms
 	}
 }
+ /****************************************
+  * @brief  USB大容量存储函数
+  * @param  无
+  * @retval 无
+  ***************************************/
+void OLED_Display_Task(void* parameter)
+{	
+	while(1)
+	{
+		Show_String(12,0,"段恒斌");
+		Show_String(12,12,"段恒斌");
+		OLED_Refresh_Gram();//更新显示到OLED
+		BattChek();
+		rt_thread_delay(1000); //1s
+	}
+}
+ /****************************************
+  * @brief  任务创建函数，所有任务均在此处创建 
+  * @param  无
+  * @retval 无
+  ***************************************/
 void Task_init(void)
 {
+	/*音乐播放器任务*/
 	Wav_Player = rt_thread_create( "Wav_Player_Task",              /* 线程名字 */
                       Wav_Player_Task,   				 /* 线程入口函数 */
                       RT_NULL,             /* 线程入口函数参数 */
                       2048,                 /* 线程栈大小 */
-                      0,                   /* 线程的优先级 */
+                      1,                   /* 线程的优先级 */
                       20);                 /* 线程时间片 */
                    
     /* 启动线程，开启调度 */
    if (Wav_Player != RT_NULL)    rt_thread_startup(Wav_Player);
 	
+	/*USB大容量存储任务*/
 	USB_Transfer = rt_thread_create( "USB_Transfer_Task",              /* 线程名字 */
                       USB_Transfer_Task,   				 /* 线程入口函数 */
                       RT_NULL,             /* 线程入口函数参数 */
@@ -88,8 +116,23 @@ void Task_init(void)
                    
     /* 启动线程，开启调度 */
    if (USB_Transfer != RT_NULL)    rt_thread_startup(USB_Transfer);
-
+	 
+	 	/*OLED显示任务*/
+	OLED_Display = rt_thread_create( "OLED_Display_Task",              /* 线程名字 */
+                      OLED_Display_Task,   				 /* 线程入口函数 */
+                      RT_NULL,             /* 线程入口函数参数 */
+                      512,                 /* 线程栈大小 */
+                      2,                   /* 线程的优先级 */
+                      20);                 /* 线程时间片 */
+                   
+    /* 启动线程，开启调度 */
+   if (OLED_Display != RT_NULL)    rt_thread_startup(OLED_Display);
 }
+ /****************************************
+  * @brief  信号量创建函数，二值，互斥 
+  * @param  无
+  * @retval 无
+  ***************************************/
 void Semaphore_init(void)
 {
 	USBorAudioUsingSDIO_Mutex = rt_mutex_create("USBorAudioUsingSDIO_Mutex",RT_IPC_FLAG_PRIO);

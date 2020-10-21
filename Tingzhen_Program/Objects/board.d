@@ -70,3 +70,4 @@
 .\objects\board.o: .\HARDWARE\audioplay.h
 .\objects\board.o: .\HARDWARE\wavplay.h
 .\objects\board.o: .\HARDWARE\GPIOConfig.h
+.\objects\board.o: .\HARDWARE\OLED\oled.h

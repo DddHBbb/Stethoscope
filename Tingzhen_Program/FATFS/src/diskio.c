@@ -11,18 +11,6 @@
 #include "w25qxx.h"
 #include "malloc.h"	 
  
-//////////////////////////////////////////////////////////////////////////////////	 
-//本程序只供学习使用，未经作者许可，不得用于其它任何用途
-//ALIENTEK STM32开发板
-//FATFS底层(diskio) 驱动代码	   
-//正点原子@ALIENTEK
-//技术论坛:www.openedv.com
-//创建日期:2016/1/7
-//版本：V1.0
-//版权所有，盗版必究。
-//Copyright(C) 广州市星翼电子科技有限公司 2009-2019
-//All rights reserved									  
-////////////////////////////////////////////////////////////////////////////////// 
 
 #define SD_CARD	 	0  			//SD卡,卷标为0
 #define EX_FLASH 	1			//外部spi flash,卷标为1
@@ -31,7 +19,7 @@
 //对于W25Q256
 //前25M字节给fatfs用,25M字节后,用于存放字库,字库占用6.01M.	剩余部分,给客户自己用	 
 #define FLASH_SECTOR_SIZE 	512	
-#define FLASH_SECTOR_COUNT 	1024*25*2	//W25Q256,前25M字节给FATFS占用	
+#define FLASH_SECTOR_COUNT 	1024*1*1024	//W25Q256,前25M字节给FATFS占用	
 #define FLASH_BLOCK_SIZE   	8     		//每个BLOCK有8个扇区		
   
  

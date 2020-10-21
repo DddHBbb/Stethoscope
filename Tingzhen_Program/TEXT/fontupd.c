@@ -1,33 +1,16 @@
 #include "fontupd.h"
 #include "ff.h"	  
 #include "w25qxx.h"   
-
 #include "string.h"
 #include "malloc.h"
-
 #include "usart.h"
 #include "rtthread.h"
-//////////////////////////////////////////////////////////////////////////////////	 
-//本程序只供学习使用，未经作者许可，不得用于其它任何用途
-//ALIENTEK STM32开发板 
-//字库更新 驱动代码	   
-//正点原子@ALIENTEK
-//技术论坛:www.openedv.com
-//创建日期:2016/1/7
-//版本：V1.1
-//版权所有，盗版必究。
-//Copyright(C) 广州市星翼电子科技有限公司 2014-2024
-//All rights reserved									  
-//********************************************************************************
-//升级说明
-//V1.1 20160528
-//修改部分代码,以支持fatfs  r0.12版本
-////////////////////////////////////////////////////////////////////////////////// 	
+
 
 //字库区域占用的总扇区数大小(4个字库+unigbk表+字库信息=6302984字节,约占1539个W25QXX扇区,一个扇区4K字节)
 #define FONTSECSIZE	 	1539
 //字库存放起始地址 
-#define FONTINFOADDR 	1024*1024*25 					//Apollo STM32开发板是从25M地址以后开始存放字库
+#define FONTINFOADDR 	1024*1024*1 					//Apollo STM32开发板是从25M地址以后开始存放字库
 														//前面25M被fatfs占用了.
 														//25M以后紧跟4个字库+UNIGBK.BIN,总大小6.01M,被字库占用了,不能动!
 														//31.01M以后,用户可以自由使用.
@@ -53,34 +36,13 @@ u8*const UPDATE_REMIND_TBL[5]=
 "Updating GBK24.FON ",	//提示正在更新GBK24
 "Updating GBK32.FON ",	//提示正在更新GBK32
 }; 
-
-//显示当前字体更新进度
-//x,y:坐标
-//size:字体大小
-//fsize:整个文件大小
-//pos:当前文件指针位置
-u32 fupd_prog(u16 x,u16 y,u8 size,u32 fsize,u32 pos)
-{
-	float prog;
-	u8 t=0XFF;
-	prog=(float)pos/fsize;
-	prog*=100;
-	if(t!=prog)
-	{
-//		LCD_ShowString(x+3*size/2,y,240,320,size,"%");		
-		t=prog;
-		if(t>100)t=100;
-//		LCD_ShowNum(x,y,t,3,size);//显示数值
-	}
-	return 0;					    
-} 
 //更新某一个
 //x,y:坐标
 //size:字体大小
 //fxpath:路径
 //fx:更新的内容 0,ungbk;1,gbk12;2,gbk16;3,gbk24;4,gbk32;
 //返回值:0,成功;其他,失败.
-u8 updata_fontx(u16 x,u16 y,u8 size,u8 *fxpath,u8 fx)
+u8 updata_fontx(u8 *fxpath,u8 fx)
 {
 	u32 flashaddr=0;								    
 	FIL * fftemp;
@@ -124,15 +86,13 @@ u8 updata_fontx(u16 x,u16 y,u8 size,u8 *fxpath,u8 fx)
 				ftinfo.gbk32size=fftemp->obj.objsize;					//GBK32字库大小
 				flashaddr=ftinfo.f32addr;						//GBK32的起始地址
 				break;
-		} 
-			
+		} 		
 		while(res==FR_OK)//死循环执行
 		{
 	 		res=f_read(fftemp,tempbuf,4096,(UINT *)&bread);		//读取数据	 
 			if(res!=FR_OK)break;								//执行错误
 			W25QXX_Write(tempbuf,offx+flashaddr,4096);		//从0开始写入4096个数据  
 	  		offx+=bread;	  
-			fupd_prog(x,y,size,fftemp->obj.objsize,offx);	 			//进度显示
 			if(bread!=4096)break;								//读完了.
 	 	} 	
 		f_close(fftemp);		
@@ -148,7 +108,7 @@ u8 updata_fontx(u16 x,u16 y,u8 size,u8 *fxpath,u8 fx)
 //提示信息字体大小										  
 //返回值:0,更新成功;
 //		 其他,错误代码.	  
-u8 update_font(u16 x,u16 y,u8 size,u8* src)
+u8 update_font(u8* src)
 {	
 	u8 *pname;
 	u32 *buf;
@@ -182,10 +142,8 @@ u8 update_font(u16 x,u16 y,u8 size,u8* src)
 	myfree(SRAMIN,fftemp);	//释放内存
 	if(rval==0)				//字库文件都存在.
 	{  
-//		LCD_ShowString(x,y,240,320,size,"Erasing sectors... ");//提示正在擦除扇区	
 		for(i=0;i<FONTSECSIZE;i++)			//先擦除字库区域,提高写入速度
 		{
-			fupd_prog(x+20*size/2,y,size,FONTSECSIZE,i);//进度显示
 			W25QXX_Read((u8*)buf,((FONTINFOADDR/4096)+i)*4096,4096);//读出整个扇区的内容
 			for(j=0;j<1024;j++)//校验数据
 			{
@@ -194,11 +152,10 @@ u8 update_font(u16 x,u16 y,u8 size,u8* src)
 			if(j!=1024)W25QXX_Erase_Sector((FONTINFOADDR/4096)+i);	//需要擦除的扇区
 		}
 		for(i=0;i<5;i++)	//依次更新UNIGBK,GBK12,GBK16,GBK24,GBK32
-		{
-//			LCD_ShowString(x,y,240,320,size,UPDATE_REMIND_TBL[i]);		
+		{		
 			strcpy((char*)pname,(char*)src);				//copy src内容到pname
 			strcat((char*)pname,(char*)GBK_PATH[i]); 		//追加具体文件路径 
-			res=updata_fontx(x+20*size/2,y,size,pname,i);	//更新字库
+			res=updata_fontx(pname,i);	//更新字库
 			if(res)
 			{
 				myfree(SRAMIN,buf);
