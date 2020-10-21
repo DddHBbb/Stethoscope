@@ -71,3 +71,4 @@
 .\objects\board.o: .\HARDWARE\wavplay.h
 .\objects\board.o: .\HARDWARE\GPIOConfig.h
 .\objects\board.o: .\HARDWARE\OLED\oled.h
+.\objects\board.o: .\HARDWARE\SPI\spi.h

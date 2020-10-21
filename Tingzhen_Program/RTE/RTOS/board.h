@@ -27,6 +27,7 @@
 #include "audioplay.h"
 #include "GPIOConfig.h"
 #include "oled.h"
+#include "spi.h"
 /*
 *************************************************************************
 *                               º¯ÊýÉùÃ÷

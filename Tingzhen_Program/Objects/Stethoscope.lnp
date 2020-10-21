@@ -16,6 +16,7 @@
 ".\objects\wavplay.o"
 ".\objects\audioplay.o"
 ".\objects\oled.o"
+".\objects\nfc_spi.o"
 ".\objects\fontupd.o"
 ".\objects\text.o"
 ".\objects\exfuns.o"

@@ -65,7 +65,6 @@ void audio_play(void)
 	WM8978_Input_Cfg(0,0,0);//关闭输入通道
 	WM8978_Output_Cfg(1,0);	//开启DAC输出    	
 	
-	//audio_get_tnum("0:/MUSIC"); //得到总有效文件数
 	wavfileinfo=(FILINFO*)mymalloc(SRAMIN,sizeof(FILINFO));	//申请内存
   pname=mymalloc(SRAMIN,_MAX_LFN*2+1);					//为带路径的文件名分配内存
   f_opendir(&wavdir,(const TCHAR*)"0:/SYSTEM/MUSIC"); 	//打开目录

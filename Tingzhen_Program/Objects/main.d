@@ -70,3 +70,4 @@
 .\objects\main.o: .\HARDWARE\wavplay.h
 .\objects\main.o: .\HARDWARE\GPIOConfig.h
 .\objects\main.o: .\HARDWARE\OLED\oled.h
+.\objects\main.o: .\HARDWARE\SPI\spi.h

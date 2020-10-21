@@ -29,4 +29,7 @@ void OLED_ShowString(u8 x,u8 y,const u8 *p,u8 size);
 void OLED_Show_Font(u16 x,u16 y,u8 fnum);
 void Show_String(uint8_t x,uint8_t y,uint8_t *str);
 void BattChek(void);
+void Movie_Show_Img(uint8_t x,uint8_t y,uint32_t picx);
+
+
 #endif

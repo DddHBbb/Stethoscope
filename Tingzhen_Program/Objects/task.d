@@ -70,6 +70,7 @@
 .\objects\task.o: .\HARDWARE\wavplay.h
 .\objects\task.o: .\HARDWARE\GPIOConfig.h
 .\objects\task.o: .\HARDWARE\OLED\oled.h
+.\objects\task.o: .\HARDWARE\SPI\spi.h
 .\objects\task.o: .\USB\STM32_USB_Device_Library\Class\msc\inc\usbd_msc_core.h
 .\objects\task.o: .\USB\STM32_USB_Device_Library\Core\inc\usbd_ioreq.h
 .\objects\task.o: .\USB\STM32_USB_Device_Library\Core\inc\usbd_def.h

@@ -78,9 +78,11 @@ void USB_Transfer_Task(void* parameter)
   * @retval 无
   ***************************************/
 void OLED_Display_Task(void* parameter)
-{	
+{
+	
 	while(1)
 	{
+		OLED_Clear();	
 		Show_String(12,0,"段恒斌");
 		Show_String(12,12,"段恒斌");
 		OLED_Refresh_Gram();//更新显示到OLED
