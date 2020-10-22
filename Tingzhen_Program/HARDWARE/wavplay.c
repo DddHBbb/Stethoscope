@@ -143,6 +143,11 @@ u8 wav_play_song(u8* fname)
 {
 	u8 res;  
 	u32 fillnum; 
+//	FIL space[sizeof(FIL)];
+//	u8 space1[WAV_SAI_TX_DMA_BUFSIZE];
+//	u8 space2[WAV_SAI_TX_DMA_BUFSIZE];
+//	u8 space1[WAV_SAI_TX_DMA_BUFSIZE];
+	
 	audiodev.file=(FIL*)mymalloc(SRAMIN,sizeof(FIL));
 	audiodev.saibuf1=mymalloc(SRAMIN,WAV_SAI_TX_DMA_BUFSIZE);
 	audiodev.saibuf2=mymalloc(SRAMIN,WAV_SAI_TX_DMA_BUFSIZE);

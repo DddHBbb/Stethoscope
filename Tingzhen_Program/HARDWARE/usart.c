@@ -1,4 +1,5 @@
 #include "usart.h"
+#include "logger.h"
 
 #if 1
 #pragma import(__use_no_semihosting)             
@@ -48,8 +49,9 @@ void uart_init(u32 bound)
 	UART1_Handler.Init.Parity=UART_PARITY_NONE;		    //无奇偶校验位
 	UART1_Handler.Init.HwFlowCtl=UART_HWCONTROL_NONE;   //无硬件流控
 	UART1_Handler.Init.Mode=UART_MODE_TX_RX;		    //收发模式
+	UART1_Handler.Init.OverSampling = UART_OVERSAMPLING_16;
 	HAL_UART_Init(&UART1_Handler);					    //HAL_UART_Init()会使能UART1
-	
+	logUsartInit(&UART1_Handler);
 	HAL_UART_Receive_IT(&UART1_Handler, (u8 *)aRxBuffer, RXBUFFERSIZE);//该函数会开启接收中断：标志位UART_IT_RXNE，并且设置接收缓冲以及接收缓冲接收最大数据量
   
 }

@@ -132,9 +132,11 @@ u8 update_font(u8* src)
 	{ 
 		strcpy((char*)pname,(char*)src);				//copy src内容到pname
 		strcat((char*)pname,(char*)GBK_PATH[i]);		//追加具体文件路径 
+		printf("open_file");
 		res=f_open(fftemp,(const TCHAR*)pname,FA_READ);	//尝试打开
 		if(res)
 		{
+			printf("open_fail");
 			rval|=1<<7;	//标记打开文件失败  
 			break;		//出错了,直接退出
 		}
@@ -155,6 +157,7 @@ u8 update_font(u8* src)
 		{		
 			strcpy((char*)pname,(char*)src);				//copy src内容到pname
 			strcat((char*)pname,(char*)GBK_PATH[i]); 		//追加具体文件路径 
+			printf("update fontlib");
 			res=updata_fontx(pname,i);	//更新字库
 			if(res)
 			{
@@ -163,6 +166,7 @@ u8 update_font(u8* src)
 				return 1+i;
 			} 
 		} 
+		printf("all_ok");
 		//全部更新好了
 		ftinfo.fontok=0XAA;
 		W25QXX_Write((u8*)&ftinfo,FONTINFOADDR,sizeof(ftinfo));	//保存字库信息

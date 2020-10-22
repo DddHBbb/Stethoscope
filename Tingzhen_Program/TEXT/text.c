@@ -51,7 +51,7 @@ void Get_HzMat(unsigned char *code,unsigned char *mat,u8 size)
 //mode:0,正常显示,1,叠加显示	   
 void Show_Font(u16 x,u16 y,u16 xend,u16 yend,u16 size,u8* font)
 {
-	u8 temp,t,pos,color;
+	u8 temp,t,pos,color=1;
 	u16 y0=y;
 	u8 dzk[128];   
 	u8 csize=(size/8+((size%8)?1:0))*(size);			//得到字体一个字符对应点阵集所占的字节数	 

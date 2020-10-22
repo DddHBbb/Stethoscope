@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx,USE_USB_OTG_FS</Define>
               <Undefine></Undefine>
-              <IncludePath>.\CORE;.\FATFS\exfuns;.\FATFS\src\option;.\MALLOC;.\SYSTEM;.\TEXT;.\FATFS\src;.\HALLIB\STM32F4xx_HAL_Driver\Inc;.\HARDWARE\WM8978;.\HARDWARE\W25QXX;.\HARDWARE\SPI;.\HARDWARE\SDIO;.\HARDWARE\SAI;.\HARDWARE;.\HARDWARE\IIC;.\USB\STM32_USB_Device_Library\Class\msc\inc;.\USB\STM32_USB_Device_Library\Core\inc;.\USB\STM32_USB_OTG_Driver\inc;.\USB\USB_APP;.\HARDWARE\OLED</IncludePath>
+              <IncludePath>.\CORE;.\FATFS\exfuns;.\FATFS\src\option;.\MALLOC;.\SYSTEM;.\TEXT;.\FATFS\src;.\HALLIB\STM32F4xx_HAL_Driver\Inc;.\HARDWARE\WM8978;.\HARDWARE\W25QXX;.\HARDWARE\SPI;.\HARDWARE\SDIO;.\HARDWARE\SAI;.\HARDWARE;.\HARDWARE\IIC;.\USB\STM32_USB_Device_Library\Class\msc\inc;.\USB\STM32_USB_Device_Library\Core\inc;.\USB\STM32_USB_OTG_Driver\inc;.\USB\USB_APP;.\HARDWARE\OLED;.\NFC\Inc;.\NFC\rfal\Inc;.\NFC\ST25R95</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -743,6 +743,126 @@
               <FileName>usbd_usr.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USB\USB_APP\usbd_usr.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>NFC</GroupName>
+          <Files>
+            <File>
+              <FileName>rfal_analogConfig.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_analogConfig.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_isoDep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_isoDep.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_nfc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_nfc.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_nfca.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_nfca.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_nfcb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_nfcb.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_nfcDep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_nfcDep.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_nfcf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_nfcf.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_nfcv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_nfcv.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_rfst25r95.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_rfst25r95.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_st25tb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_st25tb.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_st25xv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_st25xv.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_t1t.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_t1t.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_t2t.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_t2t.c</FilePath>
+            </File>
+            <File>
+              <FileName>rfal_t4t.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\rfal\Src\rfal_t4t.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\Src\demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>demo_ce.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\Src\demo_ce.c</FilePath>
+            </File>
+            <File>
+              <FileName>logger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\Src\logger.c</FilePath>
+            </File>
+            <File>
+              <FileName>st25r95.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\ST25R95\st25r95.c</FilePath>
+            </File>
+            <File>
+              <FileName>st25r95_com.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\ST25R95\st25r95_com.c</FilePath>
+            </File>
+            <File>
+              <FileName>st25r95_com_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\ST25R95\st25r95_com_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>st25r95_com_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\ST25R95\st25r95_com_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC\ST25R95\timer.c</FilePath>
             </File>
           </Files>
         </Group>

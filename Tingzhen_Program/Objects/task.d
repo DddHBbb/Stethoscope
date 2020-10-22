@@ -86,3 +86,10 @@
 .\objects\task.o: .\USB\STM32_USB_Device_Library\Core\inc\usbd_req.h
 .\objects\task.o: .\USB\STM32_USB_Device_Library\Class\msc\inc\usbd_msc_bot.h
 .\objects\task.o: .\USB\STM32_USB_OTG_Driver\inc\usb_bsp.h
+.\objects\task.o: .\NFC\Inc\demo.h
+.\objects\task.o: .\NFC\Inc\platform.h
+.\objects\task.o: D:\Deuce\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\task.o: .\NFC\Inc\logger.h
+.\objects\task.o: .\NFC\Inc\platform.h
+.\objects\task.o: .\NFC\ST25R95\timer.h
+.\objects\task.o: .\NFC\ST25R95\st_errno.h

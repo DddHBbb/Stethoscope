@@ -16,6 +16,18 @@
 #define		Batt_75													GPIO_PIN_14
 #define		Batt_100												GPIO_PIN_13
 
+#define SSI_0_Pin 												GPIO_PIN_5
+#define SSI_0_GPIO_Port 									GPIOB
+#define nIRQ_IN_Pin 											GPIO_PIN_1
+#define nIRQ_IN_GPIO_Port 								GPIOE
+#define nIRQ_OUT_Pin 											GPIO_PIN_9
+#define nIRQ_OUT_GPIO_Port 								GPIOB
+#define nSPI_SS_Pin 											GPIO_PIN_7
+#define nSPI_SS_GPIO_Port 								GPIOD
+#define nfc_pwr_Pin   										GPIO_PIN_7
+#define nfc_pwr_GPIO_Port  								GPIOB 
+
+
 #define 	ENABLE_ALL_SWITCH() 		 HAL_GPIO_WritePin(GPIOC,SPI_SWITCH_PIN,GPIO_PIN_RESET);\
 																	 HAL_GPIO_WritePin(GPIOB,OLED_SWITCH_PIN|RFID_SWITCH_PIN,GPIO_PIN_RESET);\
 																	 HAL_GPIO_WritePin(GPIOA,SD_SWITCH_PIN,GPIO_PIN_RESET);\
