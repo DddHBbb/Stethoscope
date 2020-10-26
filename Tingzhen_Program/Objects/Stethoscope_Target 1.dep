@@ -1,6 +1,6 @@
 Dependencies for Project 'Stethoscope', Target 'Target 1': (DO NOT MODIFY !)
 CompilerVersion: 5060750::V5.06 update 6 (build 750)::.\ARMCC
-F (.\main.c)(0x5F90FD3C)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\main.c)(0x5F9622C5)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (.\RTE\RTOS\board.h)(0x5F901586)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h)(0x5DC11BE2)
 I (.\RTE\RTOS\rtconfig.h)(0x5F91015B)
@@ -207,8 +207,8 @@ I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h)(0x577640D2)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h)(0x577640D2)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_smartcard.h)(0x577640D2)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_wwdg.h)(0x577640D2)
-F (.\CORE\startup_stm32f429xx.s)(0x5F9113EB)(--cpu Cortex-M4.fp.sp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 530" --pd "_RTE_ SETA 1" --pd "STM32F429xx SETA 1" --pd "_RTE_ SETA 1"--list .\listings\startup_stm32f429xx.lst --xref -o .\objects\startup_stm32f429xx.o --depend .\objects\startup_stm32f429xx.d)
-F (.\TASK\Task.c)(0x5F911F5F)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\task.o --omf_browse .\objects\task.crf --depend .\objects\task.d)
+F (.\CORE\startup_stm32f429xx.s)(0x5F96291C)(--cpu Cortex-M4.fp.sp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 530" --pd "_RTE_ SETA 1" --pd "STM32F429xx SETA 1" --pd "_RTE_ SETA 1"--list .\listings\startup_stm32f429xx.lst --xref -o .\objects\startup_stm32f429xx.o --depend .\objects\startup_stm32f429xx.d)
+F (.\TASK\Task.c)(0x5F962A59)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\task.o --omf_browse .\objects\task.crf --depend .\objects\task.d)
 I (.\RTE\RTOS\board.h)(0x5F901586)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h)(0x5DC11BE2)
 I (.\RTE\RTOS\rtconfig.h)(0x5F91015B)
@@ -707,7 +707,7 @@ I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h)(0x577640D2)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h)(0x577640D2)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_smartcard.h)(0x577640D2)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_wwdg.h)(0x577640D2)
-F (.\HARDWARE\wavplay.c)(0x5F90FA15)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\wavplay.o --omf_browse .\objects\wavplay.crf --depend .\objects\wavplay.d)
+F (.\HARDWARE\wavplay.c)(0x5F9622B2)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\wavplay.o --omf_browse .\objects\wavplay.crf --depend .\objects\wavplay.d)
 I (HARDWARE\wavplay.h)(0x5F7FBFFA)
 I (.\SYSTEM\sys.h)(0x5F866259)
 I (.\SYSTEM\stm32f4xx.h)(0x5F69881A)
@@ -769,7 +769,7 @@ I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdef.h)(0x5DC61FE0)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\stdarg.h)(0x5E53505C)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h)(0x5DC11BB8)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h)(0x5DC11BB8)
-F (.\HARDWARE\audioplay.c)(0x5F90F816)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\audioplay.o --omf_browse .\objects\audioplay.crf --depend .\objects\audioplay.d)
+F (.\HARDWARE\audioplay.c)(0x5F96231C)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\audioplay.o --omf_browse .\objects\audioplay.crf --depend .\objects\audioplay.d)
 I (HARDWARE\audioplay.h)(0x5F7FBFFA)
 I (.\FATFS\src\ff.h)(0x57764108)
 I (.\FATFS\src\integer.h)(0x57764108)
@@ -827,6 +827,14 @@ I (.\FATFS\exfuns\exfuns.h)(0x57764108)
 I (.\TEXT\text.h)(0x5F8FDEE1)
 I (.\TEXT\fontupd.h)(0x5F8FEA5F)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\string.h)(0x5E53505C)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h)(0x5DC11BE2)
+I (.\RTE\RTOS\rtconfig.h)(0x5F91015B)
+I (.\RTE\_Target_1\RTE_Components.h)(0x5F86CCF7)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdebug.h)(0x5DC11BB8)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdef.h)(0x5DC61FE0)
+I (D:\Deuce\MDK5\ARM\ARMCC\include\stdarg.h)(0x5E53505C)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h)(0x5DC11BB8)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h)(0x5DC11BB8)
 F (.\HARDWARE\OLED\oled.c)(0x5F8FF988)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\oled.o --omf_browse .\objects\oled.crf --depend .\objects\oled.d)
 I (HARDWARE\OLED\oled.h)(0x5F8FF68B)
 I (.\SYSTEM\sys.h)(0x5F866259)
@@ -887,7 +895,7 @@ I (.\TEXT\text.h)(0x5F8FDEE1)
 I (.\TEXT\fontupd.h)(0x5F8FEA5F)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\string.h)(0x5E53505C)
 I (.\HARDWARE\GPIOConfig.h)(0x5F9021B5)
-F (.\TEXT\fontupd.c)(0x5F90DB13)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\fontupd.o --omf_browse .\objects\fontupd.crf --depend .\objects\fontupd.d)
+F (.\TEXT\fontupd.c)(0x5F9623AB)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\fontupd.o --omf_browse .\objects\fontupd.crf --depend .\objects\fontupd.d)
 I (TEXT\fontupd.h)(0x5F8FEA5F)
 I (.\SYSTEM\sys.h)(0x5F866259)
 I (.\SYSTEM\stm32f4xx.h)(0x5F69881A)
@@ -999,7 +1007,7 @@ I (.\HARDWARE\W25QXX\w25qxx.h)(0x5F8F8E8E)
 I (TEXT\text.h)(0x5F8FDEE1)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\string.h)(0x5E53505C)
 I (.\HARDWARE\usart.h)(0x5F6C2CE1)
-F (.\FATFS\exfuns\exfuns.c)(0x5F7FB56E)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\exfuns.o --omf_browse .\objects\exfuns.crf --depend .\objects\exfuns.d)
+F (.\FATFS\exfuns\exfuns.c)(0x5F962487)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\exfuns.o --omf_browse .\objects\exfuns.crf --depend .\objects\exfuns.d)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\string.h)(0x5E53505C)
 I (FATFS\exfuns\exfuns.h)(0x57764108)
 I (.\SYSTEM\sys.h)(0x5F866259)
@@ -1052,6 +1060,14 @@ I (.\FATFS\src\ffconf.h)(0x57764108)
 I (FATFS\exfuns\fattester.h)(0x5F69759F)
 I (.\MALLOC\malloc.h)(0x5F6975CB)
 I (.\HARDWARE\usart.h)(0x5F6C2CE1)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h)(0x5DC11BE2)
+I (.\RTE\RTOS\rtconfig.h)(0x5F91015B)
+I (.\RTE\_Target_1\RTE_Components.h)(0x5F86CCF7)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdebug.h)(0x5DC11BB8)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdef.h)(0x5DC61FE0)
+I (D:\Deuce\MDK5\ARM\ARMCC\include\stdarg.h)(0x5E53505C)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h)(0x5DC11BB8)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h)(0x5DC11BB8)
 F (.\FATFS\exfuns\fattester.c)(0x5F7FB56E)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\fattester.o --omf_browse .\objects\fattester.crf --depend .\objects\fattester.d)
 I (FATFS\exfuns\fattester.h)(0x5F69759F)
 I (.\SYSTEM\sys.h)(0x5F866259)
@@ -1160,7 +1176,7 @@ I (FATFS\src\integer.h)(0x57764108)
 I (FATFS\src\ffconf.h)(0x57764108)
 I (FATFS\src\diskio.h)(0x57764108)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\stdarg.h)(0x5E53505C)
-F (.\FATFS\src\diskio.c)(0x5F895A13)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\diskio.o --omf_browse .\objects\diskio.crf --depend .\objects\diskio.d)
+F (.\FATFS\src\diskio.c)(0x5F9624C2)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\diskio.o --omf_browse .\objects\diskio.crf --depend .\objects\diskio.d)
 I (FATFS\src\diskio.h)(0x57764108)
 I (FATFS\src\integer.h)(0x57764108)
 I (.\HARDWARE\SDIO\sdio_sdcard.h)(0x5F6953F8)
@@ -1210,53 +1226,15 @@ I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_smartcard.h)(0x577640D2)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_wwdg.h)(0x577640D2)
 I (.\HARDWARE\W25QXX\w25qxx.h)(0x5F8F8E8E)
 I (.\MALLOC\malloc.h)(0x5F6975CB)
-F (.\MALLOC\malloc.c)(0x5F7FBA19)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\malloc.o --omf_browse .\objects\malloc.crf --depend .\objects\malloc.d)
-I (MALLOC\malloc.h)(0x5F6975CB)
-I (.\SYSTEM\sys.h)(0x5F866259)
-I (.\SYSTEM\stm32f4xx.h)(0x5F69881A)
-I (.\SYSTEM\stm32f429xx.h)(0x577640D3)
-I (.\CORE\core_cm4.h)(0x577640D1)
-I (D:\Deuce\MDK5\ARM\ARMCC\include\stdint.h)(0x5E53505C)
-I (.\CORE\core_cmInstr.h)(0x577640D1)
-I (.\CORE\cmsis_armcc.h)(0x577640D1)
-I (.\CORE\core_cmFunc.h)(0x577640D1)
-I (.\CORE\core_cmSimd.h)(0x577640D1)
-I (.\SYSTEM\system_stm32f4xx.h)(0x577640D3)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h)(0x577640D2)
-I (.\SYSTEM\stm32f4xx_hal_conf.h)(0x5F8661A2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h)(0x577640D3)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h)(0x577640D3)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\Legacy/stm32_hal_legacy.h)(0x577640D2)
-I (D:\Deuce\MDK5\ARM\ARMCC\include\stdio.h)(0x5E53505C)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc_ex.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_gpio.h)(0x577640D3)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_gpio_ex.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma_ex.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_cortex.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_cryp.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma2d.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ex.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ramfunc.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_sram.h)(0x577640D3)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_fmc.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_nor.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_nand.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pccard.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_iwdg.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr_ex.h)(0x577640D3)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_sai.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_sai_ex.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_sd.h)(0x577640D3)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_sdmmc.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h)(0x577640D3)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_smartcard.h)(0x577640D2)
-I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_wwdg.h)(0x577640D2)
-F (.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c)(0x5F86C517)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\stm32f4xx_hal.o --omf_browse .\objects\stm32f4xx_hal.crf --depend .\objects\stm32f4xx_hal.d)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h)(0x5DC11BE2)
+I (.\RTE\RTOS\rtconfig.h)(0x5F91015B)
+I (.\RTE\_Target_1\RTE_Components.h)(0x5F86CCF7)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdebug.h)(0x5DC11BB8)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdef.h)(0x5DC61FE0)
+I (D:\Deuce\MDK5\ARM\ARMCC\include\stdarg.h)(0x5E53505C)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h)(0x5DC11BB8)
+I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h)(0x5DC11BB8)
+F (.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c)(0x5F9626EF)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\stm32f4xx_hal.o --omf_browse .\objects\stm32f4xx_hal.crf --depend .\objects\stm32f4xx_hal.d)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h)(0x577640D2)
 I (.\SYSTEM\stm32f4xx_hal_conf.h)(0x5F8661A2)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h)(0x577640D3)
@@ -3145,7 +3123,7 @@ I (.\NFC\rfal\Inc\rfal_chip.h)(0x5F901952)
 I (.\NFC\ST25R95\utils.h)(0x5F901A41)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\string.h)(0x5E53505C)
 I (.\NFC\rfal\Inc\rfal_analogConfigTbl.h)(0x5F901951)
-I (.\NFC\ST25R95\st25r95_com.h)(0x5F901A36)
+I (.\NFC\ST25R95\st25r95_com.h)(0x5F963B80)
 F (.\NFC\rfal\Src\rfal_crc.c)(0x5F901947)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\rfal_crc.o --omf_browse .\objects\rfal_crc.crf --depend .\objects\rfal_crc.d)
 I (NFC\rfal\Src\rfal_crc.h)(0x5F901947)
 I (.\NFC\Inc\platform.h)(0x5F90EF27)
@@ -3721,7 +3699,7 @@ I (.\NFC\rfal\Inc\rfal_features.h)(0x5F901954)
 I (.\NFC\ST25R95\utils.h)(0x5F901A41)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\string.h)(0x5E53505C)
 I (.\NFC\ST25R95\st25r95.h)(0x5F901A34)
-I (.\NFC\ST25R95\st25r95_com.h)(0x5F901A36)
+I (.\NFC\ST25R95\st25r95_com.h)(0x5F963B80)
 I (.\NFC\rfal\Inc\rfal_nfcf.h)(0x5F901957)
 I (.\NFC\rfal\Inc\rfal_nfca.h)(0x5F901956)
 I (.\NFC\rfal\Inc\rfal_t1t.h)(0x5F90195A)
@@ -4309,13 +4287,13 @@ I (D:\Deuce\MDK5\ARM\ARMCC\include\stdarg.h)(0x5E53505C)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h)(0x5DC11BB8)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h)(0x5DC11BB8)
 I (NFC\ST25R95\st25r95.h)(0x5F901A34)
-I (NFC\ST25R95\st25r95_com.h)(0x5F901A36)
+I (NFC\ST25R95\st25r95_com.h)(0x5F963B80)
 I (.\NFC\rfal\Inc\rfal_rf.h)(0x5F901959)
 I (.\NFC\rfal\Inc\rfal_features.h)(0x5F901954)
 I (NFC\ST25R95\utils.h)(0x5F901A41)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\string.h)(0x5E53505C)
 F (.\NFC\ST25R95\st25r95_com.c)(0x5F901A35)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\st25r95_com.o --omf_browse .\objects\st25r95_com.crf --depend .\objects\st25r95_com.d)
-I (NFC\ST25R95\st25r95_com.h)(0x5F901A36)
+I (NFC\ST25R95\st25r95_com.h)(0x5F963B80)
 I (.\NFC\Inc\platform.h)(0x5F90EF27)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h)(0x577640D2)
 I (.\SYSTEM\stm32f4xx_hal_conf.h)(0x5F8661A2)
@@ -4380,8 +4358,8 @@ I (D:\Deuce\MDK5\ARM\ARMCC\include\string.h)(0x5E53505C)
 I (.\NFC\rfal\Inc\rfal_nfcb.h)(0x5F901956)
 I (.\NFC\rfal\Inc\rfal_nfcf.h)(0x5F901957)
 I (NFC\ST25R95\utils.h)(0x5F901A41)
-F (.\NFC\ST25R95\st25r95_com_spi.c)(0x5F901A37)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\st25r95_com_spi.o --omf_browse .\objects\st25r95_com_spi.crf --depend .\objects\st25r95_com_spi.d)
-I (NFC\ST25R95\st25r95_com.h)(0x5F901A36)
+F (.\NFC\ST25R95\st25r95_com_spi.c)(0x5F963C35)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\st25r95_com_spi.o --omf_browse .\objects\st25r95_com_spi.crf --depend .\objects\st25r95_com_spi.d)
+I (NFC\ST25R95\st25r95_com.h)(0x5F963B80)
 I (.\NFC\Inc\platform.h)(0x5F90EF27)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h)(0x577640D2)
 I (.\SYSTEM\stm32f4xx_hal_conf.h)(0x5F8661A2)
@@ -4447,7 +4425,7 @@ I (.\NFC\rfal\Inc\rfal_nfcb.h)(0x5F901956)
 I (.\NFC\rfal\Inc\rfal_nfcf.h)(0x5F901957)
 I (NFC\ST25R95\utils.h)(0x5F901A41)
 F (.\NFC\ST25R95\st25r95_com_uart.c)(0x5F901A38)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\st25r95_com_uart.o --omf_browse .\objects\st25r95_com_uart.crf --depend .\objects\st25r95_com_uart.d)
-I (NFC\ST25R95\st25r95_com.h)(0x5F901A36)
+I (NFC\ST25R95\st25r95_com.h)(0x5F963B80)
 I (.\NFC\Inc\platform.h)(0x5F90EF27)
 I (.\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h)(0x577640D2)
 I (.\SYSTEM\stm32f4xx_hal_conf.h)(0x5F8661A2)
@@ -4572,7 +4550,7 @@ I (D:\Deuce\MDK5\ARM\ARMCC\include\stdarg.h)(0x5E53505C)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h)(0x5DC11BB8)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h)(0x5DC11BB8)
 F (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\libcpu\arm\cortex-m4\context_rvds.S)(0x5DC11BB8)(--cpu Cortex-M4.fp.sp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 530" --pd "_RTE_ SETA 1" --pd "STM32F429xx SETA 1" --pd "_RTE_ SETA 1"--list .\listings\context_rvds.lst --xref -o .\objects\context_rvds.o --depend .\objects\context_rvds.d)
-F (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\libcpu\arm\cortex-m4\cpuport.c)(0x5F895176)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\cpuport.o --omf_browse .\objects\cpuport.crf --depend .\objects\cpuport.d)
+F (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\libcpu\arm\cortex-m4\cpuport.c)(0x5F962D6F)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\cpuport.o --omf_browse .\objects\cpuport.crf --depend .\objects\cpuport.d)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h)(0x5DC11BE2)
 I (.\RTE\RTOS\rtconfig.h)(0x5F91015B)
 I (.\RTE\_Target_1\RTE_Components.h)(0x5F86CCF7)
@@ -4691,7 +4669,7 @@ I (D:\Deuce\MDK5\ARM\ARMCC\include\stdarg.h)(0x5E53505C)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h)(0x5DC11BB8)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h)(0x5DC11BB8)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rthw.h)(0x5DC11BE2)
-F (RTE\RTOS\board.c)(0x5F911D93)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\board.o --omf_browse .\objects\board.crf --depend .\objects\board.d)
+F (RTE\RTOS\board.c)(0x5F962D91)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I .\CORE -I .\FATFS\exfuns -I .\FATFS\src\option -I .\MALLOC -I .\SYSTEM -I .\TEXT -I .\FATFS\src -I .\HALLIB\STM32F4xx_HAL_Driver\Inc -I .\HARDWARE\WM8978 -I .\HARDWARE\W25QXX -I .\HARDWARE\SPI -I .\HARDWARE\SDIO -I .\HARDWARE\SAI -I .\HARDWARE -I .\HARDWARE\IIC -I .\USB\STM32_USB_Device_Library\Class\msc\inc -I .\USB\STM32_USB_Device_Library\Core\inc -I .\USB\STM32_USB_OTG_Driver\inc -I .\USB\USB_APP -I .\HARDWARE\OLED -I .\NFC\Inc -I .\NFC\rfal\Inc -I .\NFC\ST25R95-I.\RTE\RTOS-I.\RTE\_Target_1-ID:\Deuce\MDK5\Keil\STM32F4xx_DFP\2.5.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include-ID:\Deuce\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="530" -D_RTE_ -DSTM32F429xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F429xx -DUSE_USB_OTG_FS-o .\objects\board.o --omf_browse .\objects\board.crf --depend .\objects\board.d)
 I (D:\Deuce\MDK5\ARM\ARMCC\include\stdint.h)(0x5E53505C)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rthw.h)(0x5DC11BE2)
 I (D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h)(0x5DC11BE2)

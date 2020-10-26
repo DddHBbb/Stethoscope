@@ -57,3 +57,12 @@
 .\objects\audioplay.o: .\TEXT\text.h
 .\objects\audioplay.o: .\TEXT\fontupd.h
 .\objects\audioplay.o: D:\Deuce\MDK5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\audioplay.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h
+.\objects\audioplay.o: .\RTE\RTOS\rtconfig.h
+.\objects\audioplay.o: .\RTE\_Target_1\RTE_Components.h
+.\objects\audioplay.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdebug.h
+.\objects\audioplay.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdef.h
+.\objects\audioplay.o: D:\Deuce\MDK5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\audioplay.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h
+.\objects\audioplay.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h
+.\objects\audioplay.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h

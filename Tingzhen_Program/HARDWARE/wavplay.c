@@ -28,8 +28,8 @@ u8 wav_decode_init(u8* fname,__wavctrl* wavx)
 	ChunkFMT *fmt;
 	ChunkFACT *fact;
 	ChunkDATA *data;
-	ftemp=(FIL*)mymalloc(SRAMIN,sizeof(FIL));
-	buf=mymalloc(SRAMIN,512);
+	ftemp=(FIL*)rt_malloc(sizeof(FIL));
+	buf=rt_malloc(512);
 	if(ftemp&&buf)	//内存申请成功
 	{
 		res=f_open(ftemp,(TCHAR*)fname,FA_READ);//打开文件
@@ -62,8 +62,8 @@ u8 wav_decode_init(u8* fname,__wavctrl* wavx)
 		}else res=1;//打开文件错误
 	}
 	f_close(ftemp);
-	myfree(SRAMIN,ftemp);//释放内存
-	myfree(SRAMIN,buf); 
+	rt_free(ftemp);//释放内存
+	rt_free(buf); 
 	return 0;
 }
 
@@ -143,15 +143,11 @@ u8 wav_play_song(u8* fname)
 {
 	u8 res;  
 	u32 fillnum; 
-//	FIL space[sizeof(FIL)];
-//	u8 space1[WAV_SAI_TX_DMA_BUFSIZE];
-//	u8 space2[WAV_SAI_TX_DMA_BUFSIZE];
-//	u8 space1[WAV_SAI_TX_DMA_BUFSIZE];
 	
-	audiodev.file=(FIL*)mymalloc(SRAMIN,sizeof(FIL));
-	audiodev.saibuf1=mymalloc(SRAMIN,WAV_SAI_TX_DMA_BUFSIZE);
-	audiodev.saibuf2=mymalloc(SRAMIN,WAV_SAI_TX_DMA_BUFSIZE);
-	audiodev.tbuf=mymalloc(SRAMIN,WAV_SAI_TX_DMA_BUFSIZE);
+	audiodev.file=(FIL*)rt_malloc(sizeof(FIL));
+	audiodev.saibuf1=(uint8_t *)rt_malloc(WAV_SAI_TX_DMA_BUFSIZE);
+	audiodev.saibuf2=(uint8_t *)rt_malloc(WAV_SAI_TX_DMA_BUFSIZE);
+	audiodev.tbuf=(uint8_t *)rt_malloc(WAV_SAI_TX_DMA_BUFSIZE);
 	
 	if(audiodev.file&&audiodev.saibuf1&&audiodev.saibuf2&&audiodev.tbuf)
 	{ 
@@ -207,10 +203,10 @@ u8 wav_play_song(u8* fname)
 			}else res=0XFF; 
 		}else res=0XFF;
 	}else res=0XFF; 
-	myfree(SRAMIN,audiodev.tbuf);	//释放内存
-	myfree(SRAMIN,audiodev.saibuf1);//释放内存
-	myfree(SRAMIN,audiodev.saibuf2);//释放内存 
-	myfree(SRAMIN,audiodev.file);	//释放内存 
+	rt_free(audiodev.tbuf);	//释放内存
+	rt_free(audiodev.saibuf1);//释放内存
+	rt_free(audiodev.saibuf2);//释放内存 
+	rt_free(audiodev.file);	//释放内存 
 	return res;
 } 
 	

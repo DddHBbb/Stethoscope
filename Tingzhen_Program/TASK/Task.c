@@ -38,13 +38,14 @@ static rt_mutex_t USBorAudioUsingSDIO_Mutex = RT_NULL;
   ***************************************/
 void Wav_Player_Task(void* parameter)
 {	
+	uint32_t t=0;
 	printf("Wav_Player_Task\n");
 	while(1)
 	{
 		rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);
 		audio_play();
 		rt_mutex_release(USBorAudioUsingSDIO_Mutex);
-		printf("laile");
+		printf("播放次数=%d\n",t++);
 		rt_thread_delay(1000); //1s
 	}
 }
@@ -61,7 +62,7 @@ void USB_Transfer_Task(void* parameter)
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_RESET)
 		{
 			SD_Init();		
-			MSC_BOT_Data=mymalloc(SRAMIN,MSC_MEDIA_PACKET);			//申请内存
+			MSC_BOT_Data=(uint8_t *)rt_malloc(MSC_MEDIA_PACKET);			//申请内存
 			USBD_Init(&USB_OTG_dev,USB_OTG_FS_CORE_ID,&USR_desc,&USBD_MSC_cb,&USR_cb);
 			bDeviceState;
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);
@@ -73,7 +74,7 @@ void USB_Transfer_Task(void* parameter)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);
 					usbd_CloseMassStorage(&USB_OTG_dev);
-					myfree(SRAMIN,MSC_BOT_Data);
+					rt_free(MSC_BOT_Data);
 					rt_thread_resume(Wav_Player);
 					rt_thread_resume(NFC_Transfer);
 					break;
@@ -140,7 +141,7 @@ void Task_init(void)
                       20);                 /* 线程时间片 */
                    
     /* 启动线程，开启调度 */
-//   if (Wav_Player != RT_NULL)    rt_thread_startup(Wav_Player);
+   if (Wav_Player != RT_NULL)    rt_thread_startup(Wav_Player);
 	
 	/*USB大容量存储任务*/
 	USB_Transfer = rt_thread_create( "USB_Transfer_Task",              /* 线程名字 */
@@ -158,7 +159,7 @@ void Task_init(void)
                       OLED_Display_Task,   				 /* 线程入口函数 */
                       RT_NULL,             /* 线程入口函数参数 */
                       512,                 /* 线程栈大小 */
-                      2,                   /* 线程的优先级 */
+                      3,                   /* 线程的优先级 */
                       20);                 /* 线程时间片 */
                    
     /* 启动线程，开启调度 */
@@ -169,7 +170,7 @@ void Task_init(void)
                       NFC_Transfer_Task,   				 /* 线程入口函数 */
                       RT_NULL,             /* 线程入口函数参数 */
                       1024,                 /* 线程栈大小 */
-                      2,                   /* 线程的优先级 */
+                      4,                   /* 线程的优先级 */
                       20);                 /* 线程时间片 */
                    
     /* 启动线程，开启调度 */

@@ -49,3 +49,12 @@
 .\objects\diskio.o: .\HALLIB\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_wwdg.h
 .\objects\diskio.o: .\HARDWARE\W25QXX\w25qxx.h
 .\objects\diskio.o: .\MALLOC\malloc.h
+.\objects\diskio.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h
+.\objects\diskio.o: .\RTE\RTOS\rtconfig.h
+.\objects\diskio.o: .\RTE\_Target_1\RTE_Components.h
+.\objects\diskio.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdebug.h
+.\objects\diskio.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdef.h
+.\objects\diskio.o: D:\Deuce\MDK5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\diskio.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h
+.\objects\diskio.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h
+.\objects\diskio.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h

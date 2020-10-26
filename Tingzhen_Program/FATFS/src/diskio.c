@@ -10,7 +10,7 @@
 #include "sdio_sdcard.h"
 #include "w25qxx.h"
 #include "malloc.h"	 
- 
+#include "rtthread.h"
 
 #define SD_CARD	 	0  			//SD卡,卷标为0
 #define EX_FLASH 	1			//外部spi flash,卷标为1
@@ -235,12 +235,12 @@ DWORD get_fattime (void)
 //动态分配内存
 void *ff_memalloc (UINT size)			
 {
-	return (void*)mymalloc(SRAMIN,size);
+	return (void*)rt_malloc(size);
 }
 //释放内存
 void ff_memfree (void* mf)		 
 {
-	myfree(SRAMIN,mf);
+	rt_free(mf);
 }
 
 

@@ -51,9 +51,9 @@ u8 updata_fontx(u8 *fxpath,u8 fx)
 	u16 bread;
 	u32 offx=0;
 	u8 rval=0;	     
-	fftemp=(FIL*)mymalloc(SRAMIN,sizeof(FIL));	//分配内存	
+	fftemp=(FIL*)rt_malloc(sizeof(FIL));	//分配内存	
 	if(fftemp==NULL)rval=1;
-	tempbuf=mymalloc(SRAMIN,4096);				//分配4096个字节空间
+	tempbuf=rt_malloc(4096);				//分配4096个字节空间
 	if(tempbuf==NULL)rval=1;
  	res=f_open(fftemp,(const TCHAR*)fxpath,FA_READ); 
  	if(res)rval=2;//打开文件失败  
@@ -97,8 +97,8 @@ u8 updata_fontx(u8 *fxpath,u8 fx)
 	 	} 	
 		f_close(fftemp);		
 	}			 
-	myfree(SRAMIN,fftemp);	//释放内存
-	myfree(SRAMIN,tempbuf);	//释放内存
+	rt_free(fftemp);	//释放内存
+	rt_free(tempbuf);	//释放内存
 	return res;
 } 
 //更新字体文件,UNIGBK,GBK12,GBK16,GBK24,GBK32一起更新
@@ -118,14 +118,14 @@ u8 update_font(u8* src)
 	u8 rval=0; 
 	res=0XFF;		
 	ftinfo.fontok=0XFF;
-	pname=mymalloc(SRAMIN,100);	//申请100字节内存  
-	buf=mymalloc(SRAMIN,4096);	//申请4K字节内存  
-	fftemp=(FIL*)mymalloc(SRAMIN,sizeof(FIL));	//分配内存	
+	pname=rt_malloc(100);	//申请100字节内存  
+	buf=rt_malloc(4096);	//申请4K字节内存  
+	fftemp=(FIL*)rt_malloc(sizeof(FIL));	//分配内存	
 	if(buf==NULL||pname==NULL||fftemp==NULL)
 	{
-		myfree(SRAMIN,fftemp);
-		myfree(SRAMIN,pname);
-		myfree(SRAMIN,buf);
+		rt_free(fftemp);
+		rt_free(pname);
+		rt_free(buf);
 		return 5;		//内存申请失败
 	}
 	for(i=0;i<5;i++)	//先查找文件UNIGBK,GBK12,GBK16,GBK24,GBK32是否正常 
@@ -141,7 +141,7 @@ u8 update_font(u8* src)
 			break;		//出错了,直接退出
 		}
 	} 
-	myfree(SRAMIN,fftemp);	//释放内存
+	rt_free(fftemp);	//释放内存
 	if(rval==0)				//字库文件都存在.
 	{  
 		for(i=0;i<FONTSECSIZE;i++)			//先擦除字库区域,提高写入速度
@@ -161,8 +161,8 @@ u8 update_font(u8* src)
 			res=updata_fontx(pname,i);	//更新字库
 			if(res)
 			{
-				myfree(SRAMIN,buf);
-				myfree(SRAMIN,pname);
+				rt_free(buf);
+				rt_free(pname);
 				return 1+i;
 			} 
 		} 
@@ -171,8 +171,8 @@ u8 update_font(u8* src)
 		ftinfo.fontok=0XAA;
 		W25QXX_Write((u8*)&ftinfo,FONTINFOADDR,sizeof(ftinfo));	//保存字库信息
 	}
-	myfree(SRAMIN,pname);//释放内存 
-	myfree(SRAMIN,buf);
+	rt_free(pname);//释放内存 
+	rt_free(buf);
 	return rval;//无错误.			 
 } 
 //初始化字体

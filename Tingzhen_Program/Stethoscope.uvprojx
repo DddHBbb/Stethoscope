@@ -527,16 +527,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>MALLOC</GroupName>
-          <Files>
-            <File>
-              <FileName>malloc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\MALLOC\malloc.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>HAL_Drivers</GroupName>
           <Files>
             <File>

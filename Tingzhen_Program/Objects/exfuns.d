@@ -52,3 +52,12 @@
 .\objects\exfuns.o: FATFS\exfuns\fattester.h
 .\objects\exfuns.o: .\MALLOC\malloc.h
 .\objects\exfuns.o: .\HARDWARE\usart.h
+.\objects\exfuns.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h
+.\objects\exfuns.o: .\RTE\RTOS\rtconfig.h
+.\objects\exfuns.o: .\RTE\_Target_1\RTE_Components.h
+.\objects\exfuns.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdebug.h
+.\objects\exfuns.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtdef.h
+.\objects\exfuns.o: D:\Deuce\MDK5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\exfuns.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtservice.h
+.\objects\exfuns.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtm.h
+.\objects\exfuns.o: D:\Deuce\MDK5\RealThread\RT-Thread\3.1.3\include\rtthread.h

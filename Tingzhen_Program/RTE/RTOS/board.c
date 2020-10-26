@@ -46,7 +46,7 @@ static uint32_t _SysTick_Config(rt_uint32_t ticks)
 }
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
-#define RT_HEAP_SIZE    1900
+#define RT_HEAP_SIZE    1024*40
 static uint32_t rt_heap[RT_HEAP_SIZE];     // heap default size: 4K(1024 * 4)
 RT_WEAK void *rt_heap_begin_get(void)
 {
@@ -87,35 +87,33 @@ void rt_hw_board_init()
 
 void rt_hw_console_output(const char *str)
 {	
-//	/* 进入临界段 */
-//    rt_enter_critical();
-
-//	/* 直到字符串结束 */
-//    while (*str!='\0')
-//	{
-//		/* 换行 */
-//		if (*str=='\n')
-//		{
-//			HAL_UART_Transmit(&UART1_Handler, (uint8_t *)('\r'),1,0); 
-//			while (__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_TC) == RESET);
-//		}
-
-//		HAL_UART_Transmit(&UART1_Handler, (uint8_t *)str,sizeof(*str),0); 				
-//		while (__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_TC) == RESET);	
-//	}	
-
-//	/* 退出临界段 */
-//    rt_exit_critical();
+	HAL_UART_Transmit(&UART1_Handler, (uint8_t *)str,strlen(str),1000); 				
 }
 void SysTick_Handler(void)
 {
-		HAL_IncTick();
+		
     /* 进入中断 */
     rt_interrupt_enter();
-
+		HAL_IncTick();
     /* 更新时基 */
     rt_tick_increase();
 
     /* 离开中断 */
     rt_interrupt_leave();
+}
+uint32_t HAL_GetTick(void)
+{
+    return rt_tick_get() * 1000 / RT_TICK_PER_SECOND;
+}
+
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t start, now, delta, reload, us_tick;
+    start = SysTick->VAL;
+    reload = SysTick->LOAD;
+    us_tick = SystemCoreClock / 1000000UL;
+    do {
+        now = SysTick->VAL;
+        delta = start > now ? start - now : reload + start - now;
+    } while(delta < us_tick * us);
 }

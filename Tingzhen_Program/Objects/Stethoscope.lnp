@@ -23,7 +23,6 @@
 ".\objects\mycc936.o"
 ".\objects\ff.o"
 ".\objects\diskio.o"
-".\objects\malloc.o"
 ".\objects\stm32f4xx_hal.o"
 ".\objects\stm32f4xx_hal_cortex.o"
 ".\objects\stm32f4xx_hal_dma.o"
