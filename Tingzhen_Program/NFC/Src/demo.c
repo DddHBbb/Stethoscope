@@ -116,7 +116,7 @@ static uint8_t ceNFCF_SENSF_RES[]  = {0x01,                                     
  ******************************************************************************
  */
 static rfalNfcDiscoverParam discParam;
-static uint8_t              state = DEMO_ST_NOTINIT;
+static uint8_t  state = DEMO_ST_NOTINIT;
 
 /*
 ******************************************************************************
@@ -132,8 +132,11 @@ static void demoCE( rfalNfcDevice *nfcDev );
 static void demoNotif( rfalNfcState st );
 ReturnCode  demoTransceiveBlocking( uint8_t *txBuf, uint16_t txBufSize, uint8_t **rxBuf, uint16_t **rcvLen, uint32_t fwt );
 
+const uint32_t Continue_Singnal=0x01;
+const uint32_t Abort_Singnal=0x02;
 
-
+extern rt_mailbox_t NFC_TagID;
+extern rt_mailbox_t AbortWavplay_Event;
 /*!
  *****************************************************************************
  * \brief Demo Notification
@@ -145,6 +148,7 @@ static void demoNotif( rfalNfcState st )
 {
     uint8_t       devCnt;
     rfalNfcDevice *dev;
+		
     
     
     if( st == RFAL_NFC_STATE_WAKEUP_MODE )
@@ -240,22 +244,21 @@ bool demoIni( void )
 void demoCycle( void )
 {
     static rfalNfcDevice *nfcDevice;
-    
+    uint8_t Flag=0;
+	
     rfalNfcWorker();                                    /* Run RFAL worker periodically */   
     switch( state )
     {
-        /*******************************************************************************/
         case DEMO_ST_START_DISCOVERY:
-
          
-          platformLedOff(PLATFORM_LED_AP2P_PORT, PLATFORM_LED_AP2P_PIN);
-          platformLedOff(PLATFORM_LED_FIELD_PORT, PLATFORM_LED_FIELD_PIN);
-          
-          rfalNfcDeactivate( false );
-          rfalNfcDiscover( &discParam );
-          
-          state = DEMO_ST_DISCOVERY;
-          break;
+						platformLedOff(PLATFORM_LED_AP2P_PORT, PLATFORM_LED_AP2P_PIN);
+						platformLedOff(PLATFORM_LED_FIELD_PORT, PLATFORM_LED_FIELD_PIN);
+						
+						rfalNfcDeactivate( false );
+						rfalNfcDiscover( &discParam );
+						
+						state = DEMO_ST_DISCOVERY;
+						break;
 
         /*******************************************************************************/
         case DEMO_ST_DISCOVERY:
@@ -337,8 +340,7 @@ void demoCycle( void )
                         break;
                         
                     /*******************************************************************************/
-                    case RFAL_NFC_LISTEN_TYPE_ST25TB:
-                        
+                    case RFAL_NFC_LISTEN_TYPE_ST25TB:                     
                         platformLog("ST25TB card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ));
                        
                         break;
@@ -348,8 +350,7 @@ void demoCycle( void )
                     case RFAL_NFC_POLL_TYPE_AP2P:
                         
                         platformLog("NFC Active P2P device found. NFCID3: %s\r\n", hex2Str(nfcDevice->nfcid, nfcDevice->nfcidLen));
-                        platformLedOn(PLATFORM_LED_AP2P_PORT, PLATFORM_LED_AP2P_PIN);
-                    
+                        platformLedOn(PLATFORM_LED_AP2P_PORT, PLATFORM_LED_AP2P_PIN);                   
                         demoP2P( nfcDevice );
                         break;
                     
@@ -357,9 +358,7 @@ void demoCycle( void )
                     case RFAL_NFC_POLL_TYPE_NFCA:
                     case RFAL_NFC_POLL_TYPE_NFCF:
                         
-                        platformLog("Activated in CE %s mode.\r\n", (nfcDevice->type == RFAL_NFC_POLL_TYPE_NFCA) ? "NFC-A" : "NFC-F");
-                        
-                    
+                        platformLog("Activated in CE %s mode.\r\n", (nfcDevice->type == RFAL_NFC_POLL_TYPE_NFCA) ? "NFC-A" : "NFC-F");                                        
                         demoCE( nfcDevice );
                         break;
                     
@@ -367,19 +366,22 @@ void demoCycle( void )
                     default:
                         break;
                 }
-                
+                rt_mb_send(NFC_TagID,(rt_uint32_t)hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ));
+								rt_mb_send(AbortWavplay_Event,Continue_Singnal);
                 rfalNfcDeactivate( false );
                 #if !defined(DEMO_NO_DELAY_IN_DEMOCYCLE)
                 #endif
                 state = DEMO_ST_START_DISCOVERY;
-            }
+							}	
             break;
 
         /*******************************************************************************/
         case DEMO_ST_NOTINIT:
         default:
-            break;
+				break;
     }
+//		if(Flag != 1)
+//		rt_mb_send(AbortWavplay_Event,Abort_Singnal);//有问题，顺序问题，明天看
 }
 
 static void demoCE( rfalNfcDevice *nfcDev )

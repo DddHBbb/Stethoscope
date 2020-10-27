@@ -1,7 +1,7 @@
 #ifndef __WAVPLAY_H
 #define __WAVPLAY_H
 #include "sys.h" 
- 
+#include "ff.h"
 
 #define WAV_SAI_TX_DMA_BUFSIZE    4096		//定义WAV TX DMA 数组大小(播放192Kbps@24bit的时候,需要设置4096大才不会卡)
  
@@ -72,6 +72,31 @@ typedef __packed struct
 	
 	u32 datastart;				//数据帧开始的位置(在文件里面的偏移)
 }__wavctrl; 
+
+
+
+//音乐播放控制器
+typedef __packed struct
+{  
+	//2个SAI解码的BUF
+	u8 *saibuf1;
+	u8 *saibuf2; 
+	u8 *tbuf;				//零时数组,仅在24bit解码的时候需要用到
+	FIL *file;				//音频文件指针
+	
+	u8 status;				//bit0:0,暂停播放;1,继续播放
+							//bit1:0,结束播放;1,开启播放 
+}__audiodev; 
+
+
+void wav_sai_dma_callback(void);
+void audio_start(void);
+void audio_stop(void);
+u16 audio_get_tnum(u8 *path);
+void audio_msg_show(u32 totsec,u32 cursec,u32 bitrate);
+void audio_play(char *file_name);
+u8 audio_play_song(u8* fname);
+char* Select_File(char *file_name);
 
 
 u8 wav_decode_init(u8* fname,__wavctrl* wavx);

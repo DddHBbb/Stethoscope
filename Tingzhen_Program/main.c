@@ -13,6 +13,8 @@ static rt_thread_t App_Handle = RT_NULL;
 int main(void)
 {
 	ALL_Init();
+	Event_init();
+	Mailbox_init();
 	Semaphore_init();
 	Task_init();
 }
@@ -30,8 +32,7 @@ void ALL_Init(void)
     exfuns_init();		            //为fatfs相关变量申请内存  
     f_mount(fs[0],"0:",1);          //挂载SD卡 
 		f_mount(fs[1],"1:",1);          //挂载SPI FLASH. 		     
-		if(font_init())		
-			update_font("0:");
+		if(font_init())		update_font("0:");
 		rt_thread_delay(2000);  //延时两秒为了让图片显示出来	
 		printf("done\n");
 }

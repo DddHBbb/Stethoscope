@@ -15,7 +15,6 @@
 #include "sys.h"
 #include "usart.h"
 #include "string.h"
-#include "malloc.h"
 #include "w25qxx.h"
 #include "ff.h"
 #include "exfuns.h"
@@ -24,10 +23,12 @@
 #include "fontupd.h"
 #include "text.h"
 #include "wm8978.h"	 
-#include "audioplay.h"
+#include "wavplay.h" 
 #include "GPIOConfig.h"
 #include "oled.h"
 #include "spi.h"
+
+
 /*
 *************************************************************************
 *                               º¯ÊýÉùÃ÷
@@ -35,6 +36,9 @@
 */
 void Task_init(void);
 void Semaphore_init(void);
+void Mailbox_init(void);
+void Event_init(void);
+void rt_hw_us_delay(rt_uint32_t us);
 
 
 #endif /* __BOARD_H__ */
