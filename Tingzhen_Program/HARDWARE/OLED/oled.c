@@ -52,6 +52,7 @@ const uint8_t gImage_12[504] = { /* 0X01,0X01,0X3F,0X00,0X40,0X00, */
 //[6]0 1 2 3 ... 127	
 //[7]0 1 2 3 ... 127 		   
 u8 OLED_GRAM[128][8];	 
+uint8_t BodyData[16];
 
 //更新显存到LCD		 
 void OLED_Refresh_Gram(void)
@@ -323,7 +324,7 @@ u8 bHz=0;     	//字符或者中文
 uint8_t size= 12;
 uint8_t xend, yend;
 	
-xend = (strlen((const char*)str)*12);
+xend = (strlen((const char*)str)*14);
 yend = 	y+12;
 while(*str!=0)	//数据未结束
 { 
@@ -484,3 +485,34 @@ void Movie_Show_Img(uint8_t x,uint8_t y,uint32_t picx)
     }    
 	OLED_Refresh_Gram();//更新显示到OLED		
 }
+/*动态显示当前位置*/
+void DispCurrentPosition(const uint8_t *pbuf)
+{
+	const uint8_t *buf = pbuf;
+  uint16_t len = strlen(buf)*6; /*12号字体*/
+  static uint8_t old_data ;
+	if(old_data != BodyData[0]) /*是否和上次是同一个位置*/
+	{
+		 old_data = BodyData[0];
+	}
+	if(len>127)      /*显示内容超过单屏长度*/
+	{  
+		 Show_String(48,36,(uint8_t*)buf);
+	}	
+  else             /*显示未超过单屏长度*/
+  {	 Show_String(48,36,(uint8_t*)buf);}	
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

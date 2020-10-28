@@ -30,6 +30,6 @@ void OLED_Show_Font(u16 x,u16 y,u8 fnum);
 void Show_String(uint8_t x,uint8_t y,uint8_t *str);
 void BattChek(void);
 void Movie_Show_Img(uint8_t x,uint8_t y,uint32_t picx);
-
+void DispCurrentPosition(const uint8_t *pbuf);
 
 #endif

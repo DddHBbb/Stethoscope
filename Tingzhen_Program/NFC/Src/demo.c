@@ -294,6 +294,7 @@ void demoCycle( void )
                                 
                             default:
                                 platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );
+																
                                 break;
                         }
                         break;
@@ -440,7 +441,7 @@ static void demoNfcf( rfalNfcfListenDevice *nfcfDev )
     rfalNfcfServ               srv = RFAL_NFCF_SERVICECODE_RDWR;
     rfalNfcfBlockListElem      bl[3];
     rfalNfcfServBlockListParam servBlock;
-    //uint8_t                    wrData[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+   // uint8_t                    wrData[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
     
     servBlock.numServ   = 1;                            /* Only one Service to be used           */
     servBlock.servList  = &srv;                         /* Service Code: NDEF is Read/Writeable  */
@@ -454,7 +455,7 @@ static void demoNfcf( rfalNfcfListenDevice *nfcfDev )
     
     #if 0  /* Writing example */
         err = rfalNfcfPollerUpdate( nfcfDev->sensfRes.NFCID2, &servBlock, buf , sizeof(buf), wrData, buf, sizeof(buf) );
-        platformLog(" Update Block: %s Data: %s \r\n", (err != ERR_NONE) ? "FAIL": "OK", (err != ERR_NONE) ? "" : hex2Str( wrData, RFAL_NFCF_BLOCK_LEN) );
+        platformLog(" Update Block: %s Data: %s \r\n", (err != ERR_NONE) ? "FAIL": "OK", (err != ERR_NONE) ? "" : hex2Str((uint8_t *) wrData, RFAL_NFCF_BLOCK_LEN) );
         err = rfalNfcfPollerCheck( nfcfDev->sensfRes.NFCID2, &servBlock, buf, sizeof(buf), &rcvLen);
         platformLog(" Check Block:  %s Data: %s \r\n", (err != ERR_NONE) ? "FAIL": "OK", (err != ERR_NONE) ? "" : hex2Str( &buf[1], RFAL_NFCF_BLOCK_LEN) );
     #endif
@@ -643,9 +644,32 @@ ReturnCode demoTransceiveBlocking( uint8_t *txBuf, uint16_t txBufSize, uint8_t *
     }
     return err;
 }
-void dhb_delay(uint16_t t)
+
+static void Write_NFC( rfalNfcfListenDevice *nfcfDev )
 {
-	for(int i=0;i<1000;i++);
-	
+    ReturnCode                 err;
+    uint8_t                    buf[ (RFAL_NFCF_NFCID2_LEN + RFAL_NFCF_CMD_LEN + (3*RFAL_NFCF_BLOCK_LEN)) ];
+    uint16_t                   rcvLen;
+    rfalNfcfServ               srv = RFAL_NFCF_SERVICECODE_RDWR;
+    rfalNfcfBlockListElem      bl[3];
+    rfalNfcfServBlockListParam servBlock;
+    uint8_t                    wrData[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+    
+    servBlock.numServ   = 1;                            /* Only one Service to be used           */
+    servBlock.servList  = &srv;                         /* Service Code: NDEF is Read/Writeable  */
+    servBlock.numBlock  = 1;                            /* Only one block to be used             */
+    servBlock.blockList = bl;
+    bl[0].conf     = RFAL_NFCF_BLOCKLISTELEM_LEN;       /* Two-byte Block List Element           */     
+    bl[0].blockNum = 0x0002;                            /* Block: NDEF Data                      */
+    
+    err = rfalNfcfPollerCheck( nfcfDev->sensfRes.NFCID2, &servBlock, buf, sizeof(buf), &rcvLen);
+    platformLog(" Check Block: %s Data:  %s \r\n", (err != ERR_NONE) ? "FAIL": "OK", (err != ERR_NONE) ? "" : hex2Str( &buf[1], RFAL_NFCF_BLOCK_LEN) );
+    
+    #if 1  /* Writing example */
+        err = rfalNfcfPollerUpdate( nfcfDev->sensfRes.NFCID2, &servBlock, buf , sizeof(buf), wrData, buf, sizeof(buf) );
+        platformLog(" Update Block: %s Data: %s \r\n", (err != ERR_NONE) ? "FAIL": "OK", (err != ERR_NONE) ? "" : hex2Str((uint8_t *) wrData, RFAL_NFCF_BLOCK_LEN) );
+        err = rfalNfcfPollerCheck( nfcfDev->sensfRes.NFCID2, &servBlock, buf, sizeof(buf), &rcvLen);
+        platformLog(" Check Block:  %s Data: %s \r\n", (err != ERR_NONE) ? "FAIL": "OK", (err != ERR_NONE) ? "" : hex2Str( &buf[1], RFAL_NFCF_BLOCK_LEN) );
+    #endif
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

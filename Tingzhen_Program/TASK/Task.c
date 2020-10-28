@@ -9,6 +9,13 @@
 #include "demo.h"
 #include "platform.h"
 
+/*开启任务宏定义*/
+#define Creat_Wav_Player
+#define Creat_USB_Transfer
+#define Creat_OLED_Display
+#define Creat_NFC_Transfer
+#define Creat_Status_Reflash
+/*播放状态*/
 #define  PLAYING   0x01
 #define  STOPPING (0x01<<1)
 
@@ -18,6 +25,7 @@ static void USB_Transfer_Task(void* parameter);
 static void OLED_Display_Task(void* parameter);
 static void NFC_Transfer_Task(void* parameter);
 static void BuleTooth_Transfer_Task(void* parameter);
+static void Status_Reflash_Task(void* parameter);
 /***********************声明返回区*******************************/
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 extern vu8 USB_STATUS_REG;		//USB状态
@@ -25,18 +33,19 @@ extern vu8 bDeviceState;		//USB连接 情况
 extern uint8_t AbortWavplay_Event_Flag;
 /***********************全局变量区*******************************/
 static 	char *NFC_TagID_RECV=NULL;
+static	rt_uint32_t rev_data=0;
 //任务句柄
 static rt_thread_t Wav_Player = RT_NULL;
 static rt_thread_t USB_Transfer = RT_NULL;
 static rt_thread_t OLED_Display = RT_NULL;
 static rt_thread_t NFC_Transfer = RT_NULL;
 static rt_thread_t BuleTooth_Transfer = RT_NULL;
+static rt_thread_t Status_Reflash = RT_NULL;
 //信号量句柄
 static rt_mutex_t USBorAudioUsingSDIO_Mutex = RT_NULL;
 //邮箱句柄
 rt_mailbox_t NFC_TagID = RT_NULL;
 rt_mailbox_t AbortWavplay_Event = RT_NULL;
-
 //事件句柄
 rt_event_t Display_NoAudio = RT_NULL;
 /****************************************************************/
@@ -80,10 +89,10 @@ void USB_Transfer_Task(void* parameter)
 	{		
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_RESET)
 		{
-			SD_Init();		
+			SD_Init();
+			OLED_Clear();			
 			MSC_BOT_Data=(uint8_t *)rt_malloc(MSC_MEDIA_PACKET);			//申请内存
 			USBD_Init(&USB_OTG_dev,USB_OTG_FS_CORE_ID,&USR_desc,&USBD_MSC_cb,&USR_cb);
-			bDeviceState;
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
 			rt_thread_suspend(Wav_Player);
 			rt_thread_suspend(NFC_Transfer);	
@@ -96,12 +105,25 @@ void USB_Transfer_Task(void* parameter)
 					rt_free(MSC_BOT_Data);
 					rt_thread_resume(Wav_Player);
 					rt_thread_resume(NFC_Transfer);
+					OLED_Clear();	
 					break;
 				}
 				rt_thread_delay(1000);  //100ms
 			}
 		}
-			rt_thread_delay(1000);  //1000ms
+			rt_thread_delay(10);  //1000ms
+	}
+}
+void Status_Reflash_Task(void* parameter)
+{
+	while(1)
+	{
+		rt_event_recv(Display_NoAudio,PLAYING|STOPPING,RT_EVENT_FLAG_OR|RT_EVENT_FLAG_CLEAR,RT_WAITING_NO,&rev_data);
+		if(!rt_mb_recv(AbortWavplay_Event, RT_NULL, RT_WAITING_NO))
+			AbortWavplay_Event_Flag = 1;
+		else
+			AbortWavplay_Event_Flag = 0;		
+			rt_thread_delay(500);
 	}
 }
  /****************************************
@@ -111,28 +133,20 @@ void USB_Transfer_Task(void* parameter)
   ***************************************/
 void OLED_Display_Task(void* parameter)
 {
-	printf("OLED_Display_Task\n");	
-	rt_uint32_t rev_data=0;
+	printf("OLED_Display_Task\n");
+	OLED_Clear();	
 	while(1)
-	{	
-		rt_event_recv(Display_NoAudio,PLAYING|STOPPING,RT_EVENT_FLAG_OR|RT_EVENT_FLAG_CLEAR,RT_WAITING_NO,&rev_data);
-		if(!rt_mb_recv(AbortWavplay_Event, RT_NULL, RT_WAITING_NO))
-			AbortWavplay_Event_Flag = 1;
-		else
-			AbortWavplay_Event_Flag = 0;		
-		 rt_thread_delay(700); //1s
-		
-		OLED_Clear();		
+	{		
 		Show_String(0,0,"模拟听诊器");
 		Show_String(0,12,"当前播放： ");	
 		if(rev_data == (PLAYING|STOPPING))
-				Show_String(36,36,(uint8_t *)Select_File(NFC_TagID_RECV));	
+				Show_String(48,36,(uint8_t *)Select_File(NFC_TagID_RECV));	
 		else if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_RESET)	
-				Show_String(36,36,"USB模式 ");
+				Show_String(48,36,"USB模式");
 		else if(rev_data == STOPPING)
-				Show_String(36,36,"无音频");		
-		BattChek();	
-
+				Show_String(48,36,"无播放");	
+			BattChek();	
+			rt_thread_delay(500);
 	}
 }
  /****************************************
@@ -154,7 +168,7 @@ void NFC_Transfer_Task(void* parameter)
 	while(1)
 	{
 		demoCycle();
-		rt_thread_delay(1); //1ms
+		rt_thread_delay(10); //1ms
 	}
 	
 }
@@ -165,49 +179,30 @@ void NFC_Transfer_Task(void* parameter)
   ***************************************/
 void Task_init(void)
 {
+	#ifdef  Creat_Wav_Player
 	/*音乐播放器任务*/
-	Wav_Player = rt_thread_create( "Wav_Player_Task",              /* 线程名字 */
-                      Wav_Player_Task,   				 /* 线程入口函数 */
-                      RT_NULL,             /* 线程入口函数参数 */
-                      1024,                 /* 线程栈大小 */
-                      1,                   /* 线程的优先级 */
-                      20);                 /* 线程时间片 */
-                   
-    /* 启动线程，开启调度 */
-   if (Wav_Player != RT_NULL)    rt_thread_startup(Wav_Player);
-	
+	Wav_Player = rt_thread_create( "Wav_Player_Task",Wav_Player_Task,RT_NULL,1024,3,20);                                   
+  if (Wav_Player != RT_NULL)    rt_thread_startup(Wav_Player);
+	#endif
+	#ifdef  Creat_USB_Transfer
 	/*USB大容量存储任务*/
-	USB_Transfer = rt_thread_create( "USB_Transfer_Task",              /* 线程名字 */
-                      USB_Transfer_Task,   				 /* 线程入口函数 */
-                      RT_NULL,             /* 线程入口函数参数 */
-                      512,                 /* 线程栈大小 */
-                      0,                   /* 线程的优先级 */
-                      20);                 /* 线程时间片 */
-                   
-    /* 启动线程，开启调度 */
-   if (USB_Transfer != RT_NULL)    rt_thread_startup(USB_Transfer);
-	 
-	 	/*OLED显示任务*/
-	OLED_Display = rt_thread_create( "OLED_Display_Task",              /* 线程名字 */
-                      OLED_Display_Task,   				 /* 线程入口函数 */
-                      RT_NULL,             /* 线程入口函数参数 */
-                      512,                 /* 线程栈大小 */
-                      1,                   /* 线程的优先级 */
-                      20);                 /* 线程时间片 */
-                   
-    /* 启动线程，开启调度 */
-   if (OLED_Display != RT_NULL)    rt_thread_startup(OLED_Display);
-	 
-	 	 	/*NFC任务*/
-	NFC_Transfer = rt_thread_create( "NFC_Transfer_Task",              /* 线程名字 */
-                      NFC_Transfer_Task,   				 /* 线程入口函数 */
-                      RT_NULL,             /* 线程入口函数参数 */
-                      1024,                 /* 线程栈大小 */
-                      1,                   /* 线程的优先级 */
-                      20);                 /* 线程时间片 */
-                   
-    /* 启动线程，开启调度 */
-   if (NFC_Transfer != RT_NULL)    rt_thread_startup(NFC_Transfer);
+	USB_Transfer = rt_thread_create( "USB_Transfer_Task",USB_Transfer_Task,RT_NULL,512,0,20);                 
+  if (USB_Transfer != RT_NULL)    rt_thread_startup(USB_Transfer);
+	 #endif
+	#ifdef  Creat_OLED_Display
+	/*OLED显示任务*/
+	OLED_Display = rt_thread_create( "OLED_Display_Task",OLED_Display_Task,RT_NULL,512,1,20);               
+  if (OLED_Display != RT_NULL)    rt_thread_startup(OLED_Display);
+	 #endif
+	#ifdef  Creat_NFC_Transfer
+	/*NFC任务*/
+	NFC_Transfer = rt_thread_create( "NFC_Transfer_Task",NFC_Transfer_Task,RT_NULL,1024,3,20);                 
+  if (NFC_Transfer != RT_NULL)    rt_thread_startup(NFC_Transfer);
+	 #endif
+	#ifdef  Creat_Status_Reflash
+	Status_Reflash = rt_thread_create( "Status_Reflash",Status_Reflash_Task,RT_NULL,512,2,20);                
+  if (Status_Reflash != RT_NULL)    rt_thread_startup(Status_Reflash);
+	#endif
 }
  /****************************************
   * @brief  信号量创建函数，二值，互斥 
@@ -227,7 +222,6 @@ void Mailbox_init(void)
 {
 	 NFC_TagID = rt_mb_create("NFC_TagID",8,RT_IPC_FLAG_FIFO);
 	 AbortWavplay_Event = rt_mb_create("AbortWavplay_Event",1,RT_IPC_FLAG_FIFO);
-//	 Display_NoAudio = rt_mb_create("Display_NoAudio",1,RT_IPC_FLAG_FIFO);
 }
  /****************************************
   * @brief  事件创建函数 

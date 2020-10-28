@@ -20,7 +20,7 @@ vu8 wavtransferend=0;	//sai传输完成标志
 vu8 wavwitchbuf=0;		//saibufx指示标志
 /****************************************************************/
 const char UID_Num[][8]={"B6C89A2B","B6A49C2B","D6E69C2B","C6EC9C2B","964E9D2B"};
-const char Song_Name[][20]={"爱在西元前.wav","FeelSoClose.wav","Lucky.wav","Shots.wav","viva.wav"}; 
+const char Song_Name[][20]={"音频一","音频二","音频三","音频四","音频五"}; 
 
 //开始音频播放
 void audio_start(void)
@@ -38,16 +38,24 @@ void audio_stop(void)
 //播放音乐
 void audio_play(char *file_name)
 {
-	u8 *pname;			//带路径的文件名
+	u8 *pname,*pname1;			//带路径的文件名
 	WM8978_ADDA_Cfg(1,0);	//开启DAC
 	WM8978_Input_Cfg(0,0,0);//关闭输入通道
 	WM8978_Output_Cfg(1,0);	//开启DAC输出    	
 
 	pname = rt_malloc(_MAX_LFN*2+1); 
+	pname1 = rt_malloc(_MAX_LFN*2+1);
+	
+	strcpy((char*)pname1,(const char*)file_name);
 	strcpy((char*)pname,"0:/SYSTEM/MUSIC/");						//复制路径(目录)
-	strcat((char*)pname,(const char*)file_name);	//将文件名接在后面
+	
+	strcat((char*)pname1,(const char*)".wav");
+	rt_kprintf("pname1 = %s\n",pname1);
+	
+	strcat((char*)pname,(const char*)pname1);	//将文件名接在后面
 	wav_play_song(pname); 			 		//播放这个音频文件			
 	rt_free(pname);
+	rt_free(pname1);
 } 
 
 //WAV解析初始化
@@ -215,7 +223,8 @@ u8 wav_play_song(u8* fname)
 					else 
 						fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
 					
-					rt_thread_yield();
+				//	rt_thread_yield();
+					rt_thread_delay(5);
 				}	
 				audio_stop(); 
 			}else res=0XFF; 
