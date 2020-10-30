@@ -135,6 +135,7 @@ void OLED_Display_Task(void* parameter)
 {
 	printf("OLED_Display_Task\n");
 	OLED_Clear();	
+	u8 len=20;
 	while(1)
 	{		
 		Show_String(0,0,"模拟听诊器");
@@ -146,7 +147,23 @@ void OLED_Display_Task(void* parameter)
 		else if(rev_data == STOPPING)
 				Show_String(48,36,"无播放");	
 			BattChek();	
-			rt_thread_delay(200);
+			rt_thread_delay(2000);
+		
+//	 if(USART_RX_STA&0x8000)
+//		{					   
+//			len=USART_RX_STA&0x3fff;//得到此次接收到的数据长度
+//			printf("\r\n您发送的消息为:\r\n");
+//			HAL_UART_Transmit(&UART1_Handler,(uint8_t*)USART_RX_BUF,len,1000);	//发送接收到的数据
+//			while(__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
+//			printf("\r\n\r\n");//插入换行
+//			USART_RX_STA=0;
+//		}
+		for(int i=0;i<USART_RX_STA;i++)
+			{
+				rt_kprintf("USART_RX_BUF = %c\n",USART_RX_BUF[i]);			
+			}
+			USART_RX_STA = 0;
+			rt_thread_delay(2000);
 	}
 }
  /****************************************
