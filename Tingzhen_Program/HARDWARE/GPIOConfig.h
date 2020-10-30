@@ -9,18 +9,18 @@
 #define   SPI_SWITCH_PIN									GPIO_PIN_4
 #define  	OLED_SWITCH_PIN									GPIO_PIN_6
 #define   RFID_SWITCH_PIN									GPIO_PIN_7
-#define   BUlETHOOTH_SWITCH_PIN						GPIO_PIN_12
+#define   BUlETHOOTH_SWITCH_PIN						GPIO_PIN_10
 #define   AUDIO_SWITCH_PIN								GPIO_PIN_11
 #define		Batt_25													GPIO_PIN_8
 #define		Batt_50													GPIO_PIN_15
 #define		Batt_75													GPIO_PIN_14
 #define		Batt_100												GPIO_PIN_13
 
-#define SSI_0_Pin 												GPIO_PIN_5
-#define SSI_0_GPIO_Port 									GPIOB
-#define nIRQ_IN_Pin 											GPIO_PIN_1
+#define SSI_0_Pin 												GPIO_PIN_1
+#define SSI_0_GPIO_Port 									GPIOE
+#define nIRQ_IN_Pin 											GPIO_PIN_0
 #define nIRQ_IN_GPIO_Port 								GPIOE
-#define nIRQ_OUT_Pin 											GPIO_PIN_9
+#define nIRQ_OUT_Pin 											GPIO_PIN_5
 #define nIRQ_OUT_GPIO_Port 								GPIOB
 #define nSPI_SS_Pin 											GPIO_PIN_7
 #define nSPI_SS_GPIO_Port 								GPIOD

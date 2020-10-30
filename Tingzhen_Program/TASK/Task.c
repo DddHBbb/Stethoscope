@@ -146,7 +146,7 @@ void OLED_Display_Task(void* parameter)
 		else if(rev_data == STOPPING)
 				Show_String(48,36,"ÎÞ²¥·Å");	
 			BattChek();	
-			rt_thread_delay(500);
+			rt_thread_delay(200);
 	}
 }
  /****************************************
@@ -168,7 +168,7 @@ void NFC_Transfer_Task(void* parameter)
 	while(1)
 	{
 		demoCycle();
-		rt_thread_delay(10); //1ms
+		rt_thread_delay(1); //1ms
 	}
 	
 }

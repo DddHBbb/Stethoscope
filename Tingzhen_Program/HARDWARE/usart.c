@@ -1,7 +1,6 @@
 #include "usart.h"
 #include "logger.h"
 
-#if 1
 #pragma import(__use_no_semihosting)             
 //标准库需要的支持函数                 
 struct __FILE 
@@ -22,7 +21,7 @@ int fputc(int ch, FILE *f)
 	USART1->DR = (u8) ch;      
 	return ch;
 }
-#endif 
+
 
 #if EN_USART1_RX   //如果使能了接收
 //串口1中断服务程序
@@ -119,9 +118,6 @@ void USART1_IRQHandler(void)
 { 
 	u32 timeout=0;
 	u32 maxDelay=0x1FFFF;
-#if SYSTEM_SUPPORT_OS	 	//使用OS
-	OSIntEnter();    
-#endif
 	
 	HAL_UART_IRQHandler(&UART1_Handler);	//调用HAL库中断处理公用函数
 	
@@ -138,55 +134,16 @@ void USART1_IRQHandler(void)
 	 timeout++; //超时处理
 	 if(timeout>maxDelay) break;	
 	}
-#if SYSTEM_SUPPORT_OS	 	//使用OS
-	OSIntExit();  											 
-#endif
+
 } 
 #endif	      
 
 
-/*下面代码我们直接把中断控制逻辑写在中断服务函数内部。
- 说明：采用HAL库处理逻辑，效率不高。*/
-/*
 
 
-//串口1中断服务程序
-void USART1_IRQHandler(void)                	
-{ 
-	u8 Res;
-#if SYSTEM_SUPPORT_OS	 	//使用OS
-	OSIntEnter();    
-#endif
-	if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_RXNE)!=RESET))  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
-	{
-        HAL_UART_Receive(&UART1_Handler,&Res,1,1000); 
-		if((USART_RX_STA&0x8000)==0)//接收未完成
-		{
-			if(USART_RX_STA&0x4000)//接收到了0x0d
-			{
-				if(Res!=0x0a)USART_RX_STA=0;//接收错误,重新开始
-				else USART_RX_STA|=0x8000;	//接收完成了 
-			}
-			else //还没收到0X0D
-			{	
-				if(Res==0x0d)USART_RX_STA|=0x4000;
-				else
-				{
-					USART_RX_BUF[USART_RX_STA&0X3FFF]=Res ;
-					USART_RX_STA++;
-					if(USART_RX_STA>(USART_REC_LEN-1))USART_RX_STA=0;//接收数据错误,重新开始接收	  
-				}		 
-			}
-		}   		 
-	}
-	HAL_UART_IRQHandler(&UART1_Handler);	
-#if SYSTEM_SUPPORT_OS	 	//使用OS
-	OSIntExit();  											 
-#endif
-} 
-#endif	
-*/
- 
+
+
+
 
 
 
