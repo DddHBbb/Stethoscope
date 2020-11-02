@@ -17,6 +17,7 @@ int main(void)
 	Mailbox_init();
 	Semaphore_init();
 	Task_init();
+	
 }
 
 void ALL_Init(void)
@@ -34,6 +35,7 @@ void ALL_Init(void)
 		f_mount(fs[1],"1:",1);          //挂载SPI FLASH. 		     
 		if(font_init())		update_font("0:");
 		rt_thread_delay(2000);  //延时两秒为了让图片显示出来	
+	 
 		printf("done\n");
 }
 

@@ -7,9 +7,9 @@
 #include "string.h"  
 #include "rtthread.h"
 /***********************函数声明区*******************************/
-uint8_t Compare_string(const char *file_name,const char *str_name);
+
 /***********************声明返回区*******************************/
-extern rt_mailbox_t AbortWavplay_Event;
+extern rt_mailbox_t AbortWavplay_mb;
 
 /***********************全局变量区*******************************/
 uint8_t AbortWavplay_Event_Flag=0;
@@ -239,12 +239,12 @@ u8 wav_play_song(u8* fname)
 
 char* Select_File(char *file_name)
 {
-	rt_kprintf("filename = %s\n",file_name);
+//	rt_kprintf("filename = %s\n",file_name);
 	for(int i=0;i<5;i++)
 	{
 		if(	Compare_string(file_name,UID_Num[i]))
 		{
-			rt_kprintf("Song_Name = %s\n",Song_Name[i]);
+//			rt_kprintf("Song_Name = %s\n",Song_Name[i]);
 			return (char *)Song_Name[i];
 		}
 	}

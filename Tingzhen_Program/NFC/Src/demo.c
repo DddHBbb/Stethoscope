@@ -45,6 +45,7 @@
 #include "demo.h"
 #include "utils.h"
 #include "rfal_nfc.h"
+#include "usart.h"
 
 #if (defined(ST25R3916) || defined(ST25R95)) && RFAL_FEATURE_LISTEN_MODE
 #include "demo_ce.h"
@@ -90,7 +91,8 @@ static uint8_t readBynary[] = { 0x00, 0xB0, 0x00, 0x00, 0x0F };
 
 /* P2P communication data */    
 static uint8_t ndefLLCPSYMM[] = {0x00, 0x00};
-static uint8_t ndefInit[] = {0x05, 0x20, 0x06, 0x0F, 0x75, 0x72, 0x6E, 0x3A, 0x6E, 0x66, 0x63, 0x3A, 0x73, 0x6E, 0x3A, 0x73, 0x6E, 0x65, 0x70, 0x02, 0x02, 0x07, 0x80, 0x05, 0x01, 0x02};
+//static uint8_t ndefInit[] = {0x05, 0x20, 0x06, 0x0F, 0x75, 0x72, 0x6E, 0x3A, 0x6E, 0x66, 0x63, 0x3A, 0x73, 0x6E, 0x3A, 0x73, 0x6E, 0x65, 0x70, 0x02, 0x02, 0x07, 0x80, 0x05, 0x01, 0x02};
+static uint8_t ndefInit[50];
 static uint8_t ndefUriSTcom[] = {0x13, 0x20, 0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x19, 0xc1, 0x01, 0x00, 0x00, 0x00, 0x12, 0x55, 0x00, 0x68, 0x74, 0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x77, 0x77, 0x77, 0x2e, 0x73, 0x74, 0x2e, 0x63, 0x6f, 0x6d};
 
 #if (defined(ST25R3916) || defined(ST25R95)) && RFAL_FEATURE_LISTEN_MODE
@@ -117,6 +119,7 @@ static uint8_t ceNFCF_SENSF_RES[]  = {0x01,                                     
  */
 static rfalNfcDiscoverParam discParam;
 static uint8_t  state = DEMO_ST_NOTINIT;
+static uint8_t  *NFC_SendMAC_Addr=RT_NULL;
 
 /*
 ******************************************************************************
@@ -135,8 +138,9 @@ ReturnCode  demoTransceiveBlocking( uint8_t *txBuf, uint16_t txBufSize, uint8_t 
 const uint32_t Continue_Singnal=0x01;
 const uint32_t Abort_Singnal=0x02;
 
-extern rt_mailbox_t NFC_TagID;
-extern rt_mailbox_t AbortWavplay_Event;
+extern rt_mailbox_t NFC_TagID_mb;
+extern rt_mailbox_t AbortWavplay_mb;
+extern rt_mailbox_t NFC_SendMAC_mb;
 /*!
  *****************************************************************************
  * \brief Demo Notification
@@ -367,8 +371,8 @@ void demoCycle( void )
                     default:
                         break;
                 }
-                rt_mb_send(NFC_TagID,(rt_uint32_t)hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ));
-								rt_mb_send(AbortWavplay_Event,Continue_Singnal);
+                rt_mb_send(NFC_TagID_mb,(rt_uint32_t)hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ));
+								rt_mb_send(AbortWavplay_mb,Continue_Singnal);
                 rfalNfcDeactivate( false );
                 #if !defined(DEMO_NO_DELAY_IN_DEMOCYCLE)
                 #endif
@@ -381,8 +385,6 @@ void demoCycle( void )
         default:
 				break;
     }
-//		if(Flag != 1)
-//		rt_mb_send(AbortWavplay_Event,Abort_Singnal);//有问题，顺序问题，明天看
 }
 
 static void demoCE( rfalNfcDevice *nfcDev )
@@ -539,7 +541,10 @@ void demoP2P( rfalNfcDevice *nfcDev )
     }
 
     platformLog(" Initialize device .. ");
+		rt_mb_recv(NFC_SendMAC_mb, (rt_uint32_t*)&NFC_SendMAC_Addr, RT_WAITING_NO);
+		strcpy((char*)ndefInit,(char*)NFC_SendMAC_Addr);
     err = demoTransceiveBlocking( ndefInit, sizeof(ndefInit), &rxData, &rxLen, RFAL_FWT_NONE);
+		Buff_Clear((uint8_t*)NFC_SendMAC_Addr);
     if( err != ERR_NONE )
     {
         platformLog("failed.");

@@ -41,6 +41,8 @@ void ALL_GPIO_init(void)
     GPIO_Initure.Pull=GPIO_PULLDOWN; 
     HAL_GPIO_Init(GPIOE,&GPIO_Initure);
 		
+		DISABLE_ALL_SWITCH();
+		
 		/*µÁ≥ÿµÁ¡øºÏ≤‚GPIO*/
 		GPIO_Initure.Pin=Batt_50|Batt_75|Batt_100;
     GPIO_Initure.Mode=GPIO_MODE_INPUT;              

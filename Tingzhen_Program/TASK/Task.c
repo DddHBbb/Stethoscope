@@ -24,7 +24,6 @@ static void Wav_Player_Task(void* parameter);
 static void USB_Transfer_Task(void* parameter);
 static void OLED_Display_Task(void* parameter);
 static void NFC_Transfer_Task(void* parameter);
-static void BuleTooth_Transfer_Task(void* parameter);
 static void Status_Reflash_Task(void* parameter);
 /***********************声明返回区*******************************/
 USB_OTG_CORE_HANDLE USB_OTG_dev;
@@ -33,19 +32,25 @@ extern vu8 bDeviceState;		//USB连接 情况
 extern uint8_t AbortWavplay_Event_Flag;
 /***********************全局变量区*******************************/
 static 	char *NFC_TagID_RECV=NULL;
-static	rt_uint32_t rev_data=0;
+static 	char *Rev_From_BT=NULL;
+static 	char *The_Auido_Name=NULL;
+static 	char Last_Audio_Name[50]="we are different";
+static	rt_uint32_t rev_data=0;	
+
 //任务句柄
 static rt_thread_t Wav_Player = RT_NULL;
 static rt_thread_t USB_Transfer = RT_NULL;
 static rt_thread_t OLED_Display = RT_NULL;
 static rt_thread_t NFC_Transfer = RT_NULL;
-static rt_thread_t BuleTooth_Transfer = RT_NULL;
-static rt_thread_t Status_Reflash = RT_NULL;
+static rt_thread_t Status_Refresh = RT_NULL;
 //信号量句柄
 static rt_mutex_t USBorAudioUsingSDIO_Mutex = RT_NULL;
 //邮箱句柄
-rt_mailbox_t NFC_TagID = RT_NULL;
-rt_mailbox_t AbortWavplay_Event = RT_NULL;
+rt_mailbox_t NFC_TagID_mb = RT_NULL;
+rt_mailbox_t AbortWavplay_mb = RT_NULL;
+rt_mailbox_t BuleTooth_Transfer_mb = RT_NULL;
+rt_mailbox_t NFC_SendMAC_mb = RT_NULL;
+rt_mailbox_t The_Auido_Name_mb = RT_NULL;
 //事件句柄
 rt_event_t Display_NoAudio = RT_NULL;
 /****************************************************************/
@@ -59,16 +64,33 @@ rt_event_t Display_NoAudio = RT_NULL;
 void Wav_Player_Task(void* parameter)
 {	
 	uint32_t t=0;
+	static uint8_t DataToBT[50];
 	printf("Wav_Player_Task\n");
 	while(1)
 	{
-		if(!(rt_mb_recv(NFC_TagID, (rt_uint32_t*)&NFC_TagID_RECV, RT_WAITING_NO)))
+		if(!(rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFC_TagID_RECV, RT_WAITING_NO)))
 		{
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
 			rt_event_send(Display_NoAudio,PLAYING);
-			audio_play(Select_File(NFC_TagID_RECV)); 
+			//记录最后一次播放的文件名		
+			if(Compare_string((const char*)Last_Audio_Name,(const char*)NFC_TagID_RECV) != 1)
+			{
+				//发送当前位置信息
+				strcat((char*)DataToBT,"Position:");
+				strcat((char*)DataToBT,NFC_TagID_RECV);
+				strcat((char*)DataToBT,"\r\n");
+				HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,sizeof(DataToBT),1000); 
+				rt_kprintf("我们不一样\n");
+				Buff_Clear((uint8_t*)DataToBT);
+			}
+			strcpy((char *)&Last_Audio_Name,(const char*)NFC_TagID_RECV);
+			if(!(rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO)))
+			{
+				audio_play(Select_File(The_Auido_Name)); 
+				Buff_Clear((uint8_t*)The_Auido_Name);
+			}
 			rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
-			rt_kprintf("播放次数=%d\n",t++);
+//			rt_kprintf("播放次数=%d\n",t++);	
 		}	
 		else
 		{
@@ -116,14 +138,45 @@ void USB_Transfer_Task(void* parameter)
 }
 void Status_Reflash_Task(void* parameter)
 {
+	static uint8_t DataToNFC[50];
+	static uint8_t DataToPlayer[50];
+	
 	while(1)
 	{
 		rt_event_recv(Display_NoAudio,PLAYING|STOPPING,RT_EVENT_FLAG_OR|RT_EVENT_FLAG_CLEAR,RT_WAITING_NO,&rev_data);
-		if(!rt_mb_recv(AbortWavplay_Event, RT_NULL, RT_WAITING_NO))
+		if(!rt_mb_recv(AbortWavplay_mb, RT_NULL, RT_WAITING_NO))
+		{
 			AbortWavplay_Event_Flag = 1;
+		}
 		else
-			AbortWavplay_Event_Flag = 0;		
-			rt_thread_delay(500);
+		{
+			AbortWavplay_Event_Flag = 0;	
+		}			
+		USART_RX_STA=0;
+		if(!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t*)&Rev_From_BT, RT_WAITING_NO)))
+		{
+			//处理收到的数据
+			rt_kprintf("Rev_From_BT =%s\n",Rev_From_BT);
+			if(Rev_From_BT[0] == 'M' || Rev_From_BT[1] == 'a')
+			{
+				for(int i=0;i<rt_strlen(&Rev_From_BT[8]);i++)
+				{
+					DataToNFC[i] = Rev_From_BT[8+i];
+				}
+				rt_mb_send(NFC_SendMAC_mb,(rt_uint32_t )&DataToNFC);
+			}
+			else if(Rev_From_BT[0] == 'S' || Rev_From_BT[1] == 'o')
+			{
+				for(int i=0;i<rt_strlen(&Rev_From_BT[10]);i++)
+				{
+					DataToPlayer[i] = Rev_From_BT[10+i];
+				}
+				rt_mb_send(The_Auido_Name_mb,(rt_uint32_t)&DataToPlayer);
+			}
+		  Buff_Clear((uint8_t*)Rev_From_BT);
+		}
+		rt_thread_delay(100);
+			
 	}
 }
  /****************************************
@@ -135,7 +188,6 @@ void OLED_Display_Task(void* parameter)
 {
 	printf("OLED_Display_Task\n");
 	OLED_Clear();	
-	u8 len=20;
 	while(1)
 	{		
 		Show_String(0,0,"模拟听诊器");
@@ -146,24 +198,8 @@ void OLED_Display_Task(void* parameter)
 				Show_String(48,36,"USB模式");
 		else if(rev_data == STOPPING)
 				Show_String(48,36,"无播放");	
-			BattChek();	
-			rt_thread_delay(2000);
-		
-//	 if(USART_RX_STA&0x8000)
-//		{					   
-//			len=USART_RX_STA&0x3fff;//得到此次接收到的数据长度
-//			printf("\r\n您发送的消息为:\r\n");
-//			HAL_UART_Transmit(&UART1_Handler,(uint8_t*)USART_RX_BUF,len,1000);	//发送接收到的数据
-//			while(__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
-//			printf("\r\n\r\n");//插入换行
-//			USART_RX_STA=0;
-//		}
-		for(int i=0;i<USART_RX_STA;i++)
-			{
-				rt_kprintf("USART_RX_BUF = %c\n",USART_RX_BUF[i]);			
-			}
-			USART_RX_STA = 0;
-			rt_thread_delay(2000);
+		BattChek();
+		rt_thread_delay(1000);		
 	}
 }
  /****************************************
@@ -182,6 +218,7 @@ void NFC_Transfer_Task(void* parameter)
 	{
 		platformLog("Initialization succeeded..\r\n");
 	}	
+	HAL_GPIO_WritePin(GPIOE,BUlETHOOTH_SWITCH_PIN,GPIO_PIN_RESET);
 	while(1)
 	{
 		demoCycle();
@@ -198,7 +235,7 @@ void Task_init(void)
 {
 	#ifdef  Creat_Wav_Player
 	/*音乐播放器任务*/
-	Wav_Player = rt_thread_create( "Wav_Player_Task",Wav_Player_Task,RT_NULL,1024,3,20);                                   
+	Wav_Player = rt_thread_create( "Wav_Player_Task",Wav_Player_Task,RT_NULL,2048,3,20);                                   
   if (Wav_Player != RT_NULL)    rt_thread_startup(Wav_Player);
 	#endif
 	#ifdef  Creat_USB_Transfer
@@ -217,8 +254,8 @@ void Task_init(void)
   if (NFC_Transfer != RT_NULL)    rt_thread_startup(NFC_Transfer);
 	 #endif
 	#ifdef  Creat_Status_Reflash
-	Status_Reflash = rt_thread_create( "Status_Reflash",Status_Reflash_Task,RT_NULL,512,2,20);                
-  if (Status_Reflash != RT_NULL)    rt_thread_startup(Status_Reflash);
+	Status_Refresh = rt_thread_create( "Status_Reflash",Status_Reflash_Task,RT_NULL,1024,1,20);                
+  if (Status_Refresh != RT_NULL)    rt_thread_startup(Status_Refresh);
 	#endif
 }
  /****************************************
@@ -237,8 +274,11 @@ void Semaphore_init(void)
   ***************************************/
 void Mailbox_init(void)
 {
-	 NFC_TagID = rt_mb_create("NFC_TagID",8,RT_IPC_FLAG_FIFO);
-	 AbortWavplay_Event = rt_mb_create("AbortWavplay_Event",1,RT_IPC_FLAG_FIFO);
+	 NFC_TagID_mb = rt_mb_create("NFC_TagID_mb",8,RT_IPC_FLAG_FIFO);
+	 AbortWavplay_mb = rt_mb_create("AbortWavplay_mb",1,RT_IPC_FLAG_FIFO);
+	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",20,RT_IPC_FLAG_FIFO);
+	 NFC_SendMAC_mb = rt_mb_create("NFC_SendMAC_mb",20,RT_IPC_FLAG_FIFO);
+ 	 The_Auido_Name_mb = rt_mb_create("The_Auido_Name_mb",20,RT_IPC_FLAG_FIFO);
 }
  /****************************************
   * @brief  事件创建函数 

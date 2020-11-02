@@ -1,6 +1,7 @@
 #include "usart.h"
 #include "logger.h"
 
+extern rt_mailbox_t BuleTooth_Transfer_mb;
 #pragma import(__use_no_semihosting)             
 //标准库需要的支持函数                 
 struct __FILE 
@@ -107,7 +108,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_GPIO_Init(GPIOB,&GPIO_Initure);	   	//初始化PA10	
 		
 		HAL_NVIC_EnableIRQ(USART3_IRQn);		//使能USART1中断通道
-		HAL_NVIC_SetPriority(USART3_IRQn,3,3);	//抢占优先级3，子优先级3
+		HAL_NVIC_SetPriority(USART3_IRQn, 3,3);	//抢占优先级3，子优先级3
 
 	}
 
@@ -117,29 +118,28 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if(huart->Instance==USART3)//如果是串口3
 	{
-		rt_kprintf("call\n");
-		
-		
-		USART_RX_BUF[USART_RX_STA]=aRxBuffer[0];
-		USART_RX_STA++;
-//		if((USART_RX_STA&0x8000)==0)//接收未完成
-//		{
-//			if(USART_RX_STA&0x4000)//接收到了0x0d
-//			{
-//				if(aRxBuffer[0]!=0x0a)USART_RX_STA=0;//接收错误,重新开始
-//				else USART_RX_STA|=0x8000;	//接收完成了 
-//			}
-//			else //还没收到0X0D
-//			{	
-//				if(aRxBuffer[0]==0x0d)USART_RX_STA|=0x4000;
-//				else
-//				{
-//					USART_RX_BUF[USART_RX_STA&0X3FFF]=aRxBuffer[0] ;
-//					USART_RX_STA++;
-//					if(USART_RX_STA>(USART_REC_LEN-1))USART_RX_STA=0;//接收数据错误,重新开始接收	  
-//				}		 
-//			}
-//		}
+		if((USART_RX_STA&0x8000)==0)//接收未完成
+		{
+			if(USART_RX_STA&0x4000)//接收到了0x0d
+			{
+				if(aRxBuffer[0]!=0x0a)USART_RX_STA=0;//接收错误,重新开始
+				else 
+				{
+					USART_RX_STA|=0x8000;	//接收完成了 
+					rt_mb_send(BuleTooth_Transfer_mb,(rt_uint32_t )&USART_RX_BUF);
+				}
+			}
+			else //还没收到0X0D
+			{	
+				if(aRxBuffer[0]==0x0d)USART_RX_STA|=0x4000;
+				else
+				{
+					USART_RX_BUF[USART_RX_STA&0X3FFF]=aRxBuffer[0] ;
+					USART_RX_STA++;
+					if(USART_RX_STA>(USART_REC_LEN-1))USART_RX_STA=0;//接收数据错误,重新开始接收	  
+				}		 
+			}
+		}
 	}
 }
  
@@ -166,7 +166,14 @@ void USART3_IRQHandler(void)
 
 } 
 
+void Buff_Clear(uint8_t buf[])
+{
+	for(int i=0;i<50;i++)
+		{
+			buf[i]=0; 
+		}
 
+}
 
 
 
