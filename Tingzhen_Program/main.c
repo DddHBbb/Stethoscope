@@ -17,7 +17,6 @@ int main(void)
 	Mailbox_init();
 	Semaphore_init();
 	Task_init();
-	
 }
 
 void ALL_Init(void)

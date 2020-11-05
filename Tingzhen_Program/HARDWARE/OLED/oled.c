@@ -403,58 +403,57 @@ void BattChek(void)
 	uint8_t xpos=106,ypos=2;
 	static uint8_t cnt_per_100,cnt_per_75,cnt_per_50,cnt_per_25,cnt_per_0;
 	
-		if(!HAL_GPIO_ReadPin(GPIOD, Batt_25))
-		{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_50))
-				{	  if(!HAL_GPIO_ReadPin(GPIOB, Batt_75))
-						{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_100))
-								{		
-									 battcapacity = 0x05;      //电量100%
-									 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);	
-							  }
-							  else
-							  {   
-									 cnt_per_75++;							 
-									 cnt_per_75=0;
-								   battcapacity = 0x04;      //电量75%
-									 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);	  	 
-								}
-							  OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-					  }
-					  else
-					  {	
-						    cnt_per_50++;
-								cnt_per_50=0;
-								battcapacity = 0x03;        //电量50%
-								OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);	
-								OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);						
-						}	
-						OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
-				}
-				else	
-				{	  
-					cnt_per_25++;					
-					cnt_per_25=0;
-					battcapacity = 0x02;            //电量25%
-					OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
-					OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
-					OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0); 
-						
-				}
-				OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);
-		}
-		else
-		{   
-				cnt_per_0++;			
-				battcapacity = 0x01;                 //电量0%；
-				OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,0);   
+	if(!HAL_GPIO_ReadPin(GPIOD, Batt_25))
+	{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_50))
+			{	  if(!HAL_GPIO_ReadPin(GPIOB, Batt_75))
+					{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_100))
+							{		
+								 battcapacity = 0x05;      //电量100%
+								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);	
+							}
+							else
+							{   
+								 cnt_per_75++;							 
+								 cnt_per_75=0;
+								 battcapacity = 0x04;      //电量75%
+								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);	  	 
+							}
+							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+					}
+					else
+					{	
+							cnt_per_50++;
+							cnt_per_50=0;
+							battcapacity = 0x03;        //电量50%
+							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);	
+							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);						
+					}	
+					OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
+			}
+			else	
+			{	  
+				cnt_per_25++;					
+				cnt_per_25=0;
+				battcapacity = 0x02;            //电量25%
 				OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
 				OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
-				OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);
-				
-		}
-		OLED_Fill(xpos+18,ypos+1,xpos+20,ypos+4,1);
-		OLED_DrawRectangle(xpos,ypos-2,xpos+18,ypos+7);
-		OLED_Refresh_Gram();
+				OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0); 
+					
+			}
+			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);
+	}
+	else
+	{   
+			cnt_per_0++;			
+			battcapacity = 0x01;                 //电量0%；
+			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,0);   
+			OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
+			OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
+			OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);			
+	}
+	OLED_Fill(xpos+18,ypos+1,xpos+20,ypos+4,1);
+	OLED_DrawRectangle(xpos,ypos-2,xpos+18,ypos+7);
+	OLED_Refresh_Gram();
 }
 //这两个参数定义动画每帧的长宽。
 #define MOVIE_XSIZE_1	64

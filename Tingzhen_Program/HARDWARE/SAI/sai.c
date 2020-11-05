@@ -147,8 +147,7 @@ void SAIA_TX_DMA_Init(u8* buf0,u8 *buf1,u16 num,u8 width)
         case 2:         //32位
             memwidth=DMA_MDATAALIGN_WORD;
             perwidth=DMA_PDATAALIGN_WORD;
-            break;
-            
+            break;          
     }
     __HAL_RCC_DMA2_CLK_ENABLE();                                    //使能DMA2时钟
     __HAL_LINKDMA(&SAI1A_Handler,hdmatx,SAI1_TXDMA_Handler);         //将DMA与SAI联系起来

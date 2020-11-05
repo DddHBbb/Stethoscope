@@ -14,7 +14,6 @@ extern UART_HandleTypeDef UART3_Handler; //UART句柄
 #define RXBUFFERSIZE   1 //缓存大小
 extern u8 aRxBuffer[RXBUFFERSIZE];//HAL库USART接收Buffer
 
-//如果想串口中断接收，请不要注释以下宏定义
 void uart_init(void);
 uint8_t Compare_string(const char *file_name,const char *str_name);
 void Buff_Clear(uint8_t buf[]);

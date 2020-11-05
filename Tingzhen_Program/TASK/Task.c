@@ -1,4 +1,4 @@
-#include "board.h"
+#include "board.h" 
 #include "rtthread.h"
 #include "usbd_msc_core.h"
 #include "usbd_usr.h"
@@ -34,7 +34,7 @@ extern uint8_t AbortWavplay_Event_Flag;
 static 	char *NFC_TagID_RECV=NULL;
 static 	char *Rev_From_BT=NULL;
 static 	char *The_Auido_Name=NULL;
-static 	char Last_Audio_Name[50]="we are different";
+static 	char Last_Audio_Name[50]="noway";
 static	rt_uint32_t rev_data=0;	
 
 //任务句柄
@@ -64,29 +64,29 @@ rt_event_t Display_NoAudio = RT_NULL;
 void Wav_Player_Task(void* parameter)
 {	
 	uint32_t t=0;
-	static uint8_t DataToBT[50];
+	static uint8_t DataToBT[19];
 	printf("Wav_Player_Task\n");
 	while(1)
 	{
 		if(!(rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFC_TagID_RECV, RT_WAITING_NO)))
 		{
-			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
-			rt_event_send(Display_NoAudio,PLAYING);
+			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);			
 			//记录最后一次播放的文件名		
 			if(Compare_string((const char*)Last_Audio_Name,(const char*)NFC_TagID_RECV) != 1)
 			{
 				//发送当前位置信息
-				strcat((char*)DataToBT,"Position:");
-				strcat((char*)DataToBT,NFC_TagID_RECV);
-				strcat((char*)DataToBT,"\r\n");
+				rt_sprintf((char*)DataToBT,"Position:%s\r\n",NFC_TagID_RECV);
 				HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,sizeof(DataToBT),1000); 
-				rt_kprintf("我们不一样\n");
+				while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
+				rt_kprintf("DataToBT=%s\n",DataToBT);
 				Buff_Clear((uint8_t*)DataToBT);
 			}
 			strcpy((char *)&Last_Audio_Name,(const char*)NFC_TagID_RECV);
 			if(!(rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO)))
 			{
+			  rt_event_send(Display_NoAudio,PLAYING);
 				audio_play(Select_File(The_Auido_Name)); 
+				rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);
 				Buff_Clear((uint8_t*)The_Auido_Name);
 			}
 			rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
@@ -175,7 +175,7 @@ void Status_Reflash_Task(void* parameter)
 			}
 		  Buff_Clear((uint8_t*)Rev_From_BT);
 		}
-		rt_thread_delay(100);
+		rt_thread_delay(1000);
 			
 	}
 }
@@ -254,7 +254,7 @@ void Task_init(void)
   if (NFC_Transfer != RT_NULL)    rt_thread_startup(NFC_Transfer);
 	 #endif
 	#ifdef  Creat_Status_Reflash
-	Status_Refresh = rt_thread_create( "Status_Reflash",Status_Reflash_Task,RT_NULL,1024,1,20);                
+	Status_Refresh = rt_thread_create( "Status_Reflash",Status_Reflash_Task,RT_NULL,1024,2,20);                
   if (Status_Refresh != RT_NULL)    rt_thread_startup(Status_Refresh);
 	#endif
 }
