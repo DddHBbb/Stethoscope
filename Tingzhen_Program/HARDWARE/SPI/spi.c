@@ -107,3 +107,29 @@ u8 SPI1_ReadWriteByte(u8 TxData)
     HAL_SPI_TransmitReceive(&SPI1_Handler,&TxData,&Rxdata,1, 1000);       
  	return Rxdata;          		    //返回收到的数据		
 }
+
+
+uint8_t SPI_SendReceiveByte(uint8_t data) 
+{	
+  uint8_t ret_value;	
+  
+  HAL_SPI_TransmitReceive(&hspi3, (uint8_t*) &data, &ret_value, 1, 1000);
+  
+  return ret_value;
+}
+
+/**
+ *	@brief  reveive a byte array over SPI
+ *  @param  pCommand  : pointer on the buffer to send
+ *  @param  length	 	: length of the buffer to send
+ *  @param  pResponse : pointer on the buffer response
+ *  @retval None 
+ */
+void SPI_SendReceiveBuffer(const uint8_t *pCommand, uint8_t length, uint8_t *pResponse) 
+{
+  uint8_t i;
+  
+  for(i=0; i<length; i++)
+    pResponse[i] = SPI_SendReceiveByte(pCommand[i]);
+
+}

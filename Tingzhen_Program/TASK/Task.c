@@ -54,7 +54,8 @@ rt_mailbox_t The_Auido_Name_mb = RT_NULL;
 //事件句柄
 rt_event_t Display_NoAudio = RT_NULL;
 /****************************************************************/
-
+uint8_t TT2Tag[NFCT2_MAX_TAGMEMORY];
+char dataOut[COM_XFER_SIZE]; 
 
  /****************************************
   * @brief  WAV音频播放函数
@@ -219,6 +220,8 @@ void NFC_Transfer_Task(void* parameter)
 		platformLog("Initialization succeeded..\r\n");
 	}	
 	HAL_GPIO_WritePin(GPIOE,BUlETHOOTH_SWITCH_PIN,GPIO_PIN_RESET);
+	
+	ConfigManager_HWInit();
 	while(1)
 	{
 		demoCycle();

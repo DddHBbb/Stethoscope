@@ -46,7 +46,7 @@
 #include "utils.h"
 #include "rfal_nfc.h"
 #include "usart.h"
-
+#include "main.h"
 #if (defined(ST25R3916) || defined(ST25R95)) && RFAL_FEATURE_LISTEN_MODE
 #include "demo_ce.h"
 #endif
@@ -298,7 +298,7 @@ void demoCycle( void )
                                 
                             default:
                                 platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );
-																
+																ConfigManager_TagHunting(TRACK_ALL);
                                 break;
                         }
                         break;

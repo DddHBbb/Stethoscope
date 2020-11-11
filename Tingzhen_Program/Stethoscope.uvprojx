@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx,USE_USB_OTG_FS</Define>
               <Undefine></Undefine>
-              <IncludePath>.\CORE;.\FATFS\exfuns;.\FATFS\src\option;.\MALLOC;.\SYSTEM;.\TEXT;.\FATFS\src;.\HALLIB\STM32F4xx_HAL_Driver\Inc;.\HARDWARE\WM8978;.\HARDWARE\W25QXX;.\HARDWARE\SPI;.\HARDWARE\SDIO;.\HARDWARE\SAI;.\HARDWARE;.\HARDWARE\IIC;.\USB\STM32_USB_Device_Library\Class\msc\inc;.\USB\STM32_USB_Device_Library\Core\inc;.\USB\STM32_USB_OTG_Driver\inc;.\USB\USB_APP;.\HARDWARE\OLED;.\NFC\Inc;.\NFC\rfal\Inc;.\NFC\ST25R95</IncludePath>
+              <IncludePath>.\CORE;.\FATFS\exfuns;.\FATFS\src\option;.\MALLOC;.\SYSTEM;.\TEXT;.\FATFS\src;.\HALLIB\STM32F4xx_HAL_Driver\Inc;.\HARDWARE\WM8978;.\HARDWARE\W25QXX;.\HARDWARE\SPI;.\HARDWARE\SDIO;.\HARDWARE\SAI;.\HARDWARE;.\HARDWARE\IIC;.\USB\STM32_USB_Device_Library\Class\msc\inc;.\USB\STM32_USB_Device_Library\Core\inc;.\USB\STM32_USB_OTG_Driver\inc;.\USB\USB_APP;.\HARDWARE\OLED;.\NFC\Inc;.\NFC\rfal\Inc;.\NFC\ST25R95;.\NFC_WR\common\inc;.\NFC_WR\CR95HF;.\NFC_WR\Inc;.\NFC_WR\lib_pcd\inc;.\NFC_WR\mcc_src;.\NFC_WR\CR95HF</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -644,6 +644,16 @@
               <FileType>1</FileType>
               <FilePath>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_sdmmc.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f4xx_hal_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_tim_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -848,6 +858,76 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\NFC\ST25R95\timer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>NFC_WR</GroupName>
+          <Files>
+            <File>
+              <FileName>lib_95HFConfigManager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\common\src\lib_95HFConfigManager.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_95hf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\CR95HF\drv_95hf.c</FilePath>
+            </File>
+            <File>
+              <FileName>lib_iso14443Apcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\lib_pcd\src\lib_iso14443Apcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>lib_nfctype2pcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\lib_pcd\src\lib_nfctype2pcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>lib_pcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\lib_pcd\src\lib_pcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>mcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\mcc_src\mcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>mcc_crypto.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\mcc_src\mcc_crypto.c</FilePath>
+            </File>
+            <File>
+              <FileName>mcc_crypto_card.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\mcc_src\mcc_crypto_card.c</FilePath>
+            </File>
+            <File>
+              <FileName>mcc_crypto_reader.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\mcc_src\mcc_crypto_reader.c</FilePath>
+            </File>
+            <File>
+              <FileName>mcc_macros.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\mcc_src\mcc_macros.c</FilePath>
+            </File>
+            <File>
+              <FileName>mcc_raw_request.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\mcc_src\mcc_raw_request.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\stm32f4xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NFC_WR\stm32f4xx_it.c</FilePath>
             </File>
           </Files>
         </Group>
