@@ -234,10 +234,7 @@ void ConfigManager_TagHunting ( uint8_t tagsToFind )
     ISO14443A_Init( );
 		ISO14443A_IsPresent();
 		ISO14443A_Anticollision();
-//	if (HAL_GPIO_ReadPin(IRQOUT_RFTRANS_95HF_PORT, IRQOUT_RFTRANS_95HF_PIN) == GPIO_PIN_RESET)
-//	{	
 		MifareTest();
-//	}
     /* Turn off the field if no tag has been detected*/
 		PCD_FieldOff();
 } 

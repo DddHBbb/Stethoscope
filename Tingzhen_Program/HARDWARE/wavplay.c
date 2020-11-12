@@ -9,7 +9,7 @@
 /***********************函数声明区*******************************/
 
 /***********************声明返回区*******************************/
-extern rt_mailbox_t AbortWavplay_mb;
+//extern rt_mailbox_t AbortWavplay_mb;
 
 /***********************全局变量区*******************************/
 uint8_t AbortWavplay_Event_Flag=0;
@@ -38,24 +38,24 @@ void audio_stop(void)
 //播放音乐
 void audio_play(char *file_name)
 {
-	u8 *pname,*pname1;			//带路径的文件名
+	u8 *pname;			//带路径的文件名
 	WM8978_ADDA_Cfg(1,0);	//开启DAC
 	WM8978_Input_Cfg(0,0,0);//关闭输入通道
 	WM8978_Output_Cfg(1,0);	//开启DAC输出    	
 
 	pname = rt_malloc(_MAX_LFN*2+1); 
-	pname1 = rt_malloc(_MAX_LFN*2+1);
+//	pname1 = rt_malloc(_MAX_LFN*2+1);
 	
-	strcpy((char*)pname1,(const char*)file_name);
+//	strcpy((char*)pname1,(const char*)file_name);
 	strcpy((char*)pname,"0:/SYSTEM/MUSIC/");						//复制路径(目录)
+	strcat((char*)pname,file_name);
+//	strcat((char*)pname1,(const char*)".wav");
+	rt_kprintf("pname = %s\n",pname);
 	
-	strcat((char*)pname1,(const char*)".wav");
-	rt_kprintf("pname1 = %s\n",pname1);
-	
-	strcat((char*)pname,(const char*)pname1);	//将文件名接在后面
+//	strcat((char*)pname,(const char*)pname1);	//将文件名接在后面
 	wav_play_song(pname); 			 		//播放这个音频文件			
 	rt_free(pname);
-	rt_free(pname1);
+//	rt_free(pname1);
 } 
 
 //WAV解析初始化
@@ -244,7 +244,7 @@ char* Select_File(char *file_name)
 	{
 		if(	Compare_string(file_name,UID_Num[i]))
 		{
-//			rt_kprintf("Song_Name = %s\n",Song_Name[i]);
+//		rt_kprintf("Song_Name = %s\n",Song_Name[i]);
 			return (char *)Song_Name[i];
 		}
 	}

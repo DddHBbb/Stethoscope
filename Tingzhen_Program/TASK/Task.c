@@ -76,7 +76,7 @@ void Wav_Player_Task(void* parameter)
 			if(Compare_string((const char*)Last_Audio_Name,(const char*)NFC_TagID_RECV) != 1)
 			{
 				//发送当前位置信息
-				rt_sprintf((char*)DataToBT,"Position:%s\r\n",NFC_TagID_RECV);
+				rt_sprintf((char*)DataToBT,"Position:%s\r\n",NFC_TagID_RECV);//11
 				HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,sizeof(DataToBT),1000); 
 				while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
 				rt_kprintf("DataToBT=%s\n",DataToBT);
@@ -86,7 +86,7 @@ void Wav_Player_Task(void* parameter)
 			if(!(rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO)))
 			{
 			  rt_event_send(Display_NoAudio,PLAYING);
-				audio_play(Select_File(The_Auido_Name)); 
+				audio_play(The_Auido_Name); 
 				rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);
 				Buff_Clear((uint8_t*)The_Auido_Name);
 			}
@@ -140,7 +140,7 @@ void USB_Transfer_Task(void* parameter)
 void Status_Reflash_Task(void* parameter)
 {
 	static uint8_t DataToNFC[50];
-	static uint8_t DataToPlayer[50];
+	static uint8_t DataToPlayer[100];
 	
 	while(1)
 	{
@@ -188,9 +188,9 @@ void Status_Reflash_Task(void* parameter)
 void OLED_Display_Task(void* parameter)
 {
 	printf("OLED_Display_Task\n");
-	OLED_Clear();	
+	OLED_Clear();
 	while(1)
-	{		
+	{				
 		Show_String(0,0,"模拟听诊器");
 		Show_String(0,12,"当前播放： ");	
 		if(rev_data == (PLAYING|STOPPING))
@@ -219,8 +219,7 @@ void NFC_Transfer_Task(void* parameter)
 	{
 		platformLog("Initialization succeeded..\r\n");
 	}	
-	HAL_GPIO_WritePin(GPIOE,BUlETHOOTH_SWITCH_PIN,GPIO_PIN_RESET);
-	
+	HAL_GPIO_WritePin(GPIOE,BUlETHOOTH_SWITCH_PIN,GPIO_PIN_RESET);//开启蓝牙
 	ConfigManager_HWInit();
 	while(1)
 	{
