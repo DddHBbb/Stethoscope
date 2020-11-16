@@ -68,9 +68,10 @@ void rt_hw_board_init()
     SystemCoreClockUpdate();
 		HAL_Init();                     //初始化HAL库   
     Stm32_Clock_Init(384,25,2,8);   //设置时钟,180Mhz
-		HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);	
+		delay_init(192);
 		ALL_GPIO_init();
 		uart_init();  						//初始化USART
+		Key_GPIO_Config();
 	   /* System Tick Configuration */
 
    _SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);

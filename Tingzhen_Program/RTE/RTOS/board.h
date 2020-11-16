@@ -13,6 +13,7 @@
 /* 开发板硬件bsp头文件 */
 #include "usart.h"
 #include "sys.h"
+#include "D_delay.h"
 #include "usart.h"
 #include "string.h"
 #include "w25qxx.h"
@@ -27,7 +28,8 @@
 #include "GPIOConfig.h"
 #include "oled.h"
 #include "spi.h"
-
+#include "iwdg.h"
+#include "key.h"  
 
 /*
 *************************************************************************

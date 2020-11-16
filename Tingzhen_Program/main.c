@@ -12,6 +12,11 @@ static rt_thread_t App_Handle = RT_NULL;
 
 int main(void)
 {
+	delay_ms(5000);//相当于消抖吧
+	while((HAL_GPIO_ReadPin(WAKEUP_PORT,WAKEUP_PIN) != GPIO_PIN_RESET))
+	{
+		delay_ms(2000);//慢点开机，别一轻点就开机
+	}
 	ALL_Init();
 	Event_init();
 	Mailbox_init();
@@ -22,19 +27,20 @@ int main(void)
 void ALL_Init(void)
 {
 		ENABLE_ALL_SWITCH();
-		rt_thread_delay(100);  //延时100ms为了让各个模块初始化完成
+		delay_ms(100);  //延时100ms为了让各个模块初始化完成
 		W25QXX_Init();				    //初始化W25Q256
 		SPI3_Init();
 		WM8978_Init();				    //初始化WM8978
 		OLED_Init();
-		WM8978_SPKvol_Set(100);		    //喇叭音量设置
+		WM8978_SPKvol_Set(100);	    //喇叭音量设置
+		WM8978_HPvol_Set(100,100);
 		Movie_Show_Img(32,0,0);
     exfuns_init();		            //为fatfs相关变量申请内存  
     f_mount(fs[0],"0:",1);          //挂载SD卡 
 		f_mount(fs[1],"1:",1);          //挂载SPI FLASH. 		     
 		if(font_init())		update_font("0:");
-		rt_thread_delay(2000);  //延时两秒为了让图片显示出来	
-	 
+		delay_ms(2000);  //延时两秒为了让图片显示出来	
+	  IWDG_Init(IWDG_PRESCALER_64,3000);//3s
 		printf("done\n");
 }
 

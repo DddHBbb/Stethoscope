@@ -69,8 +69,10 @@ void Wav_Player_Task(void* parameter)
 	printf("Wav_Player_Task\n");
 	while(1)
 	{
+		//在能检测到NFC标签的情况下才可以播放音频
 		if(!(rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFC_TagID_RECV, RT_WAITING_NO)))
 		{
+			//互斥量，usb和音频播放都需要使用SDIO，为防止冲突只能用一个
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);			
 			//记录最后一次播放的文件名		
 			if(Compare_string((const char*)Last_Audio_Name,(const char*)NFC_TagID_RECV) != 1)
@@ -83,6 +85,7 @@ void Wav_Player_Task(void* parameter)
 				Buff_Clear((uint8_t*)DataToBT);
 			}
 			strcpy((char *)&Last_Audio_Name,(const char*)NFC_TagID_RECV);
+			//接收音频文件名的邮箱，每次只接受一次
 			if(!(rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO)))
 			{
 			  rt_event_send(Display_NoAudio,PLAYING);
@@ -91,7 +94,6 @@ void Wav_Player_Task(void* parameter)
 				Buff_Clear((uint8_t*)The_Auido_Name);
 			}
 			rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
-//			rt_kprintf("播放次数=%d\n",t++);	
 		}	
 		else
 		{
@@ -121,6 +123,7 @@ void USB_Transfer_Task(void* parameter)
 			rt_thread_suspend(NFC_Transfer);	
 			while(1)
 			{
+				ChargeDisplay();
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);
@@ -128,13 +131,13 @@ void USB_Transfer_Task(void* parameter)
 					rt_free(MSC_BOT_Data);
 					rt_thread_resume(Wav_Player);
 					rt_thread_resume(NFC_Transfer);
-					OLED_Clear();	
+					//OLED_Clear();	
 					break;
 				}
-				rt_thread_delay(1000);  //100ms
+				rt_thread_delay(100);  //100ms
 			}
 		}
-			rt_thread_delay(10);  //1000ms
+			rt_thread_delay(1000);  //1000ms
 	}
 }
 void Status_Reflash_Task(void* parameter)
@@ -153,12 +156,12 @@ void Status_Reflash_Task(void* parameter)
 		{
 			AbortWavplay_Event_Flag = 0;	
 		}			
+		//从蓝牙收到的数据，都在这里处理
 		USART_RX_STA=0;
 		if(!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t*)&Rev_From_BT, RT_WAITING_NO)))
 		{
-			//处理收到的数据
 			rt_kprintf("Rev_From_BT =%s\n",Rev_From_BT);
-			if(Rev_From_BT[0] == 'M' || Rev_From_BT[1] == 'a')
+			if(Rev_From_BT[0] == 'M' || Rev_From_BT[1] == 'a')//mac地址
 			{
 				for(int i=0;i<rt_strlen(&Rev_From_BT[8]);i++)
 				{
@@ -166,7 +169,7 @@ void Status_Reflash_Task(void* parameter)
 				}
 				rt_mb_send(NFC_SendMAC_mb,(rt_uint32_t )&DataToNFC);
 			}
-			else if(Rev_From_BT[0] == 'S' || Rev_From_BT[1] == 'o')
+			else if(Rev_From_BT[0] == 'S' || Rev_From_BT[1] == 'o')//声音文件名
 			{
 				for(int i=0;i<rt_strlen(&Rev_From_BT[10]);i++)
 				{
@@ -174,7 +177,18 @@ void Status_Reflash_Task(void* parameter)
 				}
 				rt_mb_send(The_Auido_Name_mb,(rt_uint32_t)&DataToPlayer);
 			}
-		  Buff_Clear((uint8_t*)Rev_From_BT);
+			else if(Rev_From_BT[0] == 'B' || Rev_From_BT[1] == 'T')//蓝牙连接状态
+			{
+				if(Rev_From_BT[2] == 'C')
+				{
+					BluetoothDisp(1);
+				}
+				else if(Rev_From_BT[2] == 'D')
+				{
+					BluetoothDisp(0);
+				}
+			}
+		  Buff_Clear((uint8_t*)Rev_From_BT);//清除数组防止溢出
 		}
 		rt_thread_delay(1000);
 			
@@ -199,9 +213,19 @@ void OLED_Display_Task(void* parameter)
 				Show_String(48,36,"USB模式");
 		else if(rev_data == STOPPING)
 				Show_String(48,36,"无播放");	
-		BattChek();
-		rt_thread_delay(1000);		
-	}
+		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
+			{		
+				BattChek();
+			}	
+		if((HAL_GPIO_ReadPin(WAKEUP_PORT,WAKEUP_PIN) == GPIO_PIN_RESET))
+		{
+			delay_ms(2000);//慢点关机，别一轻点就关机
+			__set_FAULTMASK(1);
+				NVIC_SystemReset();		
+		}	
+		IWDG_Feed();	
+		rt_thread_delay(1000);	
+		}
 }
  /****************************************
   * @brief  NFC连接处理函数
@@ -215,10 +239,6 @@ void NFC_Transfer_Task(void* parameter)
 	{
 		platformLog("Initialization failed..\r\n");
 	} 
-	else
-	{
-		platformLog("Initialization succeeded..\r\n");
-	}	
 	HAL_GPIO_WritePin(GPIOE,BUlETHOOTH_SWITCH_PIN,GPIO_PIN_RESET);//开启蓝牙
 	ConfigManager_HWInit();
 	while(1)
@@ -256,7 +276,7 @@ void Task_init(void)
   if (NFC_Transfer != RT_NULL)    rt_thread_startup(NFC_Transfer);
 	 #endif
 	#ifdef  Creat_Status_Reflash
-	Status_Refresh = rt_thread_create( "Status_Reflash",Status_Reflash_Task,RT_NULL,1024,2,20);                
+	Status_Refresh = rt_thread_create( "Status_Reflash",Status_Reflash_Task,RT_NULL,1024,3,20);                
   if (Status_Refresh != RT_NULL)    rt_thread_startup(Status_Refresh);
 	#endif
 }

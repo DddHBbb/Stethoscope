@@ -51,7 +51,7 @@ bool uDataReady 			= false;
 bool RF_DataExpected 	= false;
 bool RF_DataReady 		= false;
 
-uint16_t delay_us = 0;
+//uint16_t delay_us = 0;
 uint16_t delay_timeout = 0;
 uint16_t delay_appli = 0;
 uint32_t nb_ms_elapsed = 0;

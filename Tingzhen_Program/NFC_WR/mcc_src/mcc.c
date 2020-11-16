@@ -438,7 +438,6 @@ static int8_t buildCommand ( uint8_t *cmd, uint8_t keySelect, uint8_t block )
 
     return ERR_NONE;
 }
-
 static int8_t attachParityInformation ( uint16_t *cmd, size_t length )
 {
     unsigned int i = 0;
@@ -457,7 +456,6 @@ static int8_t attachParityInformation ( uint16_t *cmd, size_t length )
     return ERR_NONE;
 }
 
-
 static ReturnCode attachParityInformationOld ( uint16_t *cmd, size_t length )
 {
     unsigned int i = 0;
@@ -475,10 +473,6 @@ static ReturnCode attachParityInformationOld ( uint16_t *cmd, size_t length )
 
     return ERR_NONE;
 }
-
-
-
-
 ReturnCode MifareAuthentication(uint8_t authentication_key,uint8_t *key,uint8_t block)	
 {
 		if (err==0)
@@ -508,11 +502,9 @@ ReturnCode MifareRead(uint8_t block,uint8_t *response)
 {
 	uint16_t *responseLength;
 	uint8_t mifare_request[2];
-//	HAL_Delay(100);
 	
 	/* MiFare read block command. */
-//	if (err ==0)
-//		{
+
 	mifare_request[0] = MCC_READ_BLOCK;
 	mifare_request[1] = block; //BLOCK number
 	*responseLength = mifareResponseLen;
@@ -533,19 +525,11 @@ ReturnCode MifareRead(uint8_t block,uint8_t *response)
 ReturnCode MifareWrite(uint8_t block, uint8_t *txData)
 {
 	uint16_t *txSize;
-//	uint16_t numBytesReceived;
-  uint8_t mifare_request[2];
-//  uint8_t mifare_reply;
-				
+  uint8_t mifare_request[2];			
   // MiFare write block command. 
-  //Generate MiFare write block request. 
-//	mifare_request[0] = MCC_WRITE_BLOCK;
-	
 	mifare_request[0] = 0xA0;
 	mifare_request[1] = block; //BLOCK number;
-//	memcpy(&mifare_request[2],txData,16);	
-
-		//Send write block request, enabling mifare 4 bit response. /
+	//Send write block request, enabling mifare 4 bit response. /
 	err = mccSendRequest(mifare_request,
 						sizeof(mifare_request),
 							&mifare_reply,
@@ -578,8 +562,6 @@ ReturnCode MifareHalt(uint8_t *response)
 	uint16_t *responseLength;
 	uint8_t mifare_request[2];
 	
-//	HAL_Delay(100);
-//	if (err ==0)
 	mifare_request[0] = MCC_HALT;
 	mifare_request[1] = 0x00; 
 	*responseLength = mifareResponseLen;

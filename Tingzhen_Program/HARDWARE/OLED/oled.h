@@ -31,5 +31,6 @@ void Show_String(uint8_t x,uint8_t y,uint8_t *str);
 void BattChek(void);
 void Movie_Show_Img(uint8_t x,uint8_t y,uint32_t picx);
 void DispCurrentPosition(const uint8_t *pbuf);
-
+void BluetoothDisp(u8 t);
+void ChargeDisplay(void);
 #endif

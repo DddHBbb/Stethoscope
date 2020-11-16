@@ -94,7 +94,7 @@ u8 wav_decode_init(u8* fname,__wavctrl* wavx)
 				{
 					wavx->audioformat=fmt->AudioFormat;		//音频格式
 					wavx->nchannels=fmt->NumOfChannels;		//通道数
-					wavx->samplerate=fmt->SampleRate;		//采样率
+					wavx->samplerate=fmt->SampleRate;		//采样率  fmt->SampleRate 
 					wavx->bitrate=fmt->ByteRate*8;			//得到位速
 					wavx->blockalign=fmt->BlockAlign;		//块对齐
 					wavx->bps=fmt->BitsPerSample;			//位数,16/24/32位
@@ -223,8 +223,7 @@ u8 wav_play_song(u8* fname)
 					else 
 						fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
 					
-				//	rt_thread_yield();
-					rt_thread_delay(5);
+					rt_thread_delay(5);//还是得切出去一下
 				}	
 				audio_stop(); 
 			}else res=0XFF; 
