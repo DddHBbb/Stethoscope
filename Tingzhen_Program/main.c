@@ -12,11 +12,11 @@ static rt_thread_t App_Handle = RT_NULL;
 
 int main(void)
 {
-	delay_ms(5000);//相当于消抖吧
-	while((HAL_GPIO_ReadPin(WAKEUP_PORT,WAKEUP_PIN) != GPIO_PIN_RESET))
-	{
-		delay_ms(2000);//慢点开机，别一轻点就开机
-	}
+//	delay_ms(5000);//相当于消抖吧
+//	while((HAL_GPIO_ReadPin(WAKEUP_PORT,WAKEUP_PIN) != GPIO_PIN_RESET))
+//	{
+//		delay_ms(2000);//慢点开机，别一轻点就开机
+//	}
 	ALL_Init();
 	Event_init();
 	Mailbox_init();

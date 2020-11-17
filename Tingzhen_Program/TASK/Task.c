@@ -39,7 +39,7 @@ static 	char Last_Audio_Name[50]="noway";
 //任务句柄
 static rt_thread_t Wav_Player = RT_NULL;
 static rt_thread_t USB_Transfer = RT_NULL;
-static rt_thread_t OLED_Display = RT_NULL;
+//static rt_thread_t OLED_Display = RT_NULL;
 static rt_thread_t NFC_Transfer = RT_NULL;
 static rt_thread_t Dispose = RT_NULL;
 //信号量句柄
@@ -63,7 +63,6 @@ char dataOut[COM_XFER_SIZE];
   ***************************************/
 void Wav_Player_Task(void* parameter)
 {	
-	uint32_t t=0;
 	static uint8_t DataToBT[19];
 	printf("Wav_Player_Task\n");
 	while(1)
@@ -131,6 +130,7 @@ void USB_Transfer_Task(void* parameter)
 					rt_thread_resume(Wav_Player);
 					rt_thread_resume(NFC_Transfer);
 					OLED_Clear();
+					BattChek();//防止闪烁
 					Show_String(0,0,(uint8_t*)"模拟听诊器");
 					Show_String(4,12,(uint8_t*)"当前播放：");	
 					Show_String(48,36,(uint8_t*)"停止播放");			

@@ -401,7 +401,6 @@ void OLED_DrawRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2)
 void BattChek(void)
 { 	
 	uint8_t xpos=106,ypos=2;
-	static uint8_t cnt_per_100,cnt_per_75,cnt_per_50,cnt_per_25,cnt_per_0;
 	
 	if(!HAL_GPIO_ReadPin(GPIOD, Batt_25))
 	{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_50))
@@ -413,8 +412,6 @@ void BattChek(void)
 							}
 							else
 							{   
-								 cnt_per_75++;							 
-								 cnt_per_75=0;
 								//电量75%
 								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);	  	 
 							}
@@ -422,8 +419,6 @@ void BattChek(void)
 					}
 					else
 					{	
-							cnt_per_50++;
-							cnt_per_50=0;
 						  //电量50%
 							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);	
 							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);						
@@ -432,8 +427,6 @@ void BattChek(void)
 			}
 			else	
 			{	  
-				cnt_per_25++;					
-				cnt_per_25=0;
 				//电量25%
 				OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
 				OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
@@ -443,8 +436,7 @@ void BattChek(void)
 			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);
 	}
 	else
-	{   
-			cnt_per_0++;			
+	{   	
 			//电量0%；
 			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,0);   
 			OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
@@ -460,6 +452,11 @@ void ChargeDisplay(void)
 	uint8_t xpos=106,ypos=2;
 	OLED_Fill(xpos+18,ypos+1,xpos+20,ypos+4,1);
 	OLED_DrawRectangle(xpos,ypos-2,xpos+18,ypos+7);
+	OLED_Refresh_Gram();
+	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
+	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
+	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
 	OLED_Refresh_Gram();
 	
 	if(!HAL_GPIO_ReadPin(GPIOD, Batt_25))
@@ -518,7 +515,10 @@ void ChargeDisplay(void)
 			OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
 			OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);			
 	}
-
+	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
+	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
+	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
 	OLED_Refresh_Gram();
 }
 //这两个参数定义动画每帧的长宽。
@@ -554,7 +554,7 @@ void Movie_Show_Img(uint8_t x,uint8_t y,uint32_t picx)
 void DispCurrentPosition(const uint8_t *pbuf)
 {
 	const uint8_t *buf = pbuf;
-  uint16_t len = strlen(buf)*6; /*12号字体*/
+  uint16_t len = strlen((const char*)buf)*6; /*12号字体*/
   static uint8_t old_data ;
 	if(old_data != BodyData[0]) /*是否和上次是同一个位置*/
 	{
