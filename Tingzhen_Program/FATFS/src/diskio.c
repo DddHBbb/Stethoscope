@@ -9,7 +9,6 @@
 #include "diskio.h"			/* FatFs lower layer API */
 #include "sdio_sdcard.h"
 #include "w25qxx.h"
-#include "malloc.h"	 
 #include "rtthread.h"
 
 #define SD_CARD	 	0  			//SD¿¨,¾í±êÎª0

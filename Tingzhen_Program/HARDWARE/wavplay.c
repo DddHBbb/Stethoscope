@@ -44,18 +44,11 @@ void audio_play(char *file_name)
 	WM8978_Output_Cfg(1,0);	//开启DAC输出    	
 
 	pname = rt_malloc(_MAX_LFN*2+1); 
-//	pname1 = rt_malloc(_MAX_LFN*2+1);
-	
-//	strcpy((char*)pname1,(const char*)file_name);
 	strcpy((char*)pname,"0:/SYSTEM/MUSIC/");						//复制路径(目录)
 	strcat((char*)pname,file_name);
-//	strcat((char*)pname1,(const char*)".wav");
 	rt_kprintf("pname = %s\n",pname);
-	
-//	strcat((char*)pname,(const char*)pname1);	//将文件名接在后面
 	wav_play_song(pname); 			 		//播放这个音频文件			
 	rt_free(pname);
-//	rt_free(pname1);
 } 
 
 //WAV解析初始化
@@ -223,7 +216,7 @@ u8 wav_play_song(u8* fname)
 					else 
 						fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
 					
-					rt_thread_delay(5);//还是得切出去一下
+					rt_thread_delay(1);//还是得切出去一下
 				}	
 				audio_stop(); 
 			}else res=0XFF; 

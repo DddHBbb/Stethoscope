@@ -1,7 +1,7 @@
 #ifndef _MYIIC_H
 #define _MYIIC_H
 #include "sys.h"
-#include "delay.h"
+
 
 //IO方向设置
 #define SDA_IN()  {GPIOE->MODER&=~(3<<(15*2));GPIOE->MODER|=0<<15*2;}	//PH5输入模式

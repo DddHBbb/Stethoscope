@@ -1,7 +1,6 @@
 #include "string.h"
 #include "exfuns.h"
 #include "fattester.h"	
-#include "malloc.h"
 #include "usart.h"
 #include "rtthread.h"
 

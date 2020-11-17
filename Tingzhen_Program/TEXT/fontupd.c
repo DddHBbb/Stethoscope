@@ -2,7 +2,6 @@
 #include "ff.h"	  
 #include "w25qxx.h"   
 #include "string.h"
-#include "malloc.h"
 #include "usart.h"
 #include "rtthread.h"
 

@@ -58,55 +58,6 @@ void HAL_SD_MspInit(SD_HandleTypeDef *hsd)
     //PD2
     GPIO_Initure.Pin=GPIO_PIN_2;            
     HAL_GPIO_Init(GPIOD,&GPIO_Initure);     //初始化
-
-#if (SD_DMA_MODE==1)                        //使用DMA模式
-    HAL_NVIC_SetPriority(SDMMC1_IRQn,2,0);  //配置SDMMC1中断，抢占优先级2，子优先级0
-    HAL_NVIC_EnableIRQ(SDMMC1_IRQn);        //使能SDMMC1中断
-    
-    //配置发送DMA
-    SDRxDMAHandler.Instance=DMA2_Stream6;
-    SDRxDMAHandler.Init.Channel=DMA_CHANNEL_4;
-    SDRxDMAHandler.Init.Direction=DMA_PERIPH_TO_MEMORY;
-    SDRxDMAHandler.Init.PeriphInc=DMA_PINC_DISABLE;
-    SDRxDMAHandler.Init.MemInc=DMA_MINC_ENABLE;
-    SDRxDMAHandler.Init.PeriphDataAlignment=DMA_PDATAALIGN_WORD;
-    SDRxDMAHandler.Init.MemDataAlignment=DMA_MDATAALIGN_WORD;
-    SDRxDMAHandler.Init.Mode=DMA_PFCTRL;
-    SDRxDMAHandler.Init.Priority=DMA_PRIORITY_VERY_HIGH;
-    SDRxDMAHandler.Init.FIFOMode=DMA_FIFOMODE_ENABLE;
-    SDRxDMAHandler.Init.FIFOThreshold=DMA_FIFO_THRESHOLD_FULL;
-    SDRxDMAHandler.Init.MemBurst=DMA_MBURST_INC4;
-    SDRxDMAHandler.Init.PeriphBurst=DMA_PBURST_INC4;
-
-    __HAL_LINKDMA(hsd, hdmarx, SDRxDMAHandler); //将接收DMA和SD卡的发送DMA连接起来
-    HAL_DMA_DeInit(&SDRxDMAHandler);
-    HAL_DMA_Init(&SDRxDMAHandler);              //初始化接收DMA
-    
-    //配置接收DMA 
-//    SDTxDMAHandler.Instance=DMA2_Stream6;
-//    SDTxDMAHandler.Init.Channel=DMA_CHANNEL_4;
-//    SDTxDMAHandler.Init.Direction=DMA_MEMORY_TO_PERIPH;
-//    SDTxDMAHandler.Init.PeriphInc=DMA_PINC_DISABLE;
-//    SDTxDMAHandler.Init.MemInc=DMA_MINC_ENABLE;
-//    SDTxDMAHandler.Init.PeriphDataAlignment=DMA_PDATAALIGN_WORD;
-//    SDTxDMAHandler.Init.MemDataAlignment=DMA_MDATAALIGN_WORD;
-//    SDTxDMAHandler.Init.Mode=DMA_PFCTRL;
-//    SDTxDMAHandler.Init.Priority=DMA_PRIORITY_VERY_HIGH;
-//    SDTxDMAHandler.Init.FIFOMode=DMA_FIFOMODE_ENABLE;
-//    SDTxDMAHandler.Init.FIFOThreshold=DMA_FIFO_THRESHOLD_FULL;
-//    SDTxDMAHandler.Init.MemBurst=DMA_MBURST_INC4;
-//    SDTxDMAHandler.Init.PeriphBurst=DMA_PBURST_INC4;
-//    
-//    __HAL_LINKDMA(hsd, hdmatx, SDTxDMAHandler);//将发送DMA和SD卡的发送DMA连接起来
-//    HAL_DMA_DeInit(&SDTxDMAHandler);
-//    HAL_DMA_Init(&SDTxDMAHandler);              //初始化发送DMA 
-  
-
-//    HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 3, 0);  //接收DMA中断优先级
-//    HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
-    HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 3, 0);  //发送DMA中断优先级
-    HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
-#endif
 }
 
 //得到卡信息
@@ -118,115 +69,7 @@ u8 SD_GetCardInfo(HAL_SD_CardInfoTypedef *cardinfo)
     sta=HAL_SD_Get_CardInfo(&SDCARD_Handler,cardinfo);
     return sta;
 }
- #if (SD_DMA_MODE==1)        //DMA模式
-
-//通过DMA读取SD卡一个扇区
-//buf:读数据缓存区
-//sector:扇区地址
-//blocksize:扇区大小(一般都是512字节)
-//cnt:扇区个数	
-//返回值:错误状态;0,正常;其他,错误代码;
-u8 SD_ReadBlocks_DMA(uint32_t *buf,uint64_t sector,uint32_t blocksize,uint32_t cnt)
-{
-    u8 err=0;
-    err=HAL_SD_ReadBlocks_DMA(&SDCARD_Handler,buf,sector,blocksize,cnt);//通过DMA读取SD卡一个扇区
-    if(err==0)//读取成功
-    {
-        //等待读取完成
-        err=HAL_SD_CheckReadOperation(&SDCARD_Handler,(uint32_t)SD_TIMEOUT);
-    }
-
-    return err;
-}
-
-//写SD卡
-//buf:写数据缓存区
-//sector:扇区地址
-//blocksize:扇区大小(一般都是512字节)
-//cnt:扇区个数	
-//返回值:错误状态;0,正常;其他,错误代码;	
-u8 SD_WriteBlocks_DMA(uint32_t *buf,uint64_t sector,uint32_t blocksize,uint32_t cnt)
-{
-    u8 err=0; 
-    err=HAL_SD_WriteBlocks_DMA(&SDCARD_Handler,buf,sector,blocksize,cnt);//通过DMA写SD卡一个扇区
-    if(err==0)//写成功
-    {     
-       err=HAL_SD_CheckWriteOperation(&SDCARD_Handler,(uint32_t)SD_TIMEOUT);//等待读取完成/
-    }
-    return err;
-}
-
-//读SD卡
-//buf:读数据缓存区
-//sector:扇区地址
-//cnt:扇区个数	
-//返回值:错误状态;0,正常;其他,错误代码;
-u8 SD_ReadDisk(u8* buf,u32 sector,u32 cnt)
-{
-    u8 sta=SD_OK;
-    long long lsector=sector;
-    u8 n;
-    if(SDCardInfo.CardType!=STD_CAPACITY_SD_CARD_V1_1)lsector<<=9;
-    if((u32)buf%4!=0)
-    {
-        for(n=0;n<cnt;n++)
-        {
-            sta=SD_ReadBlocks_DMA((uint32_t*)SDIO_DATA_BUFFER,lsector+512*n,512,1);
-            memcpy(buf,SDIO_DATA_BUFFER,512);
-            buf+=512;
-        }
-    }else
-    {
-        sta=SD_ReadBlocks_DMA((uint32_t*)buf,lsector, 512,cnt);
-    }
-    return sta;
-}  
-
-//写SD卡
-//buf:写数据缓存区
-//sector:扇区地址
-//cnt:扇区个数	
-//返回值:错误状态;0,正常;其他,错误代码;	
-u8 SD_WriteDisk(u8 *buf,u32 sector,u8 cnt)
-{   
-    u8 sta=SD_OK;
-    long long lsector=sector;
-    u8 n;
-    if(SDCardInfo.CardType!=STD_CAPACITY_SD_CARD_V1_1)lsector<<=9;
-    if((u32)buf%4!=0)
-    {
-        for(n=0;n<cnt;n++)
-        {
-            memcpy(SDIO_DATA_BUFFER,buf,512);
-            sta=SD_WriteBlocks_DMA((uint32_t*)SDIO_DATA_BUFFER,lsector+512*n,512,1);//单个sector的写操作
-            buf+=512;
-        }
-    }else
-    {
-        sta=SD_WriteBlocks_DMA((uint32_t*)buf,lsector,512,cnt);//多个sector的写操作
-    }
-    return sta;
-} 
-
-//SDMMC1中断服务函数
-void SDMMC1_IRQHandler(void)
-{
-    HAL_SD_IRQHandler(&SDCARD_Handler);
-}
-
-//DMA2数据流6中断服务函数
-void DMA2_Stream6_IRQHandler(void)
-{
-    HAL_DMA_IRQHandler(SDCARD_Handler.hdmarx);
-}
-
-//DMA2数据流3中断服务函数
-//void DMA2_Stream3_IRQHandler(void)
-//{
-//    HAL_DMA_IRQHandler(SDCARD_Handler.hdmarx);
-//}
-#else                                   //轮训模式
- 
+//轮训模式
 //读SD卡
 //buf:读数据缓存区
 //sector:扇区地址
@@ -286,4 +129,19 @@ u8 SD_WriteDisk(u8 *buf,u32 sector,u8 cnt)
 		rt_exit_critical();
     return sta;
 }
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

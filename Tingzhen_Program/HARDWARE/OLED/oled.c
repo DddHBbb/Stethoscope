@@ -349,7 +349,8 @@ while(*str!=0)	//数据未结束
 		if(x>=xend)return;//超过了,退出  
 		str+=2;  
 	}						 
-}    
+} 
+OLED_Refresh_Gram();
 }
 //画线
 //x1,y1:起点坐标

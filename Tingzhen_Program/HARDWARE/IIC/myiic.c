@@ -1,5 +1,5 @@
 #include "myiic.h"
-
+#include "D_delay.h"
 
 //IIC≥ı ºªØ
 void IIC_Init(void)
