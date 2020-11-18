@@ -411,8 +411,8 @@ int8_t mccSendRequest ( uint8_t *request,
     for ( i = 0; i < *responseLength; i++ )
     {
         response[i] = buffer[i];
-				sprintf( dataOut, "%x, ", response[i] );		//tbd
-				HAL_UART_Transmit( &UART1_Handler, ( uint8_t * )dataOut, strlen( dataOut ), 500 );	
+//				sprintf( dataOut, "%x, ", response[i] );		//tbd
+//				HAL_UART_Transmit( &UART1_Handler, ( uint8_t * )dataOut, strlen( dataOut ), 500 );	
     }
 
 out:
@@ -586,13 +586,13 @@ ReturnCode MifareTest(void)
 {
 	uint16_t *responseLength=NULL;
 	uint8_t response[0xFF];
-	uint8_t temp[4];
+	static char temp[20];
 	ReturnCode err=0;
 	//uint8_t	txData[16] = {0x00,0x11,0x22,0x33,0x66,0x66,0x66,0x66,0x66,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 	//uint8_t	txData[16] = {0x24,0x27,0x00,0x01};
 	
 	uint8_t key_A[6] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
-	uint8_t block=0x01;
+	uint8_t block=0x06;
 	/* Mifaire read block trial.*/
 	
   /* Configure demoboard for MiFare. */
@@ -605,10 +605,11 @@ ReturnCode MifareTest(void)
 	}
 	for(int i=0;i<4;i++)
 	{
-		temp[i]=response[i];
+		temp[i]=(char)response[i];
 	}
-	 rt_mb_send(NFC_TagID_mb,(rt_uint32_t)hex2Str(temp,4));
-	 rt_mb_send(AbortWavplay_mb,Continue_Singnal);
+	rt_sprintf((char*)temp,"%x%x%x%x",temp[0],temp[1],temp[2],temp[3]);
+	rt_mb_send(NFC_TagID_mb,(rt_uint32_t)&temp);
+	rt_mb_send(AbortWavplay_mb,Continue_Singnal);
 
 //	memcpy(txData, response, 16);
 //	txData[1]++;

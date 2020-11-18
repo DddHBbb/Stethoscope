@@ -73,16 +73,17 @@ void Wav_Player_Task(void* parameter)
 			//互斥量，usb和音频播放都需要使用SDIO，为防止冲突只能用一个
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);			
 			//记录最后一次播放的文件名		
-			if(Compare_string((const char*)Last_Audio_Name,(const char*)NFC_TagID_RECV) != 1)
-			{
+//			if(Compare_string((const char*)Last_Audio_Name,(const char*)NFC_TagID_RECV) != 1)
+//			{
 				//发送当前位置信息
+//				rt_sprintf((char*)DataToBT,"Position:%x%x%x%x\r\n",NFC_TagID_RECV[0],NFC_TagID_RECV[1],NFC_TagID_RECV[2],NFC_TagID_RECV[3]);//11
 				rt_sprintf((char*)DataToBT,"Position:%s\r\n",NFC_TagID_RECV);//11
 				HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,sizeof(DataToBT),1000); 
 				while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
 				rt_kprintf("DataToBT=%s\n",DataToBT);
 				Buff_Clear((uint8_t*)DataToBT);
-			}
-			strcpy((char *)&Last_Audio_Name,(const char*)NFC_TagID_RECV);
+//			}
+//			strcpy((char *)&Last_Audio_Name,(const char*)NFC_TagID_RECV);
 			//接收音频文件名的邮箱，每次只接受一次
 			if(!(rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO)))
 			{
@@ -190,7 +191,8 @@ void Dispose_Task(void* parameter)
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	BattChek();	
 		if((HAL_GPIO_ReadPin(WAKEUP_PORT,WAKEUP_PIN) == GPIO_PIN_RESET))
 		{
-			delay_ms(2000);//慢点关机，别一轻点就关机
+			DISABLE_ALL_SWITCH();
+			delay_ms(2000);//慢点关机，别一轻点就关机		
 			__set_FAULTMASK(1);
 				NVIC_SystemReset();		
 		}	
@@ -278,7 +280,7 @@ void Semaphore_init(void)
   ***************************************/
 void Mailbox_init(void)
 {
-	 NFC_TagID_mb = rt_mb_create("NFC_TagID_mb",8,RT_IPC_FLAG_FIFO);
+	 NFC_TagID_mb = rt_mb_create("NFC_TagID_mb",4,RT_IPC_FLAG_FIFO);
 	 AbortWavplay_mb = rt_mb_create("AbortWavplay_mb",1,RT_IPC_FLAG_FIFO);
 	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",20,RT_IPC_FLAG_FIFO);
 	 NFC_SendMAC_mb = rt_mb_create("NFC_SendMAC_mb",20,RT_IPC_FLAG_FIFO);
