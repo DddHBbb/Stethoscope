@@ -242,10 +242,10 @@ bool demoIni( void )
  *  This function executes the demo state machine. 
  *  It must be called periodically
  *****************************************************************************
- */
+ */ 
+rfalNfcDevice *nfcDevice;
 void demoCycle( void )
-{
-    static rfalNfcDevice *nfcDevice;
+{ 
     uint8_t Flag=0;
 	
     rfalNfcWorker();                                    /* Run RFAL worker periodically */   
@@ -295,7 +295,7 @@ void demoCycle( void )
                                 break;
                                 
                             default:
-                               // platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );
+                               // platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );																
 																ConfigManager_TagHunting(TRACK_ALL);
                                 break;
                         }

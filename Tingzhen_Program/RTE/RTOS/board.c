@@ -72,6 +72,7 @@ void rt_hw_board_init()
 		ALL_GPIO_init();
 		uart_init();  						//≥ı ºªØUSART
 		Key_GPIO_Config();
+		OLED_Init();
 	   /* System Tick Configuration */
 
    _SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);

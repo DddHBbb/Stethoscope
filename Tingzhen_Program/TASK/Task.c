@@ -31,7 +31,8 @@ extern vu8 USB_STATUS_REG;		//USB状态
 extern vu8 bDeviceState;		//USB连接 情况
 extern uint8_t AbortWavplay_Event_Flag;
 /***********************全局变量区*******************************/
-static 	char *NFC_TagID_RECV=NULL;
+static 	char *NFCTag_UID_RECV=NULL;
+static 	char *NFCTag_CustomID_RECV=NULL;
 static 	char *Rev_From_BT=NULL;
 static 	char *The_Auido_Name=NULL;
 static 	char Last_Audio_Name[50]="noway";
@@ -50,6 +51,7 @@ rt_mailbox_t AbortWavplay_mb = RT_NULL;
 rt_mailbox_t BuleTooth_Transfer_mb = RT_NULL;
 rt_mailbox_t NFC_SendMAC_mb = RT_NULL;
 rt_mailbox_t The_Auido_Name_mb = RT_NULL;
+rt_mailbox_t NFCTag_CustomID_mb = RT_NULL;
 //事件句柄
 rt_event_t Display_NoAudio = RT_NULL;
 /****************************************************************/
@@ -68,16 +70,24 @@ void Wav_Player_Task(void* parameter)
 	while(1)
 	{
 		//在能检测到NFC标签的情况下才可以播放音频
-		if(!(rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFC_TagID_RECV, RT_WAITING_NO)))
+		if(!(rt_mb_recv(NFCTag_CustomID_mb, (rt_uint32_t*)&NFCTag_CustomID_RECV, RT_WAITING_NO)))
 		{
 			//互斥量，usb和音频播放都需要使用SDIO，为防止冲突只能用一个
-			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);			
-			//发送当前位置信息
-			rt_sprintf((char*)DataToBT,"Position:%x%x%x%x\r\n",NFC_TagID_RECV[0],NFC_TagID_RECV[1],NFC_TagID_RECV[2],NFC_TagID_RECV[3]);//11
-			HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,sizeof(DataToBT),1000); 
-			while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
-			rt_kprintf("DataToBT=%s\n",DataToBT);
-			Buff_Clear((uint8_t*)DataToBT);
+			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
+			//记录最后一次播放的文件	
+			if(!(rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFCTag_UID_RECV, RT_WAITING_NO)))
+			{
+				if(Compare_string((const char*)Last_Audio_Name,(const char*)NFCTag_UID_RECV) != 1)
+				{
+					//发送当前位置信息
+					rt_sprintf((char*)DataToBT,"Position:%x%x%x%x\r\n",NFCTag_CustomID_RECV[0],NFCTag_CustomID_RECV[1],NFCTag_CustomID_RECV[2],NFCTag_CustomID_RECV[3]);//11
+					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,sizeof(DataToBT),1000); 
+					while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
+					rt_kprintf("DataToBT=%s\n",DataToBT);
+					Buff_Clear((uint8_t*)DataToBT);
+				}
+			}
+			strcpy((char *)&Last_Audio_Name,(const char*)NFCTag_UID_RECV);
 			//接收音频文件名的邮箱，每次只接受一次
 			if(!(rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO)))
 			{
@@ -100,10 +110,17 @@ void Wav_Player_Task(void* parameter)
 void USB_Transfer_Task(void* parameter)
 {		
 	printf("USB_Transfer_Task\n");
+		
+	OLED_Clear();
+	Show_String(0,0,(uint8_t*)"模拟听诊器");
+	Show_String(0,12,(uint8_t*)"当前播放：");	
+	Show_String(48,36,(uint8_t*)"停止播放");
 	while(1)
 	{		
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_RESET)
-		{
+		{			
+			rt_thread_suspend(Wav_Player);
+			rt_thread_suspend(NFC_Transfer);
 			SD_Init();
 			OLED_Clear();
 			Show_String(0,0,(uint8_t*)"模拟听诊器");
@@ -112,11 +129,10 @@ void USB_Transfer_Task(void* parameter)
 			MSC_BOT_Data=(uint8_t *)rt_malloc(MSC_MEDIA_PACKET);			//申请内存
 			USBD_Init(&USB_OTG_dev,USB_OTG_FS_CORE_ID,&USR_desc,&USBD_MSC_cb,&USR_cb);
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
-			rt_thread_suspend(Wav_Player);
-			rt_thread_suspend(NFC_Transfer);	
 			while(1)
 			{
 				ChargeDisplay();
+				delay_ms(500); 
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);
@@ -131,7 +147,7 @@ void USB_Transfer_Task(void* parameter)
 					Show_String(48,36,(uint8_t*)"停止播放");			
 					break;
 				}
-				rt_thread_delay(100);  //100ms
+				//rt_thread_delay(100);  //100ms
 			}
 		}
 			rt_thread_delay(1000);  //1000ms
@@ -142,11 +158,7 @@ void Dispose_Task(void* parameter)
 	static uint8_t DataToNFC[50];
 	static uint8_t DataToPlayer[100];
 	static uint8_t BTS=0;
-	
-	OLED_Clear();
-	Show_String(0,0,(uint8_t*)"模拟听诊器");
-	Show_String(0,12,(uint8_t*)"当前播放：");	
-	Show_String(48,36,(uint8_t*)"停止播放");
+
 	while(1)
 	{
 		/*检测不到NFC标签时停止播放*/
@@ -274,6 +286,7 @@ void Semaphore_init(void)
   ***************************************/
 void Mailbox_init(void)
 {
+	 NFCTag_CustomID_mb = rt_mb_create("NFCTag_CustomID_mb",4,RT_IPC_FLAG_FIFO);
 	 NFC_TagID_mb = rt_mb_create("NFC_TagID_mb",4,RT_IPC_FLAG_FIFO);
 	 AbortWavplay_mb = rt_mb_create("AbortWavplay_mb",1,RT_IPC_FLAG_FIFO);
 	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",20,RT_IPC_FLAG_FIFO);

@@ -53,6 +53,7 @@
 #include "usart.h"
 #include "rtthread.h"
 #include "logger.h"
+#include "rfal_nfc.h"
 /*
  ******************************************************************************
  * MACROS
@@ -125,7 +126,7 @@ const uint32_t Continue_Singnal=0x01;
 const uint32_t Abort_Singnal=0x02;
 
 extern ISO14443A_CARD 	ISO14443A_Card;
-extern rt_mailbox_t NFC_TagID_mb;
+extern rt_mailbox_t NFCTag_CustomID_mb;
 extern rt_mailbox_t AbortWavplay_mb;
 /*
  ******************************************************************************
@@ -581,7 +582,8 @@ ReturnCode MifareHalt(uint8_t *response)
 	*responseLength = numBytesReceived;
 	return err;		
 }
-
+extern rt_mailbox_t NFC_TagID_mb;
+extern rfalNfcDevice *nfcDevice;
 ReturnCode MifareTest(void)
 {
 	uint16_t *responseLength=NULL;
@@ -607,8 +609,9 @@ ReturnCode MifareTest(void)
 	{
 		temp[i]=(char)response[i];
 	}
-//	rt_sprintf((char*)temp,"%x%x%x%x",temp[0],temp[1],temp[2],temp[3]);
-	rt_mb_send(NFC_TagID_mb,(rt_uint32_t)&temp);
+	if((temp[0] == 0x24) && (temp[1] == 0x27))
+	   rt_mb_send(NFCTag_CustomID_mb,(rt_uint32_t)&temp);
+	rt_mb_send(NFC_TagID_mb,(rt_uint32_t)hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ));
 	rt_mb_send(AbortWavplay_mb,Continue_Singnal);
 
 //	memcpy(txData, response, 16);
