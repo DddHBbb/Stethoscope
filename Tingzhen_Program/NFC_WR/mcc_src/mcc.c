@@ -607,7 +607,7 @@ ReturnCode MifareTest(void)
 	{
 		temp[i]=(char)response[i];
 	}
-	rt_sprintf((char*)temp,"%x%x%x%x",temp[0],temp[1],temp[2],temp[3]);
+//	rt_sprintf((char*)temp,"%x%x%x%x",temp[0],temp[1],temp[2],temp[3]);
 	rt_mb_send(NFC_TagID_mb,(rt_uint32_t)&temp);
 	rt_mb_send(AbortWavplay_mb,Continue_Singnal);
 
