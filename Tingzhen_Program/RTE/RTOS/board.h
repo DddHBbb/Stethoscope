@@ -41,6 +41,6 @@ void Semaphore_init(void);
 void Mailbox_init(void);
 void Event_init(void);
 void rt_hw_us_delay(rt_uint32_t us);
-
+char rt_hw_console_getchar(void);
 
 #endif /* __BOARD_H__ */

@@ -625,5 +625,4 @@ ReturnCode MifareTest(void)
 //		err = MifareHalt(response);
 //	}
 	return err;
-	HAL_Delay(100);
 }

@@ -1,4 +1,5 @@
 #include "sai.h"
+#include "D_delay.h"
 
 SAI_HandleTypeDef SAI1A_Handler;        //SAI1 Block A句柄
 DMA_HandleTypeDef SAI1_TXDMA_Handler;   //DMA发送句柄
@@ -168,7 +169,7 @@ void SAIA_TX_DMA_Init(u8* buf0,u8 *buf1,u16 num,u8 width)
 
     HAL_DMAEx_MultiBufferStart(&SAI1_TXDMA_Handler,(u32)buf0,(u32)&SAI1_Block_A->DR,(u32)buf1,num);//开启双缓冲
     __HAL_DMA_DISABLE(&SAI1_TXDMA_Handler);                         //先关闭DMA 
-//    delay_us(10);                                                   //10us延时，防止-O2优化出问题 	
+    delay_us(10);                                                   //10us延时，防止-O2优化出问题 	
     __HAL_DMA_ENABLE_IT(&SAI1_TXDMA_Handler,DMA_IT_TC);             //开启传输完成中断
     __HAL_DMA_CLEAR_FLAG(&SAI1_TXDMA_Handler,DMA_FLAG_TCIF3_7);     //清除DMA传输完成中断标志位
     HAL_NVIC_SetPriority(DMA2_Stream3_IRQn,0,0);                    //DMA中断优先级

@@ -198,7 +198,7 @@ void Dispose_Task(void* parameter)
 		if((HAL_GPIO_ReadPin(WAKEUP_PORT,WAKEUP_PIN) == GPIO_PIN_RESET))
 		{
 			DISABLE_ALL_SWITCH();
-			delay_ms(2000);//慢点关机，别一轻点就关机		
+			delay_ms(1000);//慢点关机，别一轻点就关机		
 			__set_FAULTMASK(1);
 				NVIC_SystemReset();		
 		}	

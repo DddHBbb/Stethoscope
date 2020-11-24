@@ -12,6 +12,7 @@ static rt_thread_t App_Handle = RT_NULL;
 
 int main(void)
 {
+
 	PowerOn_Display();
 	ALL_Init();
 	Event_init();
@@ -27,7 +28,6 @@ void ALL_Init(void)
 		W25QXX_Init();				    //初始化W25Q256
 		SPI3_Init();
 		WM8978_Init();				    //初始化WM8978
-		WM8978_SPKvol_Set(100);	    //喇叭音量设置
 		WM8978_HPvol_Set(100,100);
 		Movie_Show_Img(32,0,0);
     exfuns_init();		            //为fatfs相关变量申请内存  

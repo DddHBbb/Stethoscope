@@ -33,12 +33,12 @@ void W25QXX_Init(void)
     if(W25QXX_TYPE==W25Q256)                //SPI FLASH为W25Q256
     {
         temp=W25QXX_ReadSR(3);              //读取状态寄存器3，判断地址模式
-        if((temp&0X01)==0)			        //如果不是4字节地址模式,则进入4字节地址模式
-		{
-			W25QXX_CS=0; 			        //选中
-			SPI1_ReadWriteByte(W25X_Enable4ByteAddr);//发送进入4字节地址模式指令   
-			W25QXX_CS=1;       		        //取消片选   
-		}
+			if((temp&0X01)==0)			        //如果不是4字节地址模式,则进入4字节地址模式
+			{
+				W25QXX_CS=0; 			        //选中
+				SPI1_ReadWriteByte(W25X_Enable4ByteAddr);//发送进入4字节地址模式指令   
+				W25QXX_CS=1;       		        //取消片选   
+			}
     }
 }  
 
