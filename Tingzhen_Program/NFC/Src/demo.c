@@ -139,6 +139,9 @@ ReturnCode  demoTransceiveBlocking( uint8_t *txBuf, uint16_t txBufSize, uint8_t 
 
 
 extern rt_mailbox_t NFC_SendMAC_mb;
+extern rt_event_t AbortWavplay_Event;
+extern rt_event_t PlayWavplay_Event;
+//extern rt_event_t Prevent_Accidental_Play_Event;
 /*!
  *****************************************************************************
  * \brief Demo Notification
@@ -247,6 +250,9 @@ rfalNfcDevice *nfcDevice;
 void demoCycle( void )
 { 
     uint8_t Flag=0;
+		static uint8_t Count_Num=0;
+		rt_uint32_t Play_rev=0;
+		static uint8_t Prevent_Accidental_Play_Flag=0;
 	
     rfalNfcWorker();                                    /* Run RFAL worker periodically */   
     switch( state )
@@ -297,6 +303,10 @@ void demoCycle( void )
                             default:
                                // platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );																
 																ConfigManager_TagHunting(TRACK_ALL);
+																rt_event_send(AbortWavplay_Event,2);
+																rt_event_send(PlayWavplay_Event,1);
+																Prevent_Accidental_Play_Flag=1;
+																Count_Num=0;//发送成功，则停止检测 
                                 break;
                         }
                         break;
@@ -374,6 +384,20 @@ void demoCycle( void )
                 #endif
                 state = DEMO_ST_START_DISCOVERY;
 							}	
+						else 
+						{
+//							if(Prevent_Accidental_Play_Flag == 1)
+//							{
+								//如果连续10次都未检测到，就判定为没检测到
+								Count_Num++;
+								if(Count_Num == 10)
+								{
+									rt_event_send(AbortWavplay_Event,1);
+									Count_Num=0;
+//									Prevent_Accidental_Play_Flag = 0;
+								}
+//							}
+						}
             break;
 
         /*******************************************************************************/

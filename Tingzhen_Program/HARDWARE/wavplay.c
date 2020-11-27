@@ -9,8 +9,9 @@
 /***********************函数声明区*******************************/
 
 /***********************声明返回区*******************************/
-//extern rt_mailbox_t AbortWavplay_mb;
-
+extern rt_mailbox_t AbortWavplay_mb;
+extern rt_event_t AbortWavplay_Event;
+extern rt_event_t PlayWavplay_Event;
 /***********************全局变量区*******************************/
 uint8_t AbortWavplay_Event_Flag=0;
 
@@ -170,7 +171,11 @@ void wav_sai_dma_tx_callback(void)
 u8 wav_play_song(u8* fname)
 {
 	u8 res,*flag=NULL;  
-	u32 fillnum; 
+	u32 fillnum=0; 
+  rt_uint32_t Play_rev=0;
+	rt_uint32_t Abort_rev=0;
+	rt_uint32_t Pre_rev=0;
+	static uint8_t Conut_Num=0;
 	
 	audiodev.file=(FIL*)rt_malloc(sizeof(FIL));
 	audiodev.saibuf1=(uint8_t *)rt_malloc(WAV_SAI_TX_DMA_BUFSIZE);
@@ -205,19 +210,29 @@ u8 wav_play_song(u8* fname)
 				fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);
 				audio_start();  
 				//此循环牵扯数据传输，不宜使用RT组件，保证其数据完整性
-				while(AbortWavplay_Event_Flag)
-				{ 
-					while(wavtransferend==0);//等待wav传输完成; 
-					wavtransferend=0;
-					if(fillnum!=WAV_SAI_TX_DMA_BUFSIZE)//播放结束
-						break;
-					if(wavwitchbuf)
-						fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf2
-					else 
-						fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
-					
-					rt_thread_delay(1);//还是得切出去一下
+				while(1)
+				{ 	
+					rt_event_recv(AbortWavplay_Event,1|2,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Abort_rev);
+					rt_event_recv(PlayWavplay_Event, 1,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Play_rev);		
+					if(Play_rev == 1)
+					{
+						rt_kprintf("没出去\n");
+						while(wavtransferend==0);//等待wav传输完成; 
+						wavtransferend=0;
+						if(fillnum!=WAV_SAI_TX_DMA_BUFSIZE)//播放结束
+							break;
+						if(wavwitchbuf)
+							fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf2
+						else 
+							fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
+					}
+					if(Abort_rev == 1)		
+						break;		
+					rt_event_control(AbortWavplay_Event,RT_IPC_CMD_RESET,0);
+					rt_thread_delay(1);
 				}	
+				rt_event_control(AbortWavplay_Event,RT_IPC_CMD_RESET,0);
+				rt_event_control(PlayWavplay_Event,RT_IPC_CMD_RESET,0);
 				audio_stop(); 
 			}else res=0XFF; 
 		}else res=0XFF;

@@ -52,8 +52,12 @@ rt_mailbox_t BuleTooth_Transfer_mb = RT_NULL;
 rt_mailbox_t NFC_SendMAC_mb = RT_NULL;
 rt_mailbox_t The_Auido_Name_mb = RT_NULL;
 rt_mailbox_t NFCTag_CustomID_mb = RT_NULL;
+rt_mailbox_t Loop_PlayBack_mb = RT_NULL;
 //事件句柄
-rt_event_t Display_NoAudio = RT_NULL;
+///rt_event_t Display_NoAudio = RT_NULL;
+rt_event_t AbortWavplay_Event = RT_NULL;
+rt_event_t PlayWavplay_Event = RT_NULL;
+rt_event_t Prevent_Accidental_Play_Event = RT_NULL;
 /****************************************************************/
 uint8_t TT2Tag[NFCT2_MAX_TAGMEMORY];
 char dataOut[COM_XFER_SIZE]; 
@@ -70,12 +74,12 @@ void Wav_Player_Task(void* parameter)
 	while(1)
 	{
 		//在能检测到NFC标签的情况下才可以播放音频
-		if(!(rt_mb_recv(NFCTag_CustomID_mb, (rt_uint32_t*)&NFCTag_CustomID_RECV, RT_WAITING_NO)))
+		if((rt_mb_recv(NFCTag_CustomID_mb, (rt_uint32_t*)&NFCTag_CustomID_RECV, RT_WAITING_NO)) == RT_EOK)
 		{
 			//互斥量，usb和音频播放都需要使用SDIO，为防止冲突只能用一个
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
 			//记录最后一次播放的文件	
-			if(!(rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFCTag_UID_RECV, RT_WAITING_NO)))
+			if((rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFCTag_UID_RECV, RT_WAITING_NO))== RT_EOK)
 			{
 				if(Compare_string((const char*)Last_Audio_Name,(const char*)NFCTag_UID_RECV) != 1)
 				{
@@ -89,17 +93,27 @@ void Wav_Player_Task(void* parameter)
 			}
 			strcpy((char *)&Last_Audio_Name,(const char*)NFCTag_UID_RECV);
 			//接收音频文件名的邮箱，每次只接受一次
-			if(!(rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO)))
-			{
-				Show_String(48,36,(uint8_t*)"正在播放");
-				audio_play(The_Auido_Name); 
-				Show_String(48,36,(uint8_t*)"停止播放");	
+			if((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO))== RT_EOK)
+			{	
+				Show_String(48,36,(uint8_t*)"正在播放");	
+				rt_thread_delay(10);
+				//不拿开就循环播放
+				while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
+				{
+					WM8978_Write_Reg(2,0x180);			
+					audio_play(The_Auido_Name); 
+					WM8978_Write_Reg(2,0x40);
+					WM8978_HPvol_Set(20,20);
+					rt_thread_delay(1);
+				}		
+				rt_thread_delay(10);
+				Show_String(48,36,(uint8_t*)"停止播放");
 				rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);
 				Buff_Clear((uint8_t*)The_Auido_Name);
 			}
 			rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
 		}	
-		rt_thread_delay(1); //1s
+		rt_thread_delay(10); //1s
 	}
 }
  /****************************************
@@ -147,10 +161,9 @@ void USB_Transfer_Task(void* parameter)
 					Show_String(48,36,(uint8_t*)"停止播放");			
 					break;
 				}
-				//rt_thread_delay(100);  //100ms
 			}
 		}
-			rt_thread_delay(1000);  //1000ms
+			rt_thread_delay(10);  //1000ms
 	}
 }
 void Dispose_Task(void* parameter)
@@ -161,9 +174,7 @@ void Dispose_Task(void* parameter)
 
 	while(1)
 	{
-		/*检测不到NFC标签时停止播放*/
-		if(!rt_mb_recv(AbortWavplay_mb, RT_NULL, RT_WAITING_NO))  AbortWavplay_Event_Flag = 1;
-		else																											AbortWavplay_Event_Flag = 0;						
+		/*检测不到NFC标签时停止播放*/				
 		USART_RX_STA=0;		//清除接受状态，否则接收会出问题
 		/*从蓝牙收到的数据，都在这里处理*/
 		if(!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t*)&Rev_From_BT, RT_WAITING_NO)))
@@ -202,8 +213,8 @@ void Dispose_Task(void* parameter)
 			__set_FAULTMASK(1);
 				NVIC_SystemReset();		
 		}	
-		IWDG_Feed();	
-		rt_thread_delay(1000);
+		IWDG_Feed();
+		rt_thread_delay(100);
 			
 	}
 }
@@ -235,7 +246,7 @@ void NFC_Transfer_Task(void* parameter)
 	while(1)
 	{
 		demoCycle();
-		rt_thread_delay(1); //1ms
+		rt_thread_delay(5); //1ms
 	}
 }
  /****************************************
@@ -252,7 +263,7 @@ void Task_init(void)
 	#endif
 	#ifdef  Creat_USB_Transfer
 	/*USB大容量存储任务*/
-	USB_Transfer = rt_thread_create( "USB_Transfer_Task",USB_Transfer_Task,RT_NULL,512,0,20);                 
+	USB_Transfer = rt_thread_create( "USB_Transfer_Task",USB_Transfer_Task,RT_NULL,512,1,20);                 
   if (USB_Transfer != RT_NULL)    rt_thread_startup(USB_Transfer);
 	 #endif
 	#ifdef  Creat_OLED_Display
@@ -266,7 +277,7 @@ void Task_init(void)
   if (NFC_Transfer != RT_NULL)    rt_thread_startup(NFC_Transfer);
 	 #endif
 	#ifdef  Creat_Dispose
-	Dispose = rt_thread_create( "Status_Reflash",Dispose_Task,RT_NULL,1024,1,20);                
+	Dispose = rt_thread_create( "Status_Reflash",Dispose_Task,RT_NULL,1024,2,20);                
   if (Dispose != RT_NULL)    rt_thread_startup(Dispose);
 	#endif
 }
@@ -292,6 +303,7 @@ void Mailbox_init(void)
 	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",20,RT_IPC_FLAG_FIFO);
 	 NFC_SendMAC_mb = rt_mb_create("NFC_SendMAC_mb",20,RT_IPC_FLAG_FIFO);
  	 The_Auido_Name_mb = rt_mb_create("The_Auido_Name_mb",20,RT_IPC_FLAG_FIFO);
+	 Loop_PlayBack_mb = rt_mb_create("Loop_PlayBack_mb",1,RT_IPC_FLAG_FIFO);
 }
  /****************************************
   * @brief  事件创建函数 
@@ -300,7 +312,10 @@ void Mailbox_init(void)
   ***************************************/
 void Event_init(void)
 {
-	// Display_NoAudio = rt_event_create("Display_NoAudio",RT_IPC_FLAG_FIFO);
+//	 Display_NoAudio = rt_event_create("Display_NoAudio",RT_IPC_FLAG_FIFO);
+	AbortWavplay_Event = rt_event_create("AbortWavplay_Event",RT_IPC_FLAG_FIFO);
+	PlayWavplay_Event = rt_event_create("PlaytWavplay_Event",RT_IPC_FLAG_FIFO);
+	Prevent_Accidental_Play_Event = rt_event_create("Prevent_Accidental_Play_Event",RT_IPC_FLAG_FIFO);
 }
 
 

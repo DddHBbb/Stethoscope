@@ -666,7 +666,7 @@ int8_t ISO14443A_Init(void)
 	TechnoSelected = PCDPROTOCOL_14443A;
 	
 	/* GT min time to respect before sending REQ_A */
-	HAL_Delay(5);
+//	HAL_Delay(5);
  
  return ISO14443A_SUCCESSCODE;
 Error:

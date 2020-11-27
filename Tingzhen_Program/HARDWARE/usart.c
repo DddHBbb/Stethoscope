@@ -172,7 +172,8 @@ void Buff_Clear(uint8_t buf[])
 		{
 			buf[i]=0; 
 		}
-
+		if(buf != NULL)
+			buf=NULL;
 }
 
 

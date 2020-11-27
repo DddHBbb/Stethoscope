@@ -198,6 +198,17 @@ uint16_t random(uint16_t min, uint16_t max)
 	//return (((SysTick->VAL)%(max - min + 1)) + min);
 }
 
+
+
+
+
+
+
+
+
+
+
+
 /* USER CODE END 1 */
 
 /**

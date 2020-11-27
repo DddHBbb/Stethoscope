@@ -6,6 +6,7 @@
 #include "text.h"	
 #include "string.h"
 #include "GPIOConfig.h"
+
 void Show_chars(uint8_t x,uint8_t y,uint8_t xend,uint8_t yend,uint8_t chr);
 const uint8_t gImage_12[504] = { /* 0X01,0X01,0X3F,0X00,0X40,0X00, */
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,
@@ -226,7 +227,7 @@ void OLED_Init(void)
 	GPIO_Initure.Pin=GPIO_PIN_15;         //PA15
 	GPIO_Initure.Mode=GPIO_MODE_OUTPUT_PP;//推挽输出
 	GPIO_Initure.Pull=GPIO_PULLUP;        //上拉
-	GPIO_Initure.Speed=GPIO_SPEED_FAST;   //高速
+	GPIO_Initure.Speed=GPIO_SPEED_HIGH;   //高速
 	HAL_GPIO_Init(GPIOA,&GPIO_Initure);   //初始化
 
 	//PB4,7
