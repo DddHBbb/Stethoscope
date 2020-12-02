@@ -127,7 +127,7 @@ const uint32_t Abort_Singnal=0x02;
 
 extern ISO14443A_CARD 	ISO14443A_Card;
 extern rt_mailbox_t NFCTag_CustomID_mb;
-extern rt_mailbox_t AbortWavplay_mb;
+//extern rt_mailbox_t AbortWavplay_mb;
 extern rt_mailbox_t Loop_PlayBack_mb;
 /*
  ******************************************************************************
@@ -613,8 +613,9 @@ ReturnCode MifareTest(void)
 	if((temp[0] == 0x24) && (temp[1] == 0x27))
 	   rt_mb_send(NFCTag_CustomID_mb,(rt_uint32_t)&temp);
 	rt_mb_send(NFC_TagID_mb,(rt_uint32_t)hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ));
-	rt_mb_send(AbortWavplay_mb,Continue_Singnal);
+//	rt_mb_send(AbortWavplay_mb,Continue_Singnal);
 	rt_mb_send(Loop_PlayBack_mb,Continue_Singnal);
+//	rt_kprintf("ËÙ¶È\n");
 //	memcpy(txData, response, 16);
 //	txData[1]++;
 //	if (ERR_NONE == err)	

@@ -6,6 +6,7 @@
 #include "text.h"	
 #include "string.h"
 #include "GPIOConfig.h"
+#include "D_delay.h"
 
 void Show_chars(uint8_t x,uint8_t y,uint8_t xend,uint8_t yend,uint8_t chr);
 const uint8_t gImage_12[504] = { /* 0X01,0X01,0X3F,0X00,0X40,0X00, */
@@ -247,7 +248,7 @@ void OLED_Init(void)
 	OLED_RS=1;	 
 	
 	OLED_RST=0;
-	rt_thread_delay(100);
+	delay_ms(100);
 	OLED_RST=1; 
 					  
 	OLED_WR_Byte(0xAE,OLED_CMD); //关闭显示
@@ -275,7 +276,7 @@ void OLED_Init(void)
 	OLED_WR_Byte(0xA4,OLED_CMD); //全局显示开启;bit0:1,开启;0,关闭;(白屏/黑屏)
 	OLED_WR_Byte(0xA6,OLED_CMD); //设置显示方式;bit0:1,反相显示;0,正常显示	    						   
 	OLED_WR_Byte(0xAF,OLED_CMD); //开启显示	 
-	OLED_Clear();
+	//OLED_Clear();
 }   
 
 

@@ -230,7 +230,7 @@ void ConfigManager_HWInit (void)
 void ConfigManager_TagHunting ( uint8_t tagsToFind )
 {
     PCD_FieldOff();
-    ISO14443A_Init( );
+    ISO14443A_Init();
 		ISO14443A_IsPresent();
 		ISO14443A_Anticollision();
 		MifareTest();

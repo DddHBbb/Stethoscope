@@ -24,12 +24,14 @@ void ALL_GPIO_init(void)
     GPIO_Initure.Pull=GPIO_PULLUP; 
 		GPIO_Initure.Speed = GPIO_SPEED_FAST;	
     HAL_GPIO_Init(GPIOA,&GPIO_Initure);
-	
+		
 		GPIO_Initure.Pin=SPI_SWITCH_PIN;
     HAL_GPIO_Init(GPIOC,&GPIO_Initure);
 		
 		GPIO_Initure.Pin=OLED_SWITCH_PIN;
     HAL_GPIO_Init(GPIOB,&GPIO_Initure);
+		GPIO_Initure.Pin=OLED_SWITCH2_PIN;
+    HAL_GPIO_Init(GPIOD,&GPIO_Initure);
 		
 		GPIO_Initure.Pin=RFID_SWITCH_PIN;
     HAL_GPIO_Init(GPIOB,&GPIO_Initure);
@@ -42,6 +44,19 @@ void ALL_GPIO_init(void)
     HAL_GPIO_Init(GPIOE,&GPIO_Initure);
 		
 		DISABLE_ALL_SWITCH();
+		
+		 /*开关机 */
+		GPIO_Initure.Pin=PBout_Pin|INT_Pin;
+    GPIO_Initure.Mode=GPIO_MODE_INPUT;              
+    GPIO_Initure.Pull=GPIO_PULLUP;                                       
+    HAL_GPIO_Init(GPIOE,&GPIO_Initure);
+		
+		GPIO_Initure.Pin=PSHOLD_Pin;
+    GPIO_Initure.Mode=GPIO_MODE_OUTPUT_PP;              
+    GPIO_Initure.Pull=GPIO_NOPULL; 
+		GPIO_Initure.Speed = GPIO_SPEED_FAST;	
+    HAL_GPIO_Init(GPIOE,&GPIO_Initure);
+		
 		
 		/*电池电量检测GPIO*/
 		GPIO_Initure.Pin=Batt_50|Batt_75|Batt_100;

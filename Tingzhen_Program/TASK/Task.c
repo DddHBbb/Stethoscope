@@ -8,7 +8,7 @@
 #include "usb_bsp.h"
 #include "demo.h"
 #include "platform.h"
-
+#include "st25r95_com.h"
 /*开启任务宏定义*/
 #define Creat_Wav_Player
 #define Creat_USB_Transfer
@@ -47,7 +47,7 @@ static rt_thread_t Dispose = RT_NULL;
 static rt_mutex_t USBorAudioUsingSDIO_Mutex = RT_NULL;
 //邮箱句柄
 rt_mailbox_t NFC_TagID_mb = RT_NULL;
-rt_mailbox_t AbortWavplay_mb = RT_NULL;
+//rt_mailbox_t AbortWavplay_mb = RT_NULL;
 rt_mailbox_t BuleTooth_Transfer_mb = RT_NULL;
 rt_mailbox_t NFC_SendMAC_mb = RT_NULL;
 rt_mailbox_t The_Auido_Name_mb = RT_NULL;
@@ -76,9 +76,10 @@ void Wav_Player_Task(void* parameter)
 		//在能检测到NFC标签的情况下才可以播放音频
 		if((rt_mb_recv(NFCTag_CustomID_mb, (rt_uint32_t*)&NFCTag_CustomID_RECV, RT_WAITING_NO)) == RT_EOK)
 		{
+			rt_kprintf("速度2\n");
 			//互斥量，usb和音频播放都需要使用SDIO，为防止冲突只能用一个
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
-			//记录最后一次播放的文件	
+			//记录最后一次播放的文件，相同读卡信息只发一次
 			if((rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFCTag_UID_RECV, RT_WAITING_NO))== RT_EOK)
 			{
 				if(Compare_string((const char*)Last_Audio_Name,(const char*)NFCTag_UID_RECV) != 1)
@@ -90,29 +91,32 @@ void Wav_Player_Task(void* parameter)
 					rt_kprintf("DataToBT=%s\n",DataToBT);
 					Buff_Clear((uint8_t*)DataToBT);
 				}
-			}
+			}		
 			strcpy((char *)&Last_Audio_Name,(const char*)NFCTag_UID_RECV);
 			//接收音频文件名的邮箱，每次只接受一次
 			if((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO))== RT_EOK)
 			{	
 				Show_String(48,36,(uint8_t*)"正在播放");	
-				rt_thread_delay(10);
+				rt_thread_delay(10);//次延时是为了让OLED显示正常
 				//不拿开就循环播放
 				while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
 				{
-					WM8978_Write_Reg(2,0x180);			
+					WM8978_Write_Reg(2,0x180);	//退出低功耗
+					WM8978_HPvol_Set(5,5);
+					WM8978_HPvol_Set(20,20);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量
 					audio_play(The_Auido_Name); 
-					WM8978_Write_Reg(2,0x40);
-					WM8978_HPvol_Set(20,20);
-					rt_thread_delay(1);
-				}		
-				rt_thread_delay(10);
+					WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
+					rt_thread_delay(1);					//必要时切出去执行其他任务
+				}					
 				Show_String(48,36,(uint8_t*)"停止播放");
+				rt_thread_delay(10);//次延时是为了让OLED显示正常
 				rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);
 				Buff_Clear((uint8_t*)The_Auido_Name);
 			}
 			rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
 		}	
+		else
+	  	Last_Audio_Name[0] = '$';//整体播放完成，改变保留信息，以便相同位置得以播放
 		rt_thread_delay(10); //1s
 	}
 }
@@ -146,7 +150,8 @@ void USB_Transfer_Task(void* parameter)
 			while(1)
 			{
 				ChargeDisplay();
-				delay_ms(500); 
+				rt_thread_delay(500); 
+				IWDG_Feed();
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);
@@ -173,8 +178,7 @@ void Dispose_Task(void* parameter)
 	static uint8_t BTS=0;
 
 	while(1)
-	{
-		/*检测不到NFC标签时停止播放*/				
+	{			
 		USART_RX_STA=0;		//清除接受状态，否则接收会出问题
 		/*从蓝牙收到的数据，都在这里处理*/
 		if(!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t*)&Rev_From_BT, RT_WAITING_NO)))
@@ -205,14 +209,12 @@ void Dispose_Task(void* parameter)
 		}
 		if(BTS) BluetoothDisp(1);
 		else		BluetoothDisp(0);
-		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	BattChek();	
-		if((HAL_GPIO_ReadPin(WAKEUP_PORT,WAKEUP_PIN) == GPIO_PIN_RESET))
+		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	BattChek();		
+		//关机检测
+		if((HAL_GPIO_ReadPin(GPIOE,INT_Pin) == GPIO_PIN_RESET))
 		{
-			DISABLE_ALL_SWITCH();
-			delay_ms(1000);//慢点关机，别一轻点就关机		
-			__set_FAULTMASK(1);
-				NVIC_SystemReset();		
-		}	
+			HAL_GPIO_WritePin(GPIOE,PSHOLD_Pin,GPIO_PIN_RESET);
+		}
 		IWDG_Feed();
 		rt_thread_delay(100);
 			
@@ -245,8 +247,13 @@ void NFC_Transfer_Task(void* parameter)
 	ConfigManager_HWInit();//初始化读卡
 	while(1)
 	{
+		/*在NFC读取过程中使用低功耗，会使得读取速度变慢，音频文件无法正常播放，所以得另想它招
+			所以低功耗不出现在此任务中*/
+//		HAL_GPIO_WritePin(nSPI_SS_GPIO_Port,nSPI_SS_Pin,GPIO_PIN_RESET);
 		demoCycle();
 		rt_thread_delay(5); //1ms
+//	 st25r95Idle(0,0,0);
+		
 	}
 }
  /****************************************
@@ -299,7 +306,7 @@ void Mailbox_init(void)
 {
 	 NFCTag_CustomID_mb = rt_mb_create("NFCTag_CustomID_mb",4,RT_IPC_FLAG_FIFO);
 	 NFC_TagID_mb = rt_mb_create("NFC_TagID_mb",4,RT_IPC_FLAG_FIFO);
-	 AbortWavplay_mb = rt_mb_create("AbortWavplay_mb",1,RT_IPC_FLAG_FIFO);
+	// AbortWavplay_mb = rt_mb_create("AbortWavplay_mb",1,RT_IPC_FLAG_FIFO);
 	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",20,RT_IPC_FLAG_FIFO);
 	 NFC_SendMAC_mb = rt_mb_create("NFC_SendMAC_mb",20,RT_IPC_FLAG_FIFO);
  	 The_Auido_Name_mb = rt_mb_create("The_Auido_Name_mb",20,RT_IPC_FLAG_FIFO);

@@ -38,6 +38,7 @@ u8 WM8978_Init(void)
 	WM8978_Write_Reg(49,1<<2);	//R49,SPEAKER BOOST,1.5x 
 	WM8978_Write_Reg(10,1<<3);	//R10,SOFTMUTE关闭,128x采样,最佳SNR 
 	WM8978_Write_Reg(14,1<<3);	//R14,ADC 128x采样率
+	WM8978_Write_Reg(35,0x0E);	//R14,ADC 128x采样率
 	return 0;
 } 
 //WM8978写寄存器

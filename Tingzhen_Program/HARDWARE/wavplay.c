@@ -9,7 +9,7 @@
 /***********************函数声明区*******************************/
 
 /***********************声明返回区*******************************/
-extern rt_mailbox_t AbortWavplay_mb;
+//extern rt_mailbox_t AbortWavplay_mb;
 extern rt_event_t AbortWavplay_Event;
 extern rt_event_t PlayWavplay_Event;
 /***********************全局变量区*******************************/
@@ -209,11 +209,12 @@ u8 wav_play_song(u8* fname)
 				fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);
 				fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);
 				audio_start();  
-				//此循环牵扯数据传输，不宜使用RT组件，保证其数据完整性
+				/*此循环牵扯数据传输，不宜使用RT组件，保证其数据完整性
+					由于系统调度，此死循环不一定为死循环，可能导致播放不完整*/
 				while(1)
 				{ 	
-					rt_event_recv(AbortWavplay_Event,1|2,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Abort_rev);
-					rt_event_recv(PlayWavplay_Event, 1,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Play_rev);		
+					rt_event_recv(AbortWavplay_Event,1|2,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Abort_rev);//几us
+					rt_event_recv(PlayWavplay_Event, 1,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Play_rev);		//几us
 					if(Play_rev == 1)
 					{
 						rt_kprintf("没出去\n");

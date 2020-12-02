@@ -47,6 +47,7 @@
 #include "rfal_nfc.h"
 #include "usart.h"
 #include "main.h"
+#include "st25r95_com.h"
 #if (defined(ST25R3916) || defined(ST25R95)) && RFAL_FEATURE_LISTEN_MODE
 #include "demo_ce.h"
 #endif
@@ -252,7 +253,6 @@ void demoCycle( void )
     uint8_t Flag=0;
 		static uint8_t Count_Num=0;
 		rt_uint32_t Play_rev=0;
-		static uint8_t Prevent_Accidental_Play_Flag=0;
 	
     rfalNfcWorker();                                    /* Run RFAL worker periodically */   
     switch( state )
@@ -300,13 +300,14 @@ void demoCycle( void )
                                 demoP2P( nfcDevice );
                                 break;
                                 
-                            default:
+                            default:															
                                // platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );																
-																ConfigManager_TagHunting(TRACK_ALL);
+																ConfigManager_TagHunting(TRACK_ALL);															
 																rt_event_send(AbortWavplay_Event,2);
 																rt_event_send(PlayWavplay_Event,1);
-																Prevent_Accidental_Play_Flag=1;
 																Count_Num=0;//发送成功，则停止检测 
+//																st25r95Idle(0x64,0x74,0x20);
+//																st25r95Idle(0,0,0);
                                 break;
                         }
                         break;
@@ -386,17 +387,14 @@ void demoCycle( void )
 							}	
 						else 
 						{
-//							if(Prevent_Accidental_Play_Flag == 1)
-//							{
 								//如果连续10次都未检测到，就判定为没检测到
 								Count_Num++;
 								if(Count_Num == 10)
 								{
+									/*检测不到NFC标签时停止播放，这里需了解RTT的事件*/	
 									rt_event_send(AbortWavplay_Event,1);
 									Count_Num=0;
-//									Prevent_Accidental_Play_Flag = 0;
 								}
-//							}
 						}
             break;
 

@@ -2,7 +2,7 @@
 #define	__KEY_H
 
 #define HAL_Key
-#ifdef HAL_Key
+#ifdef  HAL_Key
 
 #include "stm32f4xx.h"
 #define    WAKEUP_PORT        GPIOC			   
