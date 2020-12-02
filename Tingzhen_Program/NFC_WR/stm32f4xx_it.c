@@ -63,9 +63,6 @@ uint32_t nb_ms_elapsed = 0;
 extern UART_HandleTypeDef huart;
 #endif /* CR95HF */
 
-//extern TIM_HandleTypeDef	TimHandleDelay;
-//extern TIM_HandleTypeDef  TimHandleTimeout;
-//extern TIM_HandleTypeDef	TimHandleAppli;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -74,11 +71,6 @@ extern UART_HandleTypeDef huart;
 /**
 * @brief This function handles System tick timer.
 */
-//void SysTick_Handler(void)
-//{
-//  HAL_IncTick();
-//  HAL_SYSTICK_IRQHandler();
-//}
 
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */
@@ -94,8 +86,7 @@ extern UART_HandleTypeDef huart;
 
 void RFTRANS_95HF_IRQ_HANDLER(void)
 {
-//  HAL_GPIO_EXTI_IRQHandler(IRQOUT_RFTRANS_95HF_PIN);
-//  HAL_GPIO_EXTI_IRQHandler(KEY_BUTTON_PIN);
+
 }
 
 /**
@@ -104,16 +95,18 @@ void RFTRANS_95HF_IRQ_HANDLER(void)
  * @retval None
  */
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  if(GPIO_Pin == IRQOUT_RFTRANS_95HF_PIN)
-  {		
-//    if(RF_DataExpected)			
-//      RF_DataReady = true;
-    
-    /* Answer to command ready*/
-  }
-}
+//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+//{
+//  if(GPIO_Pin == IRQOUT_RFTRANS_95HF_PIN)
+//  {		
+
+//  }
+//	if(GPIO_Pin == GPIO_PIN_0)
+//  {		
+//		printf("触发中断\n");
+//  }
+//	printf("触发中断1\n");
+//}
 
 
 /**

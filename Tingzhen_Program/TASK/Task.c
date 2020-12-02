@@ -103,7 +103,7 @@ void Wav_Player_Task(void* parameter)
 				{
 					WM8978_Write_Reg(2,0x180);	//退出低功耗
 					WM8978_HPvol_Set(5,5);
-					WM8978_HPvol_Set(20,20);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量
+	 				WM8978_HPvol_Set(20,20);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量
 					audio_play(The_Auido_Name); 
 					WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
 					rt_thread_delay(1);					//必要时切出去执行其他任务
@@ -151,7 +151,7 @@ void USB_Transfer_Task(void* parameter)
 			{
 				ChargeDisplay();
 				rt_thread_delay(500); 
-				IWDG_Feed();
+//				IWDG_Feed();
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);
@@ -176,9 +176,24 @@ void Dispose_Task(void* parameter)
 	static uint8_t DataToNFC[50];
 	static uint8_t DataToPlayer[100];
 	static uint8_t BTS=0;
-
+	static uint8_t flag=1;
 	while(1)
-	{			
+	{		
+			rt_thread_delay(1000);
+		if(flag==1)
+		{
+			flag=0;
+//			__HAL_RCC_AHB1_FORCE_RESET();
+			SysTick->CTRL = 0x00;//关闭定时器
+			SysTick->VAL = 0x00;//清空val,清空定时器
+			HAL_PWREx_EnableFlashPowerDown();
+			HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_SLEEPENTRY_WFI);
+			Stm32_Clock_Init(384,25,2,8);
+
+//			HAL_PWR_EnableSleepOnExit();
+//			HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON,PWR_SLEEPENTRY_WFI);		
+		}
+		rt_kprintf("醒了\n");
 		USART_RX_STA=0;		//清除接受状态，否则接收会出问题
 		/*从蓝牙收到的数据，都在这里处理*/
 		if(!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t*)&Rev_From_BT, RT_WAITING_NO)))
@@ -210,12 +225,7 @@ void Dispose_Task(void* parameter)
 		if(BTS) BluetoothDisp(1);
 		else		BluetoothDisp(0);
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	BattChek();		
-		//关机检测
-		if((HAL_GPIO_ReadPin(GPIOE,INT_Pin) == GPIO_PIN_RESET))
-		{
-			HAL_GPIO_WritePin(GPIOE,PSHOLD_Pin,GPIO_PIN_RESET);
-		}
-		IWDG_Feed();
+//		IWDG_Feed();
 		rt_thread_delay(100);
 			
 	}

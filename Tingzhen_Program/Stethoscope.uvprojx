@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx,USE_USB_OTG_FS</Define>
               <Undefine></Undefine>
-              <IncludePath>.\CORE;.\FATFS\exfuns;.\FATFS\src\option;.\MALLOC;.\SYSTEM;.\TEXT;.\FATFS\src;.\HALLIB\STM32F4xx_HAL_Driver\Inc;.\HARDWARE\WM8978;.\HARDWARE\W25QXX;.\HARDWARE\SPI;.\HARDWARE\SDIO;.\HARDWARE\SAI;.\HARDWARE;.\HARDWARE\IIC;.\USB\STM32_USB_Device_Library\Class\msc\inc;.\USB\STM32_USB_Device_Library\Core\inc;.\USB\STM32_USB_OTG_Driver\inc;.\USB\USB_APP;.\HARDWARE\OLED;.\NFC\Inc;.\NFC\rfal\Inc;.\NFC\ST25R95;.\NFC_WR\common\inc;.\NFC_WR\CR95HF;.\NFC_WR\Inc;.\NFC_WR\lib_pcd\inc;.\NFC_WR\mcc_src;.\NFC_WR\CR95HF;.\HARDWARE\IWDG;.\HARDWARE\KEY;.\HARDWARE\delay</IncludePath>
+              <IncludePath>.\CORE;.\FATFS\exfuns;.\FATFS\src\option;.\MALLOC;.\SYSTEM;.\TEXT;.\FATFS\src;.\HALLIB\STM32F4xx_HAL_Driver\Inc;.\HARDWARE\WM8978;.\HARDWARE\W25QXX;.\HARDWARE\SPI;.\HARDWARE\SDIO;.\HARDWARE\SAI;.\HARDWARE;.\HARDWARE\IIC;.\USB\STM32_USB_Device_Library\Class\msc\inc;.\USB\STM32_USB_Device_Library\Core\inc;.\USB\STM32_USB_OTG_Driver\inc;.\USB\USB_APP;.\HARDWARE\OLED;.\NFC\Inc;.\NFC\rfal\Inc;.\NFC\ST25R95;.\NFC_WR\common\inc;.\NFC_WR\CR95HF;.\NFC_WR\Inc;.\NFC_WR\lib_pcd\inc;.\NFC_WR\mcc_src;.\NFC_WR\CR95HF;.\HARDWARE\IWDG;.\HARDWARE\KEY;.\HARDWARE\delay;.\HARDWARE\LOW_PWR</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -483,6 +483,11 @@
               <FileName>D_delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\HARDWARE\delay\D_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>low_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HARDWARE\LOW_PWR\low_pwr.c</FilePath>
             </File>
           </Files>
         </Group>
