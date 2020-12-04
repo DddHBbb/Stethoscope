@@ -142,6 +142,7 @@ ReturnCode  demoTransceiveBlocking( uint8_t *txBuf, uint16_t txBufSize, uint8_t 
 extern rt_mailbox_t NFC_SendMAC_mb;
 extern rt_event_t AbortWavplay_Event;
 extern rt_event_t PlayWavplay_Event;
+extern rt_mailbox_t LOW_PWR_mb;
 //extern rt_event_t Prevent_Accidental_Play_Event;
 /*!
  *****************************************************************************
@@ -301,7 +302,8 @@ void demoCycle( void )
                                 break;
                                 
                             default:															
-                               // platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );																
+                               // platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );	
+															  rt_mb_send(LOW_PWR_mb,NULL);
 																ConfigManager_TagHunting(TRACK_ALL);															
 																rt_event_send(AbortWavplay_Event,2);
 																rt_event_send(PlayWavplay_Event,1);

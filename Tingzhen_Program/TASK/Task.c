@@ -22,7 +22,7 @@
 /***********************函数声明区*******************************/
 static void Wav_Player_Task(void* parameter);
 static void USB_Transfer_Task(void* parameter);
-static void OLED_Display_Task(void* parameter);
+//static void OLED_Display_Task(void* parameter);
 static void NFC_Transfer_Task(void* parameter);
 static void Dispose_Task(void* parameter);
 /***********************声明返回区*******************************/
@@ -53,6 +53,7 @@ rt_mailbox_t NFC_SendMAC_mb = RT_NULL;
 rt_mailbox_t The_Auido_Name_mb = RT_NULL;
 rt_mailbox_t NFCTag_CustomID_mb = RT_NULL;
 rt_mailbox_t Loop_PlayBack_mb = RT_NULL;
+rt_mailbox_t LOW_PWR_mb = RT_NULL;
 //事件句柄
 ///rt_event_t Display_NoAudio = RT_NULL;
 rt_event_t AbortWavplay_Event = RT_NULL;
@@ -151,7 +152,6 @@ void USB_Transfer_Task(void* parameter)
 			{
 				ChargeDisplay();
 				rt_thread_delay(500); 
-//				IWDG_Feed();
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);
@@ -176,23 +176,9 @@ void Dispose_Task(void* parameter)
 	static uint8_t DataToNFC[50];
 	static uint8_t DataToPlayer[100];
 	static uint8_t BTS=0;
-	static uint8_t flag=1;
+	
 	while(1)
 	{		
-			rt_thread_delay(1000);
-		if(flag==1)
-		{
-			flag=0;
-//			__HAL_RCC_AHB1_FORCE_RESET();
-			SysTick->CTRL = 0x00;//关闭定时器
-			SysTick->VAL = 0x00;//清空val,清空定时器
-			HAL_PWREx_EnableFlashPowerDown();
-			HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_SLEEPENTRY_WFI);
-			Stm32_Clock_Init(384,25,2,8);
-
-//			HAL_PWR_EnableSleepOnExit();
-//			HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON,PWR_SLEEPENTRY_WFI);		
-		}
 		rt_kprintf("醒了\n");
 		USART_RX_STA=0;		//清除接受状态，否则接收会出问题
 		/*从蓝牙收到的数据，都在这里处理*/
@@ -225,7 +211,6 @@ void Dispose_Task(void* parameter)
 		if(BTS) BluetoothDisp(1);
 		else		BluetoothDisp(0);
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	BattChek();		
-//		IWDG_Feed();
 		rt_thread_delay(100);
 			
 	}
@@ -235,15 +220,15 @@ void Dispose_Task(void* parameter)
   * @param  无
   * @retval 无
   ***************************************/
-void OLED_Display_Task(void* parameter)
-{
-	printf("OLED_Display_Task\n");
-	
-	while(1)
-	{					
-		rt_thread_delay(1000);	
-	}
-}
+//void OLED_Display_Task(void* parameter)
+//{
+//	printf("OLED_Display_Task\n");
+//	
+//	while(1)
+//	{					
+//		rt_thread_delay(1000);	
+//	}
+//}
  /****************************************
   * @brief  NFC连接处理函数
   * @param  无
@@ -261,8 +246,9 @@ void NFC_Transfer_Task(void* parameter)
 			所以低功耗不出现在此任务中*/
 //		HAL_GPIO_WritePin(nSPI_SS_GPIO_Port,nSPI_SS_Pin,GPIO_PIN_RESET);
 		demoCycle();
+//		st25r95Idle(0,0,0);
 		rt_thread_delay(5); //1ms
-//	 st25r95Idle(0,0,0);
+	 
 		
 	}
 }
@@ -314,13 +300,14 @@ void Semaphore_init(void)
   ***************************************/
 void Mailbox_init(void)
 {
-	 NFCTag_CustomID_mb = rt_mb_create("NFCTag_CustomID_mb",4,RT_IPC_FLAG_FIFO);
+	 NFCTag_CustomID_mb = rt_mb_create("NFCTag_CustomID_mb",2,RT_IPC_FLAG_FIFO);
 	 NFC_TagID_mb = rt_mb_create("NFC_TagID_mb",4,RT_IPC_FLAG_FIFO);
 	// AbortWavplay_mb = rt_mb_create("AbortWavplay_mb",1,RT_IPC_FLAG_FIFO);
 	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",20,RT_IPC_FLAG_FIFO);
 	 NFC_SendMAC_mb = rt_mb_create("NFC_SendMAC_mb",20,RT_IPC_FLAG_FIFO);
  	 The_Auido_Name_mb = rt_mb_create("The_Auido_Name_mb",20,RT_IPC_FLAG_FIFO);
 	 Loop_PlayBack_mb = rt_mb_create("Loop_PlayBack_mb",1,RT_IPC_FLAG_FIFO);
+	 LOW_PWR_mb = rt_mb_create("LOW_PWR_mb",1,RT_IPC_FLAG_FIFO);
 }
  /****************************************
   * @brief  事件创建函数 

@@ -26,8 +26,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(GPIO_Pin == GPIO_PIN_0)
   {		
-//		HAL_PWR_DisableSleepOnExit();
+//		HAL_PWR_DisableSleepOnExit();//睡眠模式用
 		printf("触发中断\n");
   }
 	printf("触发中断1\n");
 }
+
+//以下是进入睡眠模式语句
+//			HAL_PWR_EnableSleepOnExit();
+//			HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON,PWR_SLEEPENTRY_WFI);		

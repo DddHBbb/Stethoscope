@@ -322,12 +322,13 @@ void Show_chars(uint8_t x,uint8_t y,uint8_t xend,uint8_t yend,uint8_t chr)
 //str:字符串
 void Show_String(uint8_t x,uint8_t y,uint8_t *str)
 {
-u8 bHz=0;     	//字符或者中文  
-uint8_t size= 12;
-uint8_t xend, yend;
+	rt_enter_critical();
+	u8 bHz=0;     	//字符或者中文  
+	uint8_t size= 12;
+	uint8_t xend, yend;
 	
-xend = (strlen((const char*)str)*14);
-yend = 	y+12;
+	xend = (strlen((const char*)str)*14);
+	yend = 	y+12;
 while(*str!=0)	//数据未结束
 { 
 	if(!bHz)
@@ -353,6 +354,7 @@ while(*str!=0)	//数据未结束
 	}						 
 } 
 OLED_Refresh_Gram();
+rt_exit_critical();
 }
 //画线
 //x1,y1:起点坐标

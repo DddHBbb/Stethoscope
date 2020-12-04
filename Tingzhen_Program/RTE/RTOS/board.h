@@ -36,6 +36,7 @@
 *                               º¯ÊýÉùÃ÷
 *************************************************************************
 */
+void Timer_Init(void);
 void Task_init(void);
 void Semaphore_init(void);
 void Mailbox_init(void);

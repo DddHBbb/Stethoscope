@@ -8,13 +8,13 @@ void PowerOn_Display(void);
 /***********************声明返回区*******************************/
 
 /***********************全局变量区*******************************/
-static rt_thread_t App_Handle = RT_NULL;
 
 int main(void)
 {	
 	ENABLE_ALL_SWITCH();
 	PowerOn_Display();	
 	ALL_Init();
+	Timer_Init();
 	Event_init();
 	Mailbox_init();
 	Semaphore_init();
@@ -39,7 +39,7 @@ void ALL_Init(void)
 			update_font("0:");
 		}
 		delay_ms(2000);  //延时两秒为了让图片显示出来	
-//	  IWDG_Init(IWDG_PRESCALER_64,(500*8));//2s
+//	  IWDG_Init(IWDG_PRESCALER_64,(500*8));//2s  低功耗无法与看门狗共用，可用外部看门狗芯片代替
 		Key_EXTI_Config();
 		printf("done\n");
 }
