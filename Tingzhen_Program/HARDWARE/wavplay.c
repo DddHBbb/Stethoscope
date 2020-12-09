@@ -213,6 +213,7 @@ u8 wav_play_song(u8* fname)
 					由于系统调度，此死循环不一定为死循环，可能导致播放不完整*/
 				while(1)
 				{ 	
+					//上电总会意外的播放，加入此停止事件可修复
 					rt_event_recv(AbortWavplay_Event,1|2,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Abort_rev);//几us
 					rt_event_recv(PlayWavplay_Event, 1,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Play_rev);		//几us
 					if(Play_rev == 1)
@@ -227,8 +228,9 @@ u8 wav_play_song(u8* fname)
 						else 
 							fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
 					}
-					if(Abort_rev == 1)		
+					if(Abort_rev == 1)		//1为停止播放，2|1为不停止
 						break;		
+					//状态清0
 					rt_event_control(AbortWavplay_Event,RT_IPC_CMD_RESET,0);
 					rt_thread_delay(1);
 				}	

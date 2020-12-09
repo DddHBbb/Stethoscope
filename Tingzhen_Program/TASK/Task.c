@@ -15,9 +15,6 @@
 //#define Creat_OLED_Display
 #define Creat_NFC_Transfer
 #define Creat_Dispose
-/*播放状态*/
-#define  PLAYING   0x01
-#define  STOPPING (0x01<<1)
 
 /***********************函数声明区*******************************/
 static void Wav_Player_Task(void* parameter);
@@ -30,6 +27,7 @@ USB_OTG_CORE_HANDLE USB_OTG_dev;
 extern vu8 USB_STATUS_REG;		//USB状态
 extern vu8 bDeviceState;		//USB连接 情况
 extern uint8_t AbortWavplay_Event_Flag;
+extern rt_timer_t LowPWR_timer;
 /***********************全局变量区*******************************/
 static 	char *NFCTag_UID_RECV=NULL;
 static 	char *NFCTag_CustomID_RECV=NULL;
@@ -70,8 +68,8 @@ char dataOut[COM_XFER_SIZE];
   ***************************************/
 void Wav_Player_Task(void* parameter)
 {	
-	static uint8_t DataToBT[17];
-	printf("Wav_Player_Task\n");
+	static uint8_t DataToBT[50];
+	printf("Wav_Player_Task\n"); 
 	while(1)
 	{
 		//在能检测到NFC标签的情况下才可以播放音频
@@ -86,8 +84,9 @@ void Wav_Player_Task(void* parameter)
 				if(Compare_string((const char*)Last_Audio_Name,(const char*)NFCTag_UID_RECV) != 1)
 				{
 					//发送当前位置信息
-					rt_sprintf((char*)DataToBT,"Position:%x%x%x%x\r\n",NFCTag_CustomID_RECV[0],NFCTag_CustomID_RECV[1],NFCTag_CustomID_RECV[2],NFCTag_CustomID_RECV[3]);//11
-					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,sizeof(DataToBT),1000); 
+					rt_sprintf((char*)DataToBT,"Position:%x%x%x%x\r\n",NFCTag_CustomID_RECV[0],NFCTag_CustomID_RECV[1],
+																														 NFCTag_CustomID_RECV[2],NFCTag_CustomID_RECV[3]);//11
+					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),1000); 
 					while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
 					rt_kprintf("DataToBT=%s\n",DataToBT);
 					Buff_Clear((uint8_t*)DataToBT);
@@ -104,7 +103,7 @@ void Wav_Player_Task(void* parameter)
 				{
 					WM8978_Write_Reg(2,0x180);	//退出低功耗
 					WM8978_HPvol_Set(5,5);
-	 				WM8978_HPvol_Set(20,20);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量
+	 				WM8978_HPvol_Set(20,20);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量，然而并没有修改音量的寄存器
 					audio_play(The_Auido_Name); 
 					WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
 					rt_thread_delay(1);					//必要时切出去执行其他任务
@@ -140,6 +139,7 @@ void USB_Transfer_Task(void* parameter)
 		{			
 			rt_thread_suspend(Wav_Player);
 			rt_thread_suspend(NFC_Transfer);
+			rt_timer_stop(LowPWR_timer);
 			SD_Init();
 			OLED_Clear();
 			Show_String(0,0,(uint8_t*)"模拟听诊器");
@@ -159,6 +159,7 @@ void USB_Transfer_Task(void* parameter)
 					rt_free(MSC_BOT_Data);
 					rt_thread_resume(Wav_Player);
 					rt_thread_resume(NFC_Transfer);
+					rt_timer_start(LowPWR_timer);
 					OLED_Clear();
 					BattChek();//防止闪烁
 					Show_String(0,0,(uint8_t*)"模拟听诊器");
@@ -179,7 +180,7 @@ void Dispose_Task(void* parameter)
 	
 	while(1)
 	{		
-		rt_kprintf("醒了\n");
+//		rt_kprintf("醒了\n");
 		USART_RX_STA=0;		//清除接受状态，否则接收会出问题
 		/*从蓝牙收到的数据，都在这里处理*/
 		if(!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t*)&Rev_From_BT, RT_WAITING_NO)))
@@ -244,6 +245,7 @@ void NFC_Transfer_Task(void* parameter)
 	{
 		/*在NFC读取过程中使用低功耗，会使得读取速度变慢，音频文件无法正常播放，所以得另想它招
 			所以低功耗不出现在此任务中*/
+		
 //		HAL_GPIO_WritePin(nSPI_SS_GPIO_Port,nSPI_SS_Pin,GPIO_PIN_RESET);
 		demoCycle();
 //		st25r95Idle(0,0,0);
@@ -300,12 +302,12 @@ void Semaphore_init(void)
   ***************************************/
 void Mailbox_init(void)
 {
-	 NFCTag_CustomID_mb = rt_mb_create("NFCTag_CustomID_mb",2,RT_IPC_FLAG_FIFO);
+	 NFCTag_CustomID_mb = rt_mb_create("NFCTag_CustomID_mb",1,RT_IPC_FLAG_FIFO);
 	 NFC_TagID_mb = rt_mb_create("NFC_TagID_mb",4,RT_IPC_FLAG_FIFO);
 	// AbortWavplay_mb = rt_mb_create("AbortWavplay_mb",1,RT_IPC_FLAG_FIFO);
-	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",20,RT_IPC_FLAG_FIFO);
-	 NFC_SendMAC_mb = rt_mb_create("NFC_SendMAC_mb",20,RT_IPC_FLAG_FIFO);
- 	 The_Auido_Name_mb = rt_mb_create("The_Auido_Name_mb",20,RT_IPC_FLAG_FIFO);
+	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",1,RT_IPC_FLAG_FIFO);
+	 NFC_SendMAC_mb = rt_mb_create("NFC_SendMAC_mb",1,RT_IPC_FLAG_FIFO);
+ 	 The_Auido_Name_mb = rt_mb_create("The_Auido_Name_mb",1,RT_IPC_FLAG_FIFO);
 	 Loop_PlayBack_mb = rt_mb_create("Loop_PlayBack_mb",1,RT_IPC_FLAG_FIFO);
 	 LOW_PWR_mb = rt_mb_create("LOW_PWR_mb",1,RT_IPC_FLAG_FIFO);
 }

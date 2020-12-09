@@ -30,8 +30,7 @@ void ALL_Init(void)
 		WM8978_HPvol_Set(20,20);
 		Movie_Show_Img(32,0,0);
     exfuns_init();		            //为fatfs相关变量申请内存  
-    f_mount(fs[0],"0:",1);          //挂载SD卡 
-//		f_mount(fs[1],"1:",1);          //挂载SPI FLASH. 		     
+    f_mount(fs[0],"0:",1);          //挂载SD卡 	     
 		if(font_init())		
 		{
 			OLED_Clear();

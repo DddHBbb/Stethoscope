@@ -9,7 +9,7 @@ static void LowPWR_timer_callback(void* parameter);
 extern rt_mailbox_t LOW_PWR_mb;
 /***********************全局变量区*******************************/
 
-static rt_timer_t LowPWR_timer=RT_NULL;
+rt_timer_t LowPWR_timer=RT_NULL;
 /****************************************************************/
 static void LowPWR_timer_callback(void* parameter) 
 { 
@@ -17,7 +17,7 @@ static void LowPWR_timer_callback(void* parameter)
 	if((rt_mb_recv(LOW_PWR_mb, RT_NULL, RT_WAITING_NO)) != RT_EOK)
 	{
 		count++;
-		if(count == 10)
+		if(count == 20)
 		{
 			OLED_Clear();
 			Show_String(36,36,(uint8_t*)"低功耗模式");
@@ -42,6 +42,6 @@ static void LowPWR_timer_callback(void* parameter)
 void Timer_Init(void)
 {
 	LowPWR_timer = rt_timer_create("LowPWR_timer",LowPWR_timer_callback,0,1000,RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
-	rt_timer_start(LowPWR_timer);
+//	rt_timer_start(LowPWR_timer);
 	
 }
