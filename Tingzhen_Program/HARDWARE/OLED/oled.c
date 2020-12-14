@@ -456,7 +456,6 @@ void ChargeDisplay(void)
 	uint8_t xpos=106,ypos=2;
 	OLED_Fill(xpos+18,ypos+1,xpos+20,ypos+4,1);
 	OLED_DrawRectangle(xpos,ypos-2,xpos+18,ypos+7);
-	OLED_Refresh_Gram();
 	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
 	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
 	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);

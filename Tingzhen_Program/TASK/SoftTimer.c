@@ -41,7 +41,7 @@ static void LowPWR_timer_callback(void* parameter)
 }
 void Timer_Init(void)
 {
-	LowPWR_timer = rt_timer_create("LowPWR_timer",LowPWR_timer_callback,0,1000,RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
+//	LowPWR_timer = rt_timer_create("LowPWR_timer",LowPWR_timer_callback,0,1000,RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
 //	rt_timer_start(LowPWR_timer);
 	
 }

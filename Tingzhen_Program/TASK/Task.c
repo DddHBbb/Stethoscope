@@ -9,6 +9,8 @@
 #include "demo.h"
 #include "platform.h"
 #include "st25r95_com.h"
+
+
 /*开启任务宏定义*/
 #define Creat_Wav_Player
 #define Creat_USB_Transfer
@@ -75,7 +77,6 @@ void Wav_Player_Task(void* parameter)
 		//在能检测到NFC标签的情况下才可以播放音频
 		if((rt_mb_recv(NFCTag_CustomID_mb, (rt_uint32_t*)&NFCTag_CustomID_RECV, RT_WAITING_NO)) == RT_EOK)
 		{
-			rt_kprintf("速度2\n");
 			//互斥量，usb和音频播放都需要使用SDIO，为防止冲突只能用一个
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
 			//记录最后一次播放的文件，相同读卡信息只发一次
@@ -89,15 +90,15 @@ void Wav_Player_Task(void* parameter)
 					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),1000); 
 					while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
 					rt_kprintf("DataToBT=%s\n",DataToBT);
-					Buff_Clear((uint8_t*)DataToBT);
+					Arry_Clear((uint8_t*)DataToBT,sizeof(DataToBT));
 				}
-			}		
+			}					
 			strcpy((char *)&Last_Audio_Name,(const char*)NFCTag_UID_RECV);
 			//接收音频文件名的邮箱，每次只接受一次
 			if((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO))== RT_EOK)
 			{	
 				Show_String(48,36,(uint8_t*)"正在播放");	
-				rt_thread_delay(10);//次延时是为了让OLED显示正常
+//				rt_thread_delay(10);//次延时是为了让OLED显示正常
 				//不拿开就循环播放
 				while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
 				{
@@ -109,14 +110,16 @@ void Wav_Player_Task(void* parameter)
 					rt_thread_delay(1);					//必要时切出去执行其他任务
 				}					
 				Show_String(48,36,(uint8_t*)"停止播放");
-				rt_thread_delay(10);//次延时是为了让OLED显示正常
+//				rt_thread_delay(10);//此延时是为了让OLED显示正常
 				rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);
-				Buff_Clear((uint8_t*)The_Auido_Name);
+				Pointer_Clear((uint8_t*)The_Auido_Name);
 			}
 			rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
 		}	
 		else
+		{
 	  	Last_Audio_Name[0] = '$';//整体播放完成，改变保留信息，以便相同位置得以播放
+		}
 		rt_thread_delay(10); //1s
 	}
 }
@@ -139,7 +142,7 @@ void USB_Transfer_Task(void* parameter)
 		{			
 			rt_thread_suspend(Wav_Player);
 			rt_thread_suspend(NFC_Transfer);
-			rt_timer_stop(LowPWR_timer);
+//			rt_timer_stop(LowPWR_timer);
 			SD_Init();
 			OLED_Clear();
 			Show_String(0,0,(uint8_t*)"模拟听诊器");
@@ -159,7 +162,7 @@ void USB_Transfer_Task(void* parameter)
 					rt_free(MSC_BOT_Data);
 					rt_thread_resume(Wav_Player);
 					rt_thread_resume(NFC_Transfer);
-					rt_timer_start(LowPWR_timer);
+//					rt_timer_start(LowPWR_timer);
 					OLED_Clear();
 					BattChek();//防止闪烁
 					Show_String(0,0,(uint8_t*)"模拟听诊器");
@@ -207,11 +210,12 @@ void Dispose_Task(void* parameter)
 				if(Rev_From_BT[2] == 'C')				BTS=1;				
 				else if(Rev_From_BT[2] == 'D')	BTS=0;
 			}
-		  Buff_Clear((uint8_t*)Rev_From_BT);//清除数组防止溢出
+		  Pointer_Clear((uint8_t*)Rev_From_BT);//清除数组防止溢出
 		}
-		if(BTS) BluetoothDisp(1);
+		if(BTS) BluetoothDisp(1);//显示蓝牙连接状态
 		else		BluetoothDisp(0);
-		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	BattChek();		
+		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	
+			BattChek();		
 		rt_thread_delay(100);
 			
 	}
@@ -238,7 +242,11 @@ void Dispose_Task(void* parameter)
 void NFC_Transfer_Task(void* parameter)
 {
 	printf("NFC_Transfer_Task\n");	
-	if( !demoIni() )platformLog("Initialization failed..\r\n");	//初始化cr95hf
+	if( !demoIni() )
+	{
+		Show_String(48,36,(uint8_t*)"初始化失败");
+		platformLog("Initialization failed..\r\n");	//初始化cr95hf
+	}
 	HAL_GPIO_WritePin(GPIOE,BUlETHOOTH_SWITCH_PIN,GPIO_PIN_RESET);//开启蓝牙
 	ConfigManager_HWInit();//初始化读卡
 	while(1)

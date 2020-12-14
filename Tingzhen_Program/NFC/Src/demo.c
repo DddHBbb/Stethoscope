@@ -302,7 +302,7 @@ void demoCycle( void )
                                 break;
                                 
                             default:															
-                               // platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );	
+                                platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );	
 															  rt_mb_send(LOW_PWR_mb,NULL);
 																ConfigManager_TagHunting(TRACK_ALL);															
 																rt_event_send(AbortWavplay_Event,2);

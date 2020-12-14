@@ -24,7 +24,7 @@ void ALL_Init(void)
 {
 		OLED_Clear();	
 		delay_ms(100);  //延时100ms为了让各个模块初始化完成
-		W25QXX_Init();				    //初始化W25Q256
+		W25QXX_Init();				    //初始化W25Q128 
 		SPI3_Init();
 		WM8978_Init();				    //初始化WM8978
 		WM8978_HPvol_Set(20,20);
@@ -53,8 +53,7 @@ void PowerOn_Display(void)
 		}		
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_RESET)
 		{
-			ChargeDisplay();
-			delay_ms(500);
+			break;
 		}		
 	}
 }

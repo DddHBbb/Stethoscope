@@ -166,14 +166,20 @@ void USART3_IRQHandler(void)
 
 } 
 
-void Buff_Clear(uint8_t buf[])
+void Arry_Clear(uint8_t buf[],uint8_t len)
 {
-	for(int i=0;i<50;i++)
+	for(int i=0;i<len;i++)
 		{
 			buf[i]=0; 
 		}
 }
-
+void Pointer_Clear(uint8_t *buf)
+{
+	if(buf != RT_NULL)
+	{
+		buf =RT_NULL;
+	}
+}
 
 
 

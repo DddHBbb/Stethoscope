@@ -16,7 +16,7 @@ extern u8 aRxBuffer[RXBUFFERSIZE];//HALø‚USARTΩ” ’Buffer
 
 void uart_init(void);
 uint8_t Compare_string(const char *file_name,const char *str_name);
-void Buff_Clear(uint8_t buf[]);
-
+void Arry_Clear(uint8_t buf[],uint8_t len);
+void Pointer_Clear(uint8_t *buf);
 
 #endif
