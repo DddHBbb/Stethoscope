@@ -146,14 +146,31 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //串口1中断服务程序
 void USART3_IRQHandler(void)                	
 { 
+	uint8_t t=0;
 	HAL_UART_IRQHandler(&UART3_Handler);	//调用HAL库中断处理公用函数
 	while (HAL_UART_GetState(&UART3_Handler) != HAL_UART_STATE_READY);//等待就绪
-	if((UART3_Handler.Instance->CR1 & 0x20)==0)
-	{
-		HAL_UART_Receive_IT(&UART3_Handler,(u8 *)&aRxBuffer,RXBUFFERSIZE);
-	}
-//	while(HAL_UART_Receive_IT(&UART3_Handler, (u8 *)&aRxBuffer, RXBUFFERSIZE) != HAL_OK)//一次处理完成之后，重新开启中断并设置RxXferCount为1
 
+	if((UART3_Handler.Instance->CR1 & 0x20)==0)
+		HAL_UART_Receive_IT(&UART3_Handler,(u8 *)&aRxBuffer,RXBUFFERSIZE);
+	if(__HAL_UART_GET_FLAG(&UART3_Handler, UART_FLAG_ORE) != RESET)
+		{
+			if(UART3_Handler.ErrorCode == HAL_UART_ERROR_ORE)
+			{
+				t= UART3_Handler.Instance->SR;
+				t= UART3_Handler.Instance->DR;
+				printf("发生ORE溢出");
+			}		
+		}
+/*	20201215晚调试中断接收卡死记录：
+		
+		现象：while (HAL_UART_GetState(&UART3_Handler) != HAL_UART_STATE_READY);
+					上述代码getstate返回错误状态导致接收卡死
+		
+	1、最有可能是HAL库的bug，解决方法，注释掉lock和unlock相关代码。
+	2、在发送函数中设置的timeout时间过长，导致新一轮接收来了，但发送还未结束，冲突。
+	3、串口接收邮箱中的发送指针，用完后未指向NULL，导致溢出
+		以上三种可能
+		*/	
 } 
 
 void Arry_Clear(uint8_t buf[],uint8_t len)

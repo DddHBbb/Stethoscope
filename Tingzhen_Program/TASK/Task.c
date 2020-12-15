@@ -98,6 +98,7 @@ void Wav_Player_Task(void* parameter)
 			if((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO))== RT_EOK)
 			{	
 				Show_String(48,36,(uint8_t*)"正在播放");	
+				OLED_Refresh_Gram();
 //				rt_thread_delay(10);//次延时是为了让OLED显示正常
 				//不拿开就循环播放
 				while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
@@ -110,8 +111,8 @@ void Wav_Player_Task(void* parameter)
 					rt_thread_delay(1);					//必要时切出去执行其他任务
 				}		
 //				rt_thread_delay(10);//此延时是为了让OLED显示正常			
-							Show_String(48,36,(uint8_t*)"停止播放");
-
+				Show_String(48,36,(uint8_t*)"停止播放");
+				OLED_Refresh_Gram();
 				rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);                                                                                                                    
 				Pointer_Clear((uint8_t*)The_Auido_Name);
 			}
@@ -138,6 +139,7 @@ void USB_Transfer_Task(void* parameter)
 	Show_String(0,0,(uint8_t*)"模拟听诊器");
 	Show_String(0,12,(uint8_t*)"当前播放：");	
 	Show_String(48,36,(uint8_t*)"停止播放");
+	OLED_Refresh_Gram();
 	while(1)
 	{		
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_RESET)
@@ -145,11 +147,13 @@ void USB_Transfer_Task(void* parameter)
 			rt_thread_suspend(Wav_Player);
 			rt_thread_suspend(NFC_Transfer);
 			rt_timer_stop(LowPWR_timer);
+			__HAL_RCC_RTC_DISABLE();
 			SD_Init();
 			OLED_Clear();
 			Show_String(0,0,(uint8_t*)"模拟听诊器");
 			Show_String(4,12,(uint8_t*)"当前播放：");	
 			Show_String(48,36,(uint8_t*)"USB模式");		
+			OLED_Refresh_Gram();
 			MSC_BOT_Data=(uint8_t *)rt_malloc(MSC_MEDIA_PACKET);			//申请内存
 			USBD_Init(&USB_OTG_dev,USB_OTG_FS_CORE_ID,&USR_desc,&USBD_MSC_cb,&USR_cb);
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
@@ -157,7 +161,7 @@ void USB_Transfer_Task(void* parameter)
 			{
 				ChargeDisplay();
 				IWDG_Feed();
-				rt_thread_delay(500); 
+				rt_thread_delay(200); 
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);
@@ -171,11 +175,12 @@ void USB_Transfer_Task(void* parameter)
 					Show_String(0,0,(uint8_t*)"模拟听诊器");
 					Show_String(4,12,(uint8_t*)"当前播放：");	
 					Show_String(48,36,(uint8_t*)"停止播放");			
+					OLED_Refresh_Gram();
 					break;
 				}
 			}
 		}
-			rt_thread_delay(100);  //1000ms
+			rt_thread_delay(1000);  //1000ms
 	}
 }
 void Dispose_Task(void* parameter)
@@ -213,9 +218,10 @@ void Dispose_Task(void* parameter)
 				if(Rev_From_BT[2] == 'C')				BTS=1;				
 				else if(Rev_From_BT[2] == 'D')	BTS=0;
 			}
-		  Pointer_Clear((uint8_t*)Rev_From_BT);//清除数组防止溢出
-			USART_RX_STA=0;		//清除接受状态，否则接收会出问题
+			USART_RX_STA=0;	//清除接受状态，否则接收会出问题
+		  Pointer_Clear((uint8_t*)Rev_From_BT);//清除指针防止溢出			
 			Arry_Clear(USART_RX_BUF,50);
+
 		}
 		if(BTS) BluetoothDisp(1);//显示蓝牙连接状态
 		else		BluetoothDisp(0);
@@ -260,8 +266,7 @@ void NFC_Transfer_Task(void* parameter)
 		/*在NFC读取过程中使用低功耗，会使得读取速度变慢，音频文件无法正常播放，所以得另想它招
 			所以低功耗不出现在此任务中*/
 		
-//		HAL_GPIO_WritePin(nSPI_SS_GPIO_Port,nSPI_SS_Pin,GPIO_PIN_RESET);
-		
+//		HAL_GPIO_WritePin(nSPI_SS_GPIO_Port,nSPI_SS_Pin,GPIO_PIN_RESET);	
 		demoCycle();
 //		st25r95Idle(0,0,0);
 		rt_thread_delay(5); //1ms
@@ -283,7 +288,7 @@ void Task_init(void)
 	#endif
 	#ifdef  Creat_USB_Transfer
 	/*USB大容量存储任务*/
-	USB_Transfer = rt_thread_create( "USB_Transfer_Task",USB_Transfer_Task,RT_NULL,512,1,20);                 
+	USB_Transfer = rt_thread_create( "USB_Transfer_Task",USB_Transfer_Task,RT_NULL,512,0,20);                 
   if (USB_Transfer != RT_NULL)    rt_thread_startup(USB_Transfer);
 	 #endif
 	#ifdef  Creat_OLED_Display
