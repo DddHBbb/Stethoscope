@@ -108,7 +108,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_GPIO_Init(GPIOB,&GPIO_Initure);	   	//初始化PA10	
 		
 		HAL_NVIC_EnableIRQ(USART3_IRQn);		//使能USART1中断通道
-		HAL_NVIC_SetPriority(USART3_IRQn, 3,3);	//抢占优先级3，子优先级3
+		HAL_NVIC_SetPriority(USART3_IRQn, 0,0);	//抢占优先级3，子优先级3
 
 	}
 
@@ -146,23 +146,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //串口1中断服务程序
 void USART3_IRQHandler(void)                	
 { 
-	u32 timeout=0;
-	u32 maxDelay=0x1FFFF;
-
 	HAL_UART_IRQHandler(&UART3_Handler);	//调用HAL库中断处理公用函数
-	timeout=0;
-    while (HAL_UART_GetState(&UART3_Handler) != HAL_UART_STATE_READY)//等待就绪
+	while (HAL_UART_GetState(&UART3_Handler) != HAL_UART_STATE_READY);//等待就绪
+	if((UART3_Handler.Instance->CR1 & 0x20)==0)
 	{
-			timeout++;////超时处理
-     if(timeout>maxDelay) break;		
+		HAL_UART_Receive_IT(&UART3_Handler,(u8 *)&aRxBuffer,RXBUFFERSIZE);
 	}
-     
-	timeout=0;
-	while(HAL_UART_Receive_IT(&UART3_Handler, (u8 *)&aRxBuffer, RXBUFFERSIZE) != HAL_OK)//一次处理完成之后，重新开启中断并设置RxXferCount为1
-	{
-	 timeout++; //超时处理
-	 if(timeout>maxDelay) break;	
-	}
+//	while(HAL_UART_Receive_IT(&UART3_Handler, (u8 *)&aRxBuffer, RXBUFFERSIZE) != HAL_OK)//一次处理完成之后，重新开启中断并设置RxXferCount为1
 
 } 
 

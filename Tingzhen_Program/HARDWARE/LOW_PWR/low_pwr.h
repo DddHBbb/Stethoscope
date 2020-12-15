@@ -4,7 +4,8 @@
 #include "stm32f4xx.h"
 
 
-void Key_EXTI_Config(void);
+void LOWPWR_EXTI_Config(void);
+void NFC_EXTI_Config(void);
 #endif
 
 

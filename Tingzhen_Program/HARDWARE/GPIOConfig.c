@@ -95,7 +95,7 @@ void ALL_GPIO_init(void)
 		/*Configure GPIO pin : nIRQ_OUT_Pin */
 		GPIO_Initure.Pin = nIRQ_OUT_Pin;
 		GPIO_Initure.Mode = GPIO_MODE_INPUT;
-		GPIO_Initure.Pull = GPIO_NOPULL;
+		GPIO_Initure.Pull = GPIO_PULLUP;
 		HAL_GPIO_Init(nIRQ_OUT_GPIO_Port, &GPIO_Initure);
 
 		GPIO_Initure.Pin =nfc_pwr_Pin;

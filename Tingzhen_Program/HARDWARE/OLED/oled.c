@@ -228,7 +228,7 @@ void OLED_Init(void)
 	GPIO_Initure.Pin=GPIO_PIN_15;         //PA15
 	GPIO_Initure.Mode=GPIO_MODE_OUTPUT_PP;//推挽输出
 	GPIO_Initure.Pull=GPIO_PULLUP;        //上拉
-	GPIO_Initure.Speed=GPIO_SPEED_HIGH;   //高速
+	GPIO_Initure.Speed=GPIO_SPEED_LOW;   //高速
 	HAL_GPIO_Init(GPIOA,&GPIO_Initure);   //初始化
 
 	//PB4,7

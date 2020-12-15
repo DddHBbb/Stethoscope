@@ -47,7 +47,7 @@
 #include "rfal_nfcf.h"
 #include "rfal_rf.h"
 #include "utils.h"
-
+#include "low_pwr.h"
 /*
  ******************************************************************************
  * ENABLE SWITCH
@@ -119,20 +119,24 @@ uint8_t st25r95SPISendReceiveByte(uint8_t data)
     return (received_byte);
 }
 
+// {GPIOB->MODER&=~(3<<(12*2));GPIOB->MODER|=1<<12*2;} 	//PB5输出模式
+
 /*******************************************************************************/
 ReturnCode st25r95SPIPollRead(uint32_t timeout)
 {
     uint32_t timer;
     ReturnCode retCode = ERR_NONE;   
-    
+	
+//    {GPIOB->MODER&=~(3<<(12*2));GPIOB->MODER|=0<<12*2;}	//PB5输入模式
     timer = platformTimerCreate(timeout); 
+	  
     while (platformGpioIsHigh(ST25R95_N_IRQ_OUT_PORT, ST25R95_N_IRQ_OUT_PIN) && (timeout != 0) && !platformTimerIsExpired(timer)) {;}
     
     if (platformGpioIsHigh(ST25R95_N_IRQ_OUT_PORT, ST25R95_N_IRQ_OUT_PIN))
     {
         retCode = ERR_TIMEOUT;
     }
-    
+//    NFC_EXTI_Config();
     return (retCode);
 }
 

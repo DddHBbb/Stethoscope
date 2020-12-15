@@ -27,7 +27,7 @@ void ALL_Init(void)
 		W25QXX_Init();				    //初始化W25Q128 
 		SPI3_Init();
 		WM8978_Init();				    //初始化WM8978
-		WM8978_HPvol_Set(20,20);
+		WM8978_HPvol_Set(40,40);
 		Movie_Show_Img(32,0,0);
     exfuns_init();		            //为fatfs相关变量申请内存  
     f_mount(fs[0],"0:",1);          //挂载SD卡 	     
@@ -38,8 +38,12 @@ void ALL_Init(void)
 			update_font("0:");
 		}
 		delay_ms(2000);  //延时两秒为了让图片显示出来	
-//	  IWDG_Init(IWDG_PRESCALER_64,(500*8));//2s  低功耗无法与看门狗共用，可用外部看门狗芯片代替
-		Key_EXTI_Config();
+	 
+		
+//		NFC_EXTI_Config();
+		LOWPWR_EXTI_Config();
+		RTC_Init();
+		IWDG_Init(IWDG_PRESCALER_64,(500*7));//2s  定时开启喂狗或者可用外部看门狗芯片代替
 		printf("done\n");
 }
 void PowerOn_Display(void)

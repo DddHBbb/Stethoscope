@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx,USE_USB_OTG_FS</Define>
               <Undefine></Undefine>
-              <IncludePath>.\CORE;.\FATFS\exfuns;.\FATFS\src\option;.\MALLOC;.\SYSTEM;.\TEXT;.\FATFS\src;.\HALLIB\STM32F4xx_HAL_Driver\Inc;.\HARDWARE\WM8978;.\HARDWARE\W25QXX;.\HARDWARE\SPI;.\HARDWARE\SDIO;.\HARDWARE\SAI;.\HARDWARE;.\HARDWARE\IIC;.\USB\STM32_USB_Device_Library\Class\msc\inc;.\USB\STM32_USB_Device_Library\Core\inc;.\USB\STM32_USB_OTG_Driver\inc;.\USB\USB_APP;.\HARDWARE\OLED;.\NFC\Inc;.\NFC\rfal\Inc;.\NFC\ST25R95;.\NFC_WR\common\inc;.\NFC_WR\CR95HF;.\NFC_WR\Inc;.\NFC_WR\lib_pcd\inc;.\NFC_WR\mcc_src;.\NFC_WR\CR95HF;.\HARDWARE\IWDG;.\HARDWARE\KEY;.\HARDWARE\delay;.\HARDWARE\LOW_PWR;.\TASK</IncludePath>
+              <IncludePath>.\CORE;.\FATFS\exfuns;.\FATFS\src\option;.\MALLOC;.\SYSTEM;.\TEXT;.\FATFS\src;.\HALLIB\STM32F4xx_HAL_Driver\Inc;.\HARDWARE\WM8978;.\HARDWARE\W25QXX;.\HARDWARE\SPI;.\HARDWARE\SDIO;.\HARDWARE\SAI;.\HARDWARE;.\HARDWARE\IIC;.\USB\STM32_USB_Device_Library\Class\msc\inc;.\USB\STM32_USB_Device_Library\Core\inc;.\USB\STM32_USB_OTG_Driver\inc;.\USB\USB_APP;.\HARDWARE\OLED;.\NFC\Inc;.\NFC\rfal\Inc;.\NFC\ST25R95;.\NFC_WR\common\inc;.\NFC_WR\CR95HF;.\NFC_WR\Inc;.\NFC_WR\lib_pcd\inc;.\NFC_WR\mcc_src;.\NFC_WR\CR95HF;.\HARDWARE\IWDG;.\HARDWARE\KEY;.\HARDWARE\delay;.\HARDWARE\LOW_PWR;.\TASK;.\HARDWARE\RTC</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -445,14 +445,14 @@
               <FilePath>.\HARDWARE\SPI\spi.c</FilePath>
             </File>
             <File>
-              <FileName>sdio_sdcard.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\HARDWARE\SDIO\sdio_sdcard.c</FilePath>
-            </File>
-            <File>
               <FileName>sai.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\HARDWARE\SAI\sai.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdio_sdcard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HARDWARE\SDIO\sdio_sdcard.c</FilePath>
             </File>
             <File>
               <FileName>usart.c</FileName>
@@ -493,6 +493,11 @@
               <FileName>low_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\HARDWARE\LOW_PWR\low_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HARDWARE\RTC\rtc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -673,6 +678,16 @@
               <FileName>stm32f4xx_hal_tim_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_rtc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc_ex.c</FilePath>
             </File>
           </Files>
         </Group>

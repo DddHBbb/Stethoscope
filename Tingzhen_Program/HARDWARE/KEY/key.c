@@ -20,8 +20,22 @@ void Key_GPIO_Config(void)
 			/*¿ª»ú¼ì²â¼ü*/
 		GPIO_Initure.Pin=WAKEUP_PIN;
     GPIO_Initure.Mode=GPIO_MODE_INPUT;              
-    GPIO_Initure.Pull=GPIO_NOPULL;                                       
+    GPIO_Initure.Pull=GPIO_PULLUP;                                       
     HAL_GPIO_Init(WAKEUP_PORT,&GPIO_Initure);	
+		
+//		GPIO_Initure.Pin = GPIO_PIN_1;
+//	  GPIO_Initure.Pull=GPIO_PULLDOWN;
+//  	HAL_GPIO_Init(GPIOB,&GPIO_Initure);	
+//	
+//		GPIO_Initure.Pin = GPIO_PIN_2;
+//  	HAL_GPIO_Init(GPIOB,&GPIO_Initure);	
+//		
+//		GPIO_Initure.Pin = GPIO_PIN_7;
+//  	HAL_GPIO_Init(GPIOE,&GPIO_Initure);
+	
+		
+	
+	
 #else
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
