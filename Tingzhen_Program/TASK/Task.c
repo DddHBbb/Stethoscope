@@ -87,7 +87,7 @@ void Wav_Player_Task(void* parameter)
 					//发送当前位置信息
 					rt_sprintf((char*)DataToBT,"Position:%x%x%x%x\r\n",NFCTag_CustomID_RECV[0],NFCTag_CustomID_RECV[1],
 																														 NFCTag_CustomID_RECV[2],NFCTag_CustomID_RECV[3]);//11
-					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),1000); 
+					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),10); 
 					while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
 					rt_kprintf("DataToBT=%s\n",DataToBT);
 					Arry_Clear((uint8_t*)DataToBT,sizeof(DataToBT));
@@ -99,31 +99,25 @@ void Wav_Player_Task(void* parameter)
 			{	
 				Show_String(48,36,(uint8_t*)"正在播放");	
 				OLED_Refresh_Gram();
-//				rt_thread_delay(10);//次延时是为了让OLED显示正常
 				//不拿开就循环播放
 				while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
 				{
 					WM8978_Write_Reg(2,0x180);	//退出低功耗
-					WM8978_HPvol_Set(5,5);
+					WM8978_HPvol_Set(5,5);			//先设置低音量，再设置高音量防止pop noise，但好像没用
 	 				WM8978_HPvol_Set(40,40);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量，然而并没有修改音量的寄存器
-					audio_play(The_Auido_Name); 
+					audio_play(The_Auido_Name); //开始播放音频文件
 					WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
 					rt_thread_delay(1);					//必要时切出去执行其他任务
 				}		
-//				rt_thread_delay(10);//此延时是为了让OLED显示正常			
 				Show_String(48,36,(uint8_t*)"停止播放");
 				OLED_Refresh_Gram();
 				rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);                                                                                                                    
 				Pointer_Clear((uint8_t*)The_Auido_Name);
 			}
+			Last_Audio_Name[0] = '$';   //整体播放完成，改变保存的信息，以便相同位置得以发送
 			rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
 		}	
-		else
-		{
-	  	Last_Audio_Name[0] = '$';//整体播放完成，改变保留信息，以便相同位置得以播放
-
-		}
-		rt_thread_delay(10); //1s
+		rt_thread_delay(100); //1s
 	}
 }
  /****************************************
@@ -161,7 +155,7 @@ void USB_Transfer_Task(void* parameter)
 			{
 				ChargeDisplay();
 				IWDG_Feed();
-				rt_thread_delay(200); 
+				rt_thread_delay(500); 
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);

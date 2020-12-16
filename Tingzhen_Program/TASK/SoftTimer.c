@@ -24,7 +24,7 @@ static void LowPWR_timer_callback(void* parameter)
 		if(count == TIMEOVER)
 		{
 			rt_kprintf("进入低功耗\n");	
-			count=17;
+//			count=17;
 			IWDG_Feed();
 			__HAL_RCC_RTC_ENABLE();
 			SysTick->CTRL = 0x00;//关闭定时器

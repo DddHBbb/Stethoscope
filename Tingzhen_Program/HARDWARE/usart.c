@@ -53,7 +53,7 @@ void uart_init(void)
 	
 	
 	UART3_Handler.Instance=USART3;					    //USART1
-	UART3_Handler.Init.BaudRate=9600;				    //波特率
+	UART3_Handler.Init.BaudRate=115200;				    //波特率
 	UART3_Handler.Init.WordLength=UART_WORDLENGTH_8B;   //字长为8位数据格式
 	UART3_Handler.Init.StopBits=UART_STOPBITS_1;	    //一个停止位
 	UART3_Handler.Init.Parity=UART_PARITY_NONE;		    //无奇偶校验位
