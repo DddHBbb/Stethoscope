@@ -74,51 +74,57 @@ void Wav_Player_Task(void* parameter)
 	printf("Wav_Player_Task\n"); 
 	while(1)
 	{
-		//在能检测到NFC标签的情况下才可以播放音频
-		if((rt_mb_recv(NFCTag_CustomID_mb, (rt_uint32_t*)&NFCTag_CustomID_RECV, RT_WAITING_NO)) == RT_EOK)
+		//加一层
+		while(1)
 		{
-			//互斥量，usb和音频播放都需要使用SDIO，为防止冲突只能用一个
-			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
-			//记录最后一次播放的文件，相同读卡信息只发一次
-			if((rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFCTag_UID_RECV, RT_WAITING_NO))== RT_EOK)
+			//在能检测到NFC标签的情况下才可以播放音频
+			if((rt_mb_recv(NFCTag_CustomID_mb, (rt_uint32_t*)&NFCTag_CustomID_RECV, RT_WAITING_NO)) == RT_EOK)
 			{
-				if(Compare_string((const char*)Last_Audio_Name,(const char*)NFCTag_UID_RECV) != 1)
+				//互斥量，usb和音频播放都需要使用SDIO，为防止冲突只能用一个
+				rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
+				//记录最后一次播放的文件，相同读卡信息只发一次
+				if((rt_mb_recv(NFC_TagID_mb, (rt_uint32_t*)&NFCTag_UID_RECV, RT_WAITING_NO))== RT_EOK)
 				{
-					//发送当前位置信息
-					rt_sprintf((char*)DataToBT,"Position:%x%x%02x%02x\r\n",NFCTag_CustomID_RECV[0],NFCTag_CustomID_RECV[1],
-																																 NFCTag_CustomID_RECV[2],NFCTag_CustomID_RECV[3]);//11
-					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),100); 
-					while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
-					rt_kprintf("DataToBT=%s\n",DataToBT);
-					Arry_Clear((uint8_t*)DataToBT,sizeof(DataToBT));
+					if(Compare_string((const char*)Last_Audio_Name,(const char*)NFCTag_UID_RECV) != 1)
+					{
+						//发送当前位置信息
+						rt_sprintf((char*)DataToBT,"Position:%x%x%02x%02x\r\n",NFCTag_CustomID_RECV[0],NFCTag_CustomID_RECV[1],
+																																	 NFCTag_CustomID_RECV[2],NFCTag_CustomID_RECV[3]);//11
+						HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),100); 
+						while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
+						rt_kprintf("DataToBT=%s\n",DataToBT);
+						Arry_Clear((uint8_t*)DataToBT,sizeof(DataToBT));
+					}
+				}					
+				strcpy((char *)&Last_Audio_Name,(const char*)NFCTag_UID_RECV);
+				//接收音频文件名的邮箱，每次只接受一次
+				if((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO))== RT_EOK)
+				{	
+					Show_String(48,36,(uint8_t*)"正在播放");	
+					OLED_Refresh_Gram();
+					//不拿开就循环播放
+					while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
+					{
+						WM8978_Write_Reg(2,0x180);	//退出低功耗
+						WM8978_HPvol_Set(5,5);			//先设置低音量，再设置高音量防止pop noise，但好像没用
+						WM8978_HPvol_Set(40,40);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量，然而并没有修改音量的寄存器
+						audio_play(The_Auido_Name); //开始播放音频文件
+						WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
+						rt_thread_delay(1);					//必要时切出去执行其他任务
+					}		
+					Show_String(48,36,(uint8_t*)"停止播放");
+					OLED_Refresh_Gram();
+					rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);                                                                                                                    
+					Pointer_Clear((uint8_t*)The_Auido_Name);
+					break;
 				}
-			}					
-			strcpy((char *)&Last_Audio_Name,(const char*)NFCTag_UID_RECV);
-			//接收音频文件名的邮箱，每次只接受一次
-			if((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO))== RT_EOK)
-			{	
-				Show_String(48,36,(uint8_t*)"正在播放");	
-				OLED_Refresh_Gram();
-				//不拿开就循环播放
-				while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
-				{
-					WM8978_Write_Reg(2,0x180);	//退出低功耗
-					WM8978_HPvol_Set(5,5);			//先设置低音量，再设置高音量防止pop noise，但好像没用
-	 				WM8978_HPvol_Set(40,40);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量，然而并没有修改音量的寄存器
-					audio_play(The_Auido_Name); //开始播放音频文件
-					WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
-					rt_thread_delay(1);					//必要时切出去执行其他任务
-				}		
-				Show_String(48,36,(uint8_t*)"停止播放");
-				OLED_Refresh_Gram();
-				rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);                                                                                                                    
-				Pointer_Clear((uint8_t*)The_Auido_Name);
-			}
-			Last_Audio_Name[0] = '$';   //整体播放完成，改变保存的信息，以便相同位置得以发送
-			rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
-		}	
+				Last_Audio_Name[0] = '$';   //整体播放完成，改变保存的信息，以便相同位置得以发送
+				rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
+			}	
 		
-		rt_thread_delay(100); //1s
+			rt_thread_delay(100); //1s
+		}
+		rt_thread_yield();
 	}
 }
  /****************************************
@@ -213,13 +219,10 @@ void Dispose_Task(void* parameter)
 				if(Rev_From_BT[2] == 'C')				BTS=1;				
 				else if(Rev_From_BT[2] == 'D')	BTS=0;
 			}
-//			USART_RX_STA=0;	//清除接受状态，否则接收会出问题
-//		  Pointer_Clear((uint8_t*)Rev_From_BT);//清除指针防止溢出			
-//			Arry_Clear(USART_RX_BUF,80);
+			USART_RX_STA=0;	//清除接受状态，否则接收会出问题
+		  Pointer_Clear((uint8_t*)Rev_From_BT);//清除指针防止溢出			
+			Arry_Clear(USART_RX_BUF,80);
 		}
-		USART_RX_STA=0;	//清除接受状态，否则接收会出问题
-	  Pointer_Clear((uint8_t*)Rev_From_BT);//清除指针防止溢出		
-		Arry_Clear(USART_RX_BUF,80);
 		if(BTS) BluetoothDisp(1);//显示蓝牙连接状态
 		else		BluetoothDisp(0);
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	
@@ -250,8 +253,8 @@ void Dispose_Task(void* parameter)
 void NFC_Transfer_Task(void* parameter)
 {
 	printf("NFC_Transfer_Task\n");	
-	if( !demoIni() )	
-		platformLog("Initialization failed..\r\n");	//初始化cr95hf
+	if( !demoIni() )	//初始化cr95hf
+		platformLog("Initialization failed..\r\n");	
 	HAL_GPIO_WritePin(GPIOE,BUlETHOOTH_SWITCH_PIN,GPIO_PIN_RESET);//开启蓝牙
 	ConfigManager_HWInit();//初始化读卡
 	while(1)
