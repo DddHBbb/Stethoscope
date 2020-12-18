@@ -74,7 +74,7 @@ void Wav_Player_Task(void* parameter)
 	printf("Wav_Player_Task\n"); 
 	while(1)
 	{
-		//加一层
+		//加一层while是为抬起nfc不再发送位置信息
 		while(1)
 		{
 			//在能检测到NFC标签的情况下才可以播放音频
@@ -140,6 +140,7 @@ void USB_Transfer_Task(void* parameter)
 	Show_String(0,0,(uint8_t*)"模拟听诊器");
 	Show_String(0,12,(uint8_t*)"当前播放：");	
 	Show_String(48,36,(uint8_t*)"停止播放");
+
 	OLED_Refresh_Gram();
 	while(1)
 	{		
@@ -216,8 +217,10 @@ void Dispose_Task(void* parameter)
 			}
 			else if(Rev_From_BT[0] == 'B' || Rev_From_BT[1] == 'T')//蓝牙连接状态
 			{
-				if(Rev_From_BT[2] == 'C')				BTS=1;				
-				else if(Rev_From_BT[2] == 'D')	BTS=0;
+				if(Rev_From_BT[2] == 'C')				
+					BTS=1;				
+				else if(Rev_From_BT[2] == 'D')	
+					BTS=0;
 			}
 			USART_RX_STA=0;	//清除接受状态，否则接收会出问题
 		  Pointer_Clear((uint8_t*)Rev_From_BT);//清除指针防止溢出			

@@ -3,7 +3,7 @@
 #include "board.h"
 #include "st25r95_com.h"
 
-#define TIMEOVER  60
+#define TIMEOVER  20
 /***********************函数声明区*******************************/
 static void LowPWR_timer_callback(void* parameter);
 
@@ -23,9 +23,9 @@ static void LowPWR_timer_callback(void* parameter)
 		{
 			OLED_Clear();
 			rt_kprintf("进入低功耗\n");	
-			Show_String(48,36,(uint8_t*)"睡眠模式");
+			Show_String(36,24,(uint8_t*)"睡眠模式");
+			Show_String(24,36,(uint8_t*)"按返回键退出");
 			OLED_Refresh_Gram();
-			
 //			IWDG_Feed();
 //			__HAL_RCC_RTC_ENABLE();
 			SysTick->CTRL = 0x00;//关闭定时器
