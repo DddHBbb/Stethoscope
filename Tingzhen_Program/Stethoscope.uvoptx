@@ -157,34 +157,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>1628</LineNumber>
+          <LineNumber>338</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134238672</Address>
+          <Address>134246752</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sai.c</Filename>
+          <Filename>.\USB\STM32_USB_Device_Library\Class\msc\src\usbd_msc_core.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Stethoscope\HALLIB/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai.c\1628</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>1646</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134238730</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sai.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\Stethoscope\HALLIB/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai.c\1646</Expression>
+          <Expression>\\Stethoscope\USB/STM32_USB_Device_Library/Class/msc/src/usbd_msc_core.c\338</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -1026,7 +1010,7 @@
 
   <Group>
     <GroupName>USB_OTG</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1070,7 +1054,7 @@
 
   <Group>
     <GroupName>USB_Device</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1162,7 +1146,7 @@
 
   <Group>
     <GroupName>USB_Config</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1666,7 +1650,7 @@
 
   <Group>
     <GroupName>::RTOS</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>1</RteFlg>

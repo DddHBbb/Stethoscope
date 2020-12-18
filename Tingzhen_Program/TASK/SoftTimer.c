@@ -3,7 +3,7 @@
 #include "board.h"
 #include "st25r95_com.h"
 
-#define TIMEOVER  20
+#define TIMEOVER  60
 /***********************º¯ÊýÉùÃ÷Çø*******************************/
 static void LowPWR_timer_callback(void* parameter);
 

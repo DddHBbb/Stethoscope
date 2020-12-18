@@ -4,7 +4,7 @@
 
  
 //最大支持的设备数,3个
-#define STORAGE_LUN_NBR 	3
+#define STORAGE_LUN_NBR 	1
 
 ////////////////////////////自己定义的一个标记USB状态的寄存器///////////////////
 //bit0:表示电脑正在向SD卡写入数据
@@ -112,7 +112,7 @@ int8_t STORAGE_Init (uint8_t lun)
 			res=SD_Init();
 			break; 
 	} 
-	return res; 
+	return res-2; 
 } 
 
 //获取存储设备的容量和块大小
@@ -133,7 +133,7 @@ int8_t STORAGE_GetCapacity (uint8_t lun, uint32_t *block_num, uint32_t *block_si
 //			*block_size=512;  
 //			*block_num=nand_dev.valid_blocknum*nand_dev.block_pagenum*nand_dev.page_mainsize/512;
 //  			break;
-		case 2://SD卡
+		case 0://SD卡
 			*block_size=512;  
 			*block_num=SDCardInfo.CardCapacity/512; 
 			break; 
@@ -179,7 +179,7 @@ int8_t STORAGE_Read (uint8_t lun,uint8_t *buf,uint32_t blk_addr,uint16_t blk_len
 //		case 1://NAND FLASH
 //			res=FTL_ReadSectors(buf,blk_addr,512,blk_len);
 //			break;
-		case 2://SD卡
+		case 0://SD卡
 			res=SD_ReadDisk(buf,blk_addr,blk_len);
 			break; 
 	} 
@@ -208,7 +208,7 @@ int8_t STORAGE_Write (uint8_t lun,uint8_t *buf,uint32_t blk_addr,uint16_t blk_le
 //		case 1://NAND FLASH
 //			res=FTL_WriteSectors(buf,blk_addr,512,blk_len);
 //			break;
-		case 2://SD卡
+		case 0://SD卡
 			res=SD_WriteDisk(buf,blk_addr,blk_len);
 			break; 
 	}  
@@ -223,8 +223,10 @@ int8_t STORAGE_Write (uint8_t lun,uint8_t *buf,uint32_t blk_addr,uint16_t blk_le
 //返回值:支持的逻辑单元个数-1
 int8_t STORAGE_GetMaxLun (void)
 {
-	if(SDCardInfo.CardCapacity)return STORAGE_LUN_NBR-1;
-	else return STORAGE_LUN_NBR-2;
+//	if(SDCardInfo.CardCapacity)return STORAGE_LUN_NBR-1;
+//	else return STORAGE_LUN_NBR-2;
+	
+	return STORAGE_LUN_NBR-1;
 }
 
 
