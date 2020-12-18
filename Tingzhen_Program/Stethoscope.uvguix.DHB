@@ -3606,7 +3606,7 @@
       <ActiveTab>8</ActiveTab>
       <Doc>
         <Name>.\main.c</Name>
-        <ColumnNumber>6</ColumnNumber>
+        <ColumnNumber>10</ColumnNumber>
         <TopLine>27</TopLine>
         <CurrentLine>28</CurrentLine>
         <Folding>1</Folding>
@@ -3687,7 +3687,7 @@
       </Doc>
       <Doc>
         <Name>.\HARDWARE\wavplay.c</Name>
-        <ColumnNumber>27</ColumnNumber>
+        <ColumnNumber>35</ColumnNumber>
         <TopLine>180</TopLine>
         <CurrentLine>193</CurrentLine>
         <Folding>1</Folding>
@@ -3750,7 +3750,7 @@
       </Doc>
       <Doc>
         <Name>D:\FakeC\Tingzhen_Version\Tingzhen_Program\FATFS\src\ff.h</Name>
-        <ColumnNumber>20</ColumnNumber>
+        <ColumnNumber>26</ColumnNumber>
         <TopLine>117</TopLine>
         <CurrentLine>139</CurrentLine>
         <Folding>1</Folding>
@@ -3768,7 +3768,7 @@
       </Doc>
       <Doc>
         <Name>.\TASK\SoftTimer.c</Name>
-        <ColumnNumber>2</ColumnNumber>
+        <ColumnNumber>7</ColumnNumber>
         <TopLine>1</TopLine>
         <CurrentLine>34</CurrentLine>
         <Folding>1</Folding>
@@ -3849,7 +3849,7 @@
       </Doc>
       <Doc>
         <Name>.\HARDWARE\OLED\oled.c</Name>
-        <ColumnNumber>10</ColumnNumber>
+        <ColumnNumber>8</ColumnNumber>
         <TopLine>47</TopLine>
         <CurrentLine>72</CurrentLine>
         <Folding>1</Folding>
