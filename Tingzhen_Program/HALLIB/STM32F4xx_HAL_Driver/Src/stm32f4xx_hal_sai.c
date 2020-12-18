@@ -1638,7 +1638,7 @@ static HAL_StatusTypeDef SAI_Disable(SAI_HandleTypeDef *hsai)
       hsai->ErrorCode |= HAL_SAI_ERROR_TIMEOUT;
       
       status = HAL_TIMEOUT;
-      
+      break;
       /* Change the SAI state */
       HAL_SAI_ErrorCallback(hsai);
     }

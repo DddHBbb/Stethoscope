@@ -33,6 +33,7 @@ u8 USART_RX_BUF[USART_REC_LEN];     //接收缓冲,最大USART_REC_LEN个字节.
 u16 USART_RX_STA=0;       //接收状态标记	
 
 u8 aRxBuffer[RXBUFFERSIZE];//HAL库使用的串口接收缓冲
+volatile u8 aRxBuffer1[2];
 UART_HandleTypeDef UART1_Handler; //UART句柄
 UART_HandleTypeDef UART3_Handler; //UART句柄
 
@@ -50,7 +51,7 @@ void uart_init(void)
 	UART1_Handler.Init.Mode=UART_MODE_TX_RX;		    //收发模式
 	UART1_Handler.Init.OverSampling = UART_OVERSAMPLING_16;
 	HAL_UART_Init(&UART1_Handler);					    //HAL_UART_Init()会使能UART1
-	
+	HAL_UART_Receive_IT(&UART1_Handler, (uint8_t *)&aRxBuffer1, 2);//该函数会开启接收中断：标志位UART_IT_RXNE，并且设置接收缓冲以及接收缓冲接收最大数据量
 	
 	UART3_Handler.Instance=USART3;					    //USART1
 	UART3_Handler.Init.BaudRate=115200;				    //波特率
@@ -90,6 +91,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
 		GPIO_Initure.Pin=GPIO_PIN_10;			//PA10
 		HAL_GPIO_Init(GPIOA,&GPIO_Initure);	   	//初始化PA10
+		
+		HAL_NVIC_SetPriority(USART1_IRQn, 1, 0);
+		HAL_NVIC_EnableIRQ(USART1_IRQn);
 	}
 	if(huart->Instance==USART3)//如果是串口1，进行串口1 MSP初始化
 	{	
@@ -109,9 +113,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		
 		HAL_NVIC_EnableIRQ(USART3_IRQn);		//使能USART1中断通道
 		HAL_NVIC_SetPriority(USART3_IRQn, 0,0);	//抢占优先级3，子优先级3
-
 	}
-
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -146,12 +148,34 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //串口1中断服务程序
 void USART3_IRQHandler(void)                	
 { 
+	uint32_t timeout=0;
+	uint32_t maxDelay=0xFFFF;
 	uint8_t t=0;
+	
 	HAL_UART_IRQHandler(&UART3_Handler);	//调用HAL库中断处理公用函数
-	while (HAL_UART_GetState(&UART3_Handler) != HAL_UART_STATE_READY);//等待就绪
-
-	if((UART3_Handler.Instance->CR1 & 0x20)==0)
-		HAL_UART_Receive_IT(&UART3_Handler,(u8 *)&aRxBuffer,RXBUFFERSIZE);
+//	while (HAL_UART_GetState(&UART3_Handler) != HAL_UART_STATE_READY)//等待就绪
+//	{		
+////		t= UART3_Handler.Instance->SR;
+////		t= UART3_Handler.Instance->DR;
+////		printf("发生ORE溢出\n");
+//		printf("UART3_Handler.State = %x\n",UART3_Handler.State);
+//		UART3_Handler.State = HAL_UART_STATE_READY;
+//		__HAL_UNLOCK(&UART3_Handler);
+////	 __HAL_UART_CLEAR_FLAG(&UART3_Handler,UART_FLAG_RXNE);
+////	 timeout++; //超时处理
+////	 if(timeout>maxDelay) break;	
+//	}
+	timeout=0;
+	while(HAL_UART_Receive_IT(&UART3_Handler, (uint8_t *)&aRxBuffer, RXBUFFERSIZE) != HAL_OK)//一次处理完成之后，重新开启中断并设置RxXferCount为1
+	{
+		printf("UART3_Handler.State = %x\n",UART3_Handler.State);
+		UART3_Handler.State = HAL_UART_STATE_READY;
+		__HAL_UNLOCK(&UART3_Handler);
+	 timeout++; //超时处理
+	 if(timeout>maxDelay) break;	
+	}
+//	if((UART3_Handler.Instance->CR1 & 0x20)==0)
+//		HAL_UART_Receive_IT(&UART3_Handler,(u8 *)&aRxBuffer,RXBUFFERSIZE);
 	if(__HAL_UART_GET_FLAG(&UART3_Handler, UART_FLAG_ORE) != RESET)
 		{
 			if(UART3_Handler.ErrorCode == HAL_UART_ERROR_ORE)
@@ -170,9 +194,27 @@ void USART3_IRQHandler(void)
 	2、在发送函数中设置的timeout时间过长，导致新一轮接收来了，但发送还未结束，冲突。
 	3、串口接收邮箱中的发送指针，用完后未指向NULL，导致溢出
 		以上三种可能
-		*/	
+*/	
 } 
-
+void USART1_IRQHandler(void)                	
+{ 
+	uint32_t timeout=0;
+	uint32_t maxDelay=0x1FFFF;
+	
+	HAL_UART_IRQHandler(&UART1_Handler);	//调用HAL库中断处理公用函数
+	timeout=0;
+  while (HAL_UART_GetState(&UART1_Handler) != HAL_UART_STATE_READY)//等待就绪
+	{
+		timeout++;////超时处理
+    if(timeout>maxDelay) break;		
+	}   
+	timeout=0;
+	while(HAL_UART_Receive_IT(&UART1_Handler, (uint8_t *)&aRxBuffer1, 2) != HAL_OK)//一次处理完成之后，重新开启中断并设置RxXferCount为1
+	{
+	  timeout++; //超时处理
+	  if(timeout>maxDelay) break;	
+	}
+}
 void Arry_Clear(uint8_t buf[],uint8_t len)
 {
 	for(int i=0;i<len;i++)
@@ -182,6 +224,10 @@ void Arry_Clear(uint8_t buf[],uint8_t len)
 }
 void Pointer_Clear(uint8_t *buf)
 {
+	for(int i=0;i<80;i++)
+		{
+			buf[i]=0; 
+		}
 	if(buf != RT_NULL)
 	{
 		buf =RT_NULL;

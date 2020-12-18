@@ -85,9 +85,9 @@ void Wav_Player_Task(void* parameter)
 				if(Compare_string((const char*)Last_Audio_Name,(const char*)NFCTag_UID_RECV) != 1)
 				{
 					//发送当前位置信息
-					rt_sprintf((char*)DataToBT,"Position:%x%x%x%x\r\n",NFCTag_CustomID_RECV[0],NFCTag_CustomID_RECV[1],
-																														 NFCTag_CustomID_RECV[2],NFCTag_CustomID_RECV[3]);//11
-					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),10); 
+					rt_sprintf((char*)DataToBT,"Position:%x%x%02x%02x\r\n",NFCTag_CustomID_RECV[0],NFCTag_CustomID_RECV[1],
+																																 NFCTag_CustomID_RECV[2],NFCTag_CustomID_RECV[3]);//11
+					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),100); 
 					while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
 					rt_kprintf("DataToBT=%s\n",DataToBT);
 					Arry_Clear((uint8_t*)DataToBT,sizeof(DataToBT));
@@ -117,6 +117,7 @@ void Wav_Player_Task(void* parameter)
 			Last_Audio_Name[0] = '$';   //整体播放完成，改变保存的信息，以便相同位置得以发送
 			rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
 		}	
+		
 		rt_thread_delay(100); //1s
 	}
 }
@@ -141,7 +142,7 @@ void USB_Transfer_Task(void* parameter)
 			rt_thread_suspend(Wav_Player);
 			rt_thread_suspend(NFC_Transfer);
 			rt_timer_stop(LowPWR_timer);
-			__HAL_RCC_RTC_DISABLE();
+//			__HAL_RCC_RTC_DISABLE();
 			SD_Init();
 			OLED_Clear();
 			Show_String(0,0,(uint8_t*)"模拟听诊器");
@@ -154,7 +155,8 @@ void USB_Transfer_Task(void* parameter)
 			while(1)
 			{
 				ChargeDisplay();
-				IWDG_Feed();
+				OLED_Refresh_Gram();
+//				IWDG_Feed();
 				rt_thread_delay(500); 
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
@@ -186,7 +188,6 @@ void Dispose_Task(void* parameter)
 	while(1)
 	{		
 //		rt_kprintf("醒了\n");
-		
 		/*从蓝牙收到的数据，都在这里处理*/
 		if(!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t*)&Rev_From_BT, RT_WAITING_NO)))
 		{
@@ -212,18 +213,19 @@ void Dispose_Task(void* parameter)
 				if(Rev_From_BT[2] == 'C')				BTS=1;				
 				else if(Rev_From_BT[2] == 'D')	BTS=0;
 			}
-			USART_RX_STA=0;	//清除接受状态，否则接收会出问题
-		  Pointer_Clear((uint8_t*)Rev_From_BT);//清除指针防止溢出			
-			Arry_Clear(USART_RX_BUF,50);
-
+//			USART_RX_STA=0;	//清除接受状态，否则接收会出问题
+//		  Pointer_Clear((uint8_t*)Rev_From_BT);//清除指针防止溢出			
+//			Arry_Clear(USART_RX_BUF,80);
 		}
+		USART_RX_STA=0;	//清除接受状态，否则接收会出问题
+	  Pointer_Clear((uint8_t*)Rev_From_BT);//清除指针防止溢出		
+		Arry_Clear(USART_RX_BUF,80);
 		if(BTS) BluetoothDisp(1);//显示蓝牙连接状态
 		else		BluetoothDisp(0);
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	
 			BattChek();		
-		IWDG_Feed();
-		rt_thread_delay(100);
-			
+//		IWDG_Feed();
+		rt_thread_delay(1000);
 	}
 }
  /****************************************
@@ -248,11 +250,8 @@ void Dispose_Task(void* parameter)
 void NFC_Transfer_Task(void* parameter)
 {
 	printf("NFC_Transfer_Task\n");	
-	if( !demoIni() )
-	{
-		Show_String(48,36,(uint8_t*)"初始化失败");
+	if( !demoIni() )	
 		platformLog("Initialization failed..\r\n");	//初始化cr95hf
-	}
 	HAL_GPIO_WritePin(GPIOE,BUlETHOOTH_SWITCH_PIN,GPIO_PIN_RESET);//开启蓝牙
 	ConfigManager_HWInit();//初始化读卡
 	while(1)
@@ -275,6 +274,7 @@ void NFC_Transfer_Task(void* parameter)
   ***************************************/
 void Task_init(void)
 {
+	
 	#ifdef  Creat_Wav_Player
 	/*音乐播放器任务*/
 	Wav_Player = rt_thread_create( "Wav_Player_Task",Wav_Player_Task,RT_NULL,2048,1,100);                                   
@@ -317,7 +317,7 @@ void Semaphore_init(void)
 void Mailbox_init(void)
 {
 	 NFCTag_CustomID_mb = rt_mb_create("NFCTag_CustomID_mb",1,RT_IPC_FLAG_FIFO);
-	 NFC_TagID_mb = rt_mb_create("NFC_TagID_mb",4,RT_IPC_FLAG_FIFO);
+	 NFC_TagID_mb = rt_mb_create("NFC_TagID_mb",1,RT_IPC_FLAG_FIFO);
 	// AbortWavplay_mb = rt_mb_create("AbortWavplay_mb",1,RT_IPC_FLAG_FIFO);
 	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",1,RT_IPC_FLAG_FIFO);
 	 NFC_SendMAC_mb = rt_mb_create("NFC_SendMAC_mb",1,RT_IPC_FLAG_FIFO);

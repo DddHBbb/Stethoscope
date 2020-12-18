@@ -119,6 +119,11 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
+          <Key>DLGUARM</Key>
+          <Name></Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
           <Key>DLGDARM</Key>
           <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(1012=-1,-1,-1,-1,0)</Name>
         </SetRegEntry>
@@ -139,13 +144,8 @@
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>DLGUARM</Key>
-          <Name>d</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
           <Key>JL2CM3</Key>
-          <Name>-U59408185 -O78 -S6 -ZTIFSpeedSel500 -A0 -C0 -JU1 -JI-JP0 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8001 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_512.FLM -FS08000000 -FL080000 -FP0($$Device:STM32F429VETx$CMSIS\Flash\STM32F4xx_512.FLM)</Name>
+          <Name>-U4294967295 -O78 -S6 -ZTIFSpeedSel500 -A0 -C0 -JU1 -JI-JP0 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8001 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_512.FLM -FS08000000 -FL080000 -FP0($$Device:STM32F429VETx$CMSIS\Flash\STM32F4xx_512.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -157,34 +157,34 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>129</LineNumber>
+          <LineNumber>1628</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134237748</Address>
+          <Address>134238672</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\HARDWARE\usart.c</Filename>
+          <Filename>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sai.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Stethoscope\HARDWARE/usart.c\129</Expression>
+          <Expression>\\Stethoscope\HALLIB/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai.c\1628</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>119</LineNumber>
+          <LineNumber>1646</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134237692</Address>
+          <Address>134238730</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\HARDWARE\usart.c</Filename>
+          <Filename>.\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sai.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Stethoscope\HARDWARE/usart.c\119</Expression>
+          <Expression>\\Stethoscope\HALLIB/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai.c\1646</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -196,7 +196,7 @@
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>huart-&gt;State</ItemText>
+          <ItemText>UART3_Handler.State</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
@@ -206,17 +206,17 @@
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>DataToBT</ItemText>
+          <ItemText>HAL_UART_GetState(&amp;UART3_Handler)</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Last_Audio_Name</ItemText>
+          <ItemText>Rev_From_BT</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>NFCTag_UID_RECV</ItemText>
+          <ItemText>USART_RX_BUF</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
@@ -236,7 +236,27 @@
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Rev_From_BT[0]</ItemText>
+          <ItemText>DataToPlayer</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Wav_Player-&gt;error</ItemText>
+        </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Wav_Player-&gt;stat</ItemText>
+        </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Dispose-&gt;error</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Dispose-&gt;stat</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

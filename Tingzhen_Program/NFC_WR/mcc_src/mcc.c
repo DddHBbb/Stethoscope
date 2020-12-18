@@ -129,6 +129,7 @@ extern ISO14443A_CARD 	ISO14443A_Card;
 extern rt_mailbox_t NFCTag_CustomID_mb;
 //extern rt_mailbox_t AbortWavplay_mb;
 extern rt_mailbox_t Loop_PlayBack_mb;
+extern volatile u8 aRxBuffer1[2];
 /*
  ******************************************************************************
  * LOCAL FUNCTION PROTOTYPES
@@ -585,6 +586,7 @@ ReturnCode MifareHalt(uint8_t *response)
 }
 extern rt_mailbox_t NFC_TagID_mb;
 extern rfalNfcDevice *nfcDevice;
+//#define WRITE
 ReturnCode MifareTest(void)
 {
 	uint16_t *responseLength=NULL;
@@ -592,8 +594,9 @@ ReturnCode MifareTest(void)
 	static char temp[20];
 	ReturnCode err=0;
 	//uint8_t	txData[16] = {0x00,0x11,0x22,0x33,0x66,0x66,0x66,0x66,0x66,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
-	//uint8_t	txData[16] = {0x24,0x27,0x00,0x01};
-	
+	volatile uint8_t	txData[] = {0x24,0x27,0x00,0x01};
+	static volatile uint16_t num=0;
+	static volatile uint16_t num1=0;
 	uint8_t key_A[6] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 	uint8_t block=0x06;
 	/* Mifaire read block trial.*/
@@ -601,6 +604,7 @@ ReturnCode MifareTest(void)
   /* Configure demoboard for MiFare. */
   err = mccInitialize();
 	err=MifareAuthentication(MCC_AUTH_KEY_A,key_A,block);		
+	
 	/* MiFare read block command. */
 	if (ERR_NONE == err)	
 	{	
@@ -615,16 +619,27 @@ ReturnCode MifareTest(void)
 	rt_mb_send(NFC_TagID_mb,(rt_uint32_t)hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ));
 //	rt_mb_send(AbortWavplay_mb,Continue_Singnal);
 	rt_mb_send(Loop_PlayBack_mb,Continue_Singnal);
-//	rt_kprintf("速度\n");
-//	memcpy(txData, response, 16);
-//	txData[1]++;
-//	if (ERR_NONE == err)	
-//	{
-//		err = MifareWrite(block, txData);
-//	}
-//	if (ERR_NONE == err)	
-//	{	
-//		err = MifareHalt(response);
-//	}
+	#ifdef WRITE
+	num=aRxBuffer1[0];
+	num1=aRxBuffer1[1];
+	txData[2] = num;
+	txData[3] = num1;
+	rt_kprintf("txData[2]=%x\r\n",txData[2]);
+	rt_kprintf("txData[3]=%x\r\n",txData[3]);
+	
+	if (ERR_NONE == err)	
+	{
+		err = MifareWrite(block, (uint8_t*)txData);
+	}
+	if(ERR_NONE == err)
+	{
+		rt_kprintf("写入成功\r\n");
+	}
+	else
+	{
+		rt_kprintf("写入失败\r\n");	
+	}
+	
+	#endif
 	return err;
 }

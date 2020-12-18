@@ -65,7 +65,8 @@ void OLED_Refresh_Gram(void)
 		OLED_WR_Byte (0xb0+i,OLED_CMD);    //设置页地址（0~7）
 		OLED_WR_Byte (0x00,OLED_CMD);      //设置显示位置—列低地址
 		OLED_WR_Byte (0x10,OLED_CMD);      //设置显示位置—列高地址   
-		for(n=0;n<128;n++)OLED_WR_Byte(OLED_GRAM[n][i],OLED_DATA); 
+		for(n=0;n<128;n++)
+			OLED_WR_Byte(OLED_GRAM[n][i],OLED_DATA); 
 	}   
 }
 //向SSD1306写入一个字节。
@@ -146,26 +147,26 @@ void OLED_ShowChar(u8 x,u8 y,u8 chr,u8 size,u8 mode)
 	u8 y0=y;
 	u8 csize=(size/8+((size%8)?1:0))*(size/2);		//得到字体一个字符对应点阵集所占的字节数
 	chr=chr-' ';//得到偏移后的值		 
-    for(t=0;t<csize;t++)
-    {   
-		if(size==12)temp=asc2_1206[chr][t]; 	 	//调用1206字体
-		else if(size==16)temp=asc2_1608[chr][t];	//调用1608字体
-		else if(size==24)temp=asc2_2412[chr][t];	//调用2412字体
-		else return;								//没有的字库
-        for(t1=0;t1<8;t1++)
+	for(t=0;t<csize;t++)
+	{   
+	if(size==12)temp=asc2_1206[chr][t]; 	 	//调用1206字体
+	else if(size==16)temp=asc2_1608[chr][t];	//调用1608字体
+	else if(size==24)temp=asc2_2412[chr][t];	//调用2412字体
+	else return;								//没有的字库
+			for(t1=0;t1<8;t1++)
+	{
+		if(temp&0x80)OLED_DrawPoint(x,y,mode);
+		else OLED_DrawPoint(x,y,!mode);
+		temp<<=1;
+		y++;
+		if((y-y0)==size)
 		{
-			if(temp&0x80)OLED_DrawPoint(x,y,mode);
-			else OLED_DrawPoint(x,y,!mode);
-			temp<<=1;
-			y++;
-			if((y-y0)==size)
-			{
-				y=y0;
-				x++;
-				break;
-			}
-		}  	 
-    }          
+			y=y0;
+			x++;
+			break;
+		}
+	}  	 
+	}          
 }
 //m^n函数
 u32 mypow(u8 m,u8 n)
@@ -458,7 +459,6 @@ void ChargeDisplay(void)
 	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
 	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
 	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-	OLED_Refresh_Gram();
 	
 	if(!HAL_GPIO_ReadPin(GPIOD, Batt_25))
 	{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_50))
@@ -520,7 +520,6 @@ void ChargeDisplay(void)
 	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
 	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
 	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-	OLED_Refresh_Gram();
 }
 //这两个参数定义动画每帧的长宽。
 #define MOVIE_XSIZE_1	64

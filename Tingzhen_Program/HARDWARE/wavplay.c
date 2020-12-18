@@ -47,7 +47,7 @@ void audio_play(char *file_name)
 	pname = rt_malloc(_MAX_LFN*2+1); 
 	strcpy((char*)pname,"0:/SYSTEM/MUSIC/");						//复制路径(目录)
 	strcat((char*)pname,file_name);
-	rt_kprintf("pname = %s\n",pname);
+//	rt_kprintf("pname = %s\n",pname);
 	wav_play_song(pname); 			 		//播放这个音频文件			
 	rt_free(pname);
 } 

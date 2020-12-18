@@ -1,6 +1,6 @@
 #include "rtc.h"
 #include "rtthread.h"
-
+#include "iwdg.h"
 RTC_HandleTypeDef RTC_Handler;  //RTC句柄
 
 void RTC_Init(void)
@@ -37,7 +37,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
     __HAL_RCC_RTC_ENABLE();//RTC时钟使能
 	
 		__HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(&RTC_Handler, RTC_FLAG_WUTF);//清除RTC WAKE UP的标志
-		HAL_RTCEx_SetWakeUpTimer_IT(&RTC_Handler,0,RTC_WAKEUPCLOCK_CK_SPRE_16BITS);    //设置重装载值和时钟 
+		HAL_RTCEx_SetWakeUpTimer_IT(&RTC_Handler,3,RTC_WAKEUPCLOCK_CK_SPRE_16BITS);    //设置重装载值和时钟 
     HAL_NVIC_SetPriority(RTC_WKUP_IRQn,0x09,0); //抢占优先级1,子优先级2
     HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
 //	  __HAL_RCC_RTC_DISABLE();
@@ -52,7 +52,34 @@ void RTC_WKUP_IRQHandler(void)
 void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
 {
     rt_kprintf("RTC中断\n");
+//		IWDG_Feed();
+//		rt_kprintf("RTC进入低功耗\n");
+//		SysTick->CTRL = 0x00;//关闭定时器
+//		SysTick->VAL = 0x00;//清空val,清空定时器
+//		HAL_PWREx_EnableFlashPowerDown();
+//		HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_SLEEPENTRY_WFI);
+//		Stm32_Clock_Init(384,25,2,8);
+//		rt_kprintf("RTC退出低功耗\n");
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

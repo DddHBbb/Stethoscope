@@ -7,7 +7,7 @@
 #include "RTE_Components.h"
 
 #if defined(RTE_USING_FINSH)
-#define RT_USING_FINSH
+//#define RT_USING_FINSH
 #endif //RTE_USING_FINSH
 
 #endif //(__CC_ARM) || (__CLANG_ARM)

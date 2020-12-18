@@ -29,6 +29,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   {		
 //		HAL_PWR_DisableSleepOnExit();//睡眠模式用
 		printf("触发按键中断\n");
+//		__HAL_RCC_RTC_DISABLE();//只有触发外部中断，才能关闭RTC
   }
 
 }
