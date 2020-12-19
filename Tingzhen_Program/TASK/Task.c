@@ -59,6 +59,7 @@ rt_mailbox_t LOW_PWR_mb = RT_NULL;
 rt_event_t AbortWavplay_Event = RT_NULL;
 rt_event_t PlayWavplay_Event = RT_NULL;
 rt_event_t Prevent_Accidental_Play_Event = RT_NULL;
+rt_event_t OLED_Display_Event = RT_NULL;
 /****************************************************************/
 uint8_t TT2Tag[NFCT2_MAX_TAGMEMORY];
 char dataOut[COM_XFER_SIZE]; 
@@ -109,6 +110,8 @@ void Wav_Player_Task(void* parameter)
 						WM8978_HPvol_Set(5,5);			//先设置低音量，再设置高音量防止pop noise，但好像没用
 						WM8978_HPvol_Set(40,40);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量，然而并没有修改音量的寄存器
 						audio_play(The_Auido_Name); //开始播放音频文件
+						rt_kprintf("播放完一遍\n");
+						WM8978_HPvol_Set(0,0);
 						WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
 						rt_thread_delay(1);					//必要时切出去执行其他任务
 					}		
@@ -121,7 +124,6 @@ void Wav_Player_Task(void* parameter)
 				Last_Audio_Name[0] = '$';   //整体播放完成，改变保存的信息，以便相同位置得以发送
 				rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
 			}	
-		
 			rt_thread_delay(100); //1s
 		}
 		rt_thread_yield();
@@ -191,6 +193,7 @@ void Dispose_Task(void* parameter)
 	static uint8_t DataToNFC[50];
 	static uint8_t DataToPlayer[100];
 	static uint8_t BTS=0;
+	static uint8_t OLED_Display_Flag=0;
 	
 	while(1)
 	{		
@@ -229,7 +232,10 @@ void Dispose_Task(void* parameter)
 		if(BTS) BluetoothDisp(1);//显示蓝牙连接状态
 		else		BluetoothDisp(0);
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	
+		{
 			BattChek();		
+			OLED_Refresh_Gram();
+		}
 //		IWDG_Feed();
 		rt_thread_delay(1000);
 	}
@@ -342,6 +348,7 @@ void Event_init(void)
 	AbortWavplay_Event = rt_event_create("AbortWavplay_Event",RT_IPC_FLAG_FIFO);
 	PlayWavplay_Event = rt_event_create("PlaytWavplay_Event",RT_IPC_FLAG_FIFO);
 	Prevent_Accidental_Play_Event = rt_event_create("Prevent_Accidental_Play_Event",RT_IPC_FLAG_FIFO);
+	OLED_Display_Event = rt_event_create("OLED_Display_Event",RT_IPC_FLAG_FIFO);
 }
 
 

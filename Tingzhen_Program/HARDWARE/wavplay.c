@@ -172,9 +172,8 @@ u8 wav_play_song(u8* fname)
 {
 	u8 res,*flag=NULL;  
 	u32 fillnum=0; 
-  rt_uint32_t Play_rev=0;
-	rt_uint32_t Abort_rev=0;
-	rt_uint32_t Pre_rev=0;
+  static rt_uint32_t Play_rev=0;
+	static rt_uint32_t Abort_rev=0;
 	static uint8_t Conut_Num=0;
 	
 	audiodev.file=(FIL*)rt_malloc(sizeof(FIL));

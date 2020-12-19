@@ -59,6 +59,7 @@ uint8_t BodyData[16];
 //更新显存到LCD		 
 void OLED_Refresh_Gram(void)
 {
+	rt_enter_critical();
 	u8 i,n;		    
 	for(i=0;i<8;i++)  
 	{  
@@ -68,6 +69,7 @@ void OLED_Refresh_Gram(void)
 		for(n=0;n<128;n++)
 			OLED_WR_Byte(OLED_GRAM[n][i],OLED_DATA); 
 	}   
+	rt_exit_critical();
 }
 //向SSD1306写入一个字节。
 //dat:要写入的数据/命令
@@ -229,7 +231,7 @@ void OLED_Init(void)
 	GPIO_Initure.Pin=GPIO_PIN_15;         //PA15
 	GPIO_Initure.Mode=GPIO_MODE_OUTPUT_PP;//推挽输出
 	GPIO_Initure.Pull=GPIO_PULLUP;        //上拉
-	GPIO_Initure.Speed=GPIO_SPEED_LOW;   //高速
+	GPIO_Initure.Speed=GPIO_SPEED_FAST;   //高速
 	HAL_GPIO_Init(GPIOA,&GPIO_Initure);   //初始化
 
 	//PB4,7
@@ -448,7 +450,6 @@ void BattChek(void)
 	}
 	OLED_Fill(xpos+18,ypos+1,xpos+20,ypos+4,1);
 	OLED_DrawRectangle(xpos,ypos-2,xpos+18,ypos+7);
-	OLED_Refresh_Gram();
 }
 void ChargeDisplay(void)
 { 	

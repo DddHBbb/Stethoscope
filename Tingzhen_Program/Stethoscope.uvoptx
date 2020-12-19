@@ -157,18 +157,50 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>338</LineNumber>
+          <LineNumber>117</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134246752</Address>
+          <Address>134252888</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\USB\STM32_USB_Device_Library\Class\msc\src\usbd_msc_core.c</Filename>
+          <Filename>.\TASK\Task.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Stethoscope\USB/STM32_USB_Device_Library/Class/msc/src/usbd_msc_core.c\338</Expression>
+          <Expression>\\Stethoscope\TASK/Task.c\117</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>113</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>.\TASK\Task.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>114</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>.\TASK\Task.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

@@ -38,7 +38,6 @@ void ALL_Init(void)
 			update_font("0:");
 		}
 		delay_ms(2000);  //延时两秒为了让图片显示出来	 
-//		NFC_EXTI_Config();
 		LOWPWR_EXTI_Config();
 //		RTC_Init();
 //		IWDG_Init(IWDG_PRESCALER_64,(500*7));//2s  定时开启喂狗或者可用外部看门狗芯片代替
