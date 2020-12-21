@@ -44,7 +44,7 @@ static rt_thread_t USB_Transfer = RT_NULL;
 static rt_thread_t NFC_Transfer = RT_NULL;
 static rt_thread_t Dispose = RT_NULL;
 //信号量句柄
-static rt_mutex_t USBorAudioUsingSDIO_Mutex = RT_NULL;
+rt_mutex_t USBorAudioUsingSDIO_Mutex = RT_NULL;
 //邮箱句柄
 rt_mailbox_t NFC_TagID_mb = RT_NULL;
 //rt_mailbox_t AbortWavplay_mb = RT_NULL;
@@ -101,7 +101,7 @@ void Wav_Player_Task(void* parameter)
 				//接收音频文件名的邮箱，每次只接受一次
 				if((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO))== RT_EOK)
 				{	
-					Show_String(48,36,(uint8_t*)"正在播放");	
+					Show_String(32,32,(uint8_t*)"正在播放");	
 					OLED_Refresh_Gram();
 					//不拿开就循环播放
 					while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
@@ -115,7 +115,7 @@ void Wav_Player_Task(void* parameter)
 						WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
 						rt_thread_delay(1);					//必要时切出去执行其他任务
 					}		
-					Show_String(48,36,(uint8_t*)"停止播放");
+					Show_String(32,32,(uint8_t*)"停止播放");
 					OLED_Refresh_Gram();
 					rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);                                                                                                                    
 					Pointer_Clear((uint8_t*)The_Auido_Name);
@@ -139,9 +139,8 @@ void USB_Transfer_Task(void* parameter)
 	printf("USB_Transfer_Task\n");
 		
 	OLED_Clear();
-	Show_String(0,0,(uint8_t*)"模拟听诊器");
-	Show_String(0,12,(uint8_t*)"当前播放：");	
-	Show_String(48,36,(uint8_t*)"停止播放");
+	Show_String(0,0,(uint8_t*)"播放状态：");
+	Show_String(32,32,(uint8_t*)"停止播放");
 
 	OLED_Refresh_Gram();
 	while(1)
@@ -154,9 +153,9 @@ void USB_Transfer_Task(void* parameter)
 //			__HAL_RCC_RTC_DISABLE();
 			SD_Init();
 			OLED_Clear();
-			Show_String(0,0,(uint8_t*)"模拟听诊器");
-			Show_String(4,12,(uint8_t*)"当前播放：");	
-			Show_String(48,36,(uint8_t*)"USB模式");		
+
+			Show_String(0,0,(uint8_t*)"播放状态：");	
+			Show_String(32,32,(uint8_t*)"USB模式");		
 			OLED_Refresh_Gram();
 			MSC_BOT_Data=(uint8_t *)rt_malloc(MSC_MEDIA_PACKET);			//申请内存
 			USBD_Init(&USB_OTG_dev,USB_OTG_FS_CORE_ID,&USR_desc,&USBD_MSC_cb,&USR_cb);
@@ -177,9 +176,8 @@ void USB_Transfer_Task(void* parameter)
 					rt_timer_start(LowPWR_timer);
 					OLED_Clear();
 					BattChek();//防止闪烁
-					Show_String(0,0,(uint8_t*)"模拟听诊器");
-					Show_String(4,12,(uint8_t*)"当前播放：");	
-					Show_String(48,36,(uint8_t*)"停止播放");			
+					Show_String(0,0,(uint8_t*)"播放状态：");	
+					Show_String(32,32,(uint8_t*)"停止播放");			
 					OLED_Refresh_Gram();
 					break;
 				}

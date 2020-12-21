@@ -23,8 +23,8 @@ static void LowPWR_timer_callback(void* parameter)
 		{
 			OLED_Clear();
 			rt_kprintf("进入低功耗\n");	
-			Show_String(36,24,(uint8_t*)"睡眠模式");
-			Show_String(24,36,(uint8_t*)"按返回键退出");
+			Show_String(32,12,(uint8_t*)"睡眠模式");
+			Show_String(16,36,(uint8_t*)"按返回键退出");
 			OLED_Refresh_Gram();
 //			IWDG_Feed();
 //			__HAL_RCC_RTC_ENABLE();
@@ -34,9 +34,8 @@ static void LowPWR_timer_callback(void* parameter)
 			HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_SLEEPENTRY_WFI);
 			Stm32_Clock_Init(384,25,2,8);
 			OLED_Clear();
-			Show_String(0,0,(uint8_t*)"模拟听诊器");
-			Show_String(0,12,(uint8_t*)"当前播放：");	
-			Show_String(48,36,(uint8_t*)"停止播放");
+			Show_String(0,0,(uint8_t*)"播放状态：");
+			Show_String(32,32,(uint8_t*)"停止播放");
 			OLED_Refresh_Gram();
 			count=0;
 //			__HAL_RCC_RTC_DISABLE();

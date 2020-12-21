@@ -1,6 +1,8 @@
 #include "rtc.h"
 #include "rtthread.h"
 #include "iwdg.h"
+#include "board.h"
+
 RTC_HandleTypeDef RTC_Handler;  //RTC句柄
 
 void RTC_Init(void)
@@ -52,14 +54,6 @@ void RTC_WKUP_IRQHandler(void)
 void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
 {
     rt_kprintf("RTC中断\n");
-//		IWDG_Feed();
-//		rt_kprintf("RTC进入低功耗\n");
-//		SysTick->CTRL = 0x00;//关闭定时器
-//		SysTick->VAL = 0x00;//清空val,清空定时器
-//		HAL_PWREx_EnableFlashPowerDown();
-//		HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_SLEEPENTRY_WFI);
-//		Stm32_Clock_Init(384,25,2,8);
-//		rt_kprintf("RTC退出低功耗\n");
 }
 
 

@@ -293,7 +293,7 @@ void Show_chars(uint8_t x,uint8_t y,uint8_t xend,uint8_t yend,uint8_t chr)
   uint8_t pos,t;
 	uint16_t y0=y;	
 	uint8_t color=1;
-	uint8_t size= 12;
+	uint8_t size= 16;
 	
 	if(chr>' ')chr=chr-' ';//得到偏移后的值
 	else chr=0;//小于空格的一律用空格代替,比如TAB键(键值为9)
@@ -326,11 +326,11 @@ void Show_chars(uint8_t x,uint8_t y,uint8_t xend,uint8_t yend,uint8_t chr)
 void Show_String(uint8_t x,uint8_t y,uint8_t *str)
 {
 	u8 bHz=0;     	//字符或者中文  
-	uint8_t size= 12;
-	uint8_t xend, yend;
+	uint8_t size=16;
+	uint8_t xend=0, yend=0;
 	
 	xend = (strlen((const char*)str)*14);
-	yend = 	y+12;
+	yend = 	y+16;
 while(*str!=0)	//数据未结束
 { 
 	if(!bHz)
