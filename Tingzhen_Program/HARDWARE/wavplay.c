@@ -6,6 +6,9 @@
 #include "text.h"
 #include "string.h"  
 #include "rtthread.h"
+#include "oled.h"
+#include "key.h"  
+
 /***********************函数声明区*******************************/
 
 /***********************声明返回区*******************************/
@@ -215,9 +218,15 @@ u8 wav_play_song(u8* fname)
 					//上电总会意外的播放，加入此停止事件可修复
 					rt_event_recv(AbortWavplay_Event,1|2,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Abort_rev);//几us
 					rt_event_recv(PlayWavplay_Event, 1,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Play_rev);		//几us
+//						while(1)
+//						{
+//							
+//						}
+//					WM8978_HPvol_Set(50,50);
+//					BluetoothDisp(1);
+//					OLED_Refresh_Gram();
 					if(Play_rev == 1)
 					{
-						rt_kprintf("没出去\n");
 						while(wavtransferend==0);//等待wav传输完成; 
 						wavtransferend=0;
 						if(fillnum!=WAV_SAI_TX_DMA_BUFSIZE)//播放结束

@@ -153,26 +153,13 @@ void USART3_IRQHandler(void)
 	uint8_t t=0;
 	
 	HAL_UART_IRQHandler(&UART3_Handler);	//调用HAL库中断处理公用函数
-//	while (HAL_UART_GetState(&UART3_Handler) != HAL_UART_STATE_READY)//等待就绪
-//	{		
-////		t= UART3_Handler.Instance->SR;
-////		t= UART3_Handler.Instance->DR;
-////		printf("发生ORE溢出\n");
-//		printf("UART3_Handler.State = %x\n",UART3_Handler.State);
-//		UART3_Handler.State = HAL_UART_STATE_READY;
-//		__HAL_UNLOCK(&UART3_Handler);
-////	 __HAL_UART_CLEAR_FLAG(&UART3_Handler,UART_FLAG_RXNE);
-////	 timeout++; //超时处理
-////	 if(timeout>maxDelay) break;	
-//	}
-	timeout=0;
 	while(HAL_UART_Receive_IT(&UART3_Handler, (uint8_t *)&aRxBuffer, RXBUFFERSIZE) != HAL_OK)//一次处理完成之后，重新开启中断并设置RxXferCount为1
 	{
 		printf("UART3_Handler.State = %x\n",UART3_Handler.State);
 		UART3_Handler.State = HAL_UART_STATE_READY;
 		__HAL_UNLOCK(&UART3_Handler);
-	 timeout++; //超时处理
-	 if(timeout>maxDelay) break;	
+	  timeout++; //超时处理
+	  if(timeout>maxDelay) break;	
 	}
 //	if((UART3_Handler.Instance->CR1 & 0x20)==0)
 //		HAL_UART_Receive_IT(&UART3_Handler,(u8 *)&aRxBuffer,RXBUFFERSIZE);

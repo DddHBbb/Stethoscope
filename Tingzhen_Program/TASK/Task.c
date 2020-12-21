@@ -9,7 +9,7 @@
 #include "demo.h"
 #include "platform.h"
 #include "st25r95_com.h"
-
+#include "image.h"
 
 /*开启任务宏定义*/
 #define Creat_Wav_Player
@@ -163,9 +163,8 @@ void USB_Transfer_Task(void* parameter)
 			while(1)
 			{
 				ChargeDisplay();
-				OLED_Refresh_Gram();
 //				IWDG_Feed();
-				rt_thread_delay(500); 
+//				rt_thread_delay(500); 
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);
@@ -192,6 +191,7 @@ void Dispose_Task(void* parameter)
 	static uint8_t DataToPlayer[100];
 	static uint8_t BTS=0;
 	static uint8_t OLED_Display_Flag=0;
+	static uint8_t volume = 85;
 	
 	while(1)
 	{		
@@ -229,13 +229,26 @@ void Dispose_Task(void* parameter)
 		}
 		if(BTS) BluetoothDisp(1);//显示蓝牙连接状态
 		else		BluetoothDisp(0);
+//		OLED_Clear();
+//			VolumeShow(48,0,48,48,0,gImage_volume_3per);
+//			OLED_Fill(16,50,22,62,volume/10);
+//		  OLED_Fill(26,50,32,62,volume/20);
+//		  OLED_Fill(36,50,42,62,volume/30);
+//		  OLED_Fill(46,50,52,62,volume/40);
+//		  OLED_Fill(56,50,62,62,volume/50);
+//		  OLED_Fill(66,50,72,62,volume/60);
+//		  OLED_Fill(76,50,82,62,volume/70);
+//		  OLED_Fill(86,50,92,62,volume/80);
+//		  OLED_Fill(96,50,102,62,volume/90);
+//		  OLED_Fill(106,50,112,62,volume/100);
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)	
 		{
 			BattChek();		
 			OLED_Refresh_Gram();
 		}
-//		IWDG_Feed();
-		rt_thread_delay(1000);
+		Battery_Capacity_Transmit();//电池电量上传
+//		IWDG_Feed();		
+		rt_thread_delay(500);
 	}
 }
  /****************************************

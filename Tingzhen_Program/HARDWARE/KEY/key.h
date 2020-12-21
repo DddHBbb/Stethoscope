@@ -1,32 +1,32 @@
 #ifndef __KEY_H
 #define	__KEY_H
 
-#define HAL_Key
-#ifdef  HAL_Key
-
 #include "stm32f4xx.h"
-#define    WAKEUP_PORT        GPIOC			   
-#define    WAKEUP_PIN		      GPIO_PIN_5
+#define    WAKEUP_PORT       GPIOC			   
+#define    WAKEUP_PIN		     GPIO_PIN_5
 
-#define    KEY2_GPIO_PORT     GPIOC		   
-#define    KEY2_GPIO_PIN		  GPIO_PIN_13
+#define    KEY_UP_PORT     	 GPIOB		   
+#define    KEY_UP_PIN		   	 GPIO_PIN_1
 
-#else
-#include "stm32f10x.h"
-//  引脚定义
-#define    KEY1_GPIO_CLK     RCC_APB2Periph_GPIOE
-#define    KEY1_GPIO_PORT    GPIOE			   
-#define    KEY1_GPIO_PIN		 GPIO_Pin_2
+#define    KEY_DOWN_PORT     GPIOB		   
+#define    KEY_DOWN_PIN		   GPIO_PIN_2
 
-#define    KEY2_GPIO_CLK     RCC_APB2Periph_GPIOC
-#define    KEY2_GPIO_PORT    GPIOC		   
-#define    KEY2_GPIO_PIN		  GPIO_Pin_13
-#endif
 
 #define KEY_ON	1
 #define KEY_OFF	0
 
+#define KEY0        HAL_GPIO_ReadPin(KEY_UP_PORT,KEY_UP_PIN)  //KEY0按键PH3
+#define KEY1        HAL_GPIO_ReadPin(KEY_DOWN_PORT,KEY_DOWN_PIN)  //KEY1按键PH2
+#define KEY2        HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) //KEY2按键PC13
+#define WK_UP       HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0)  //WKUP按键PA0
+
+#define KEY0_PRES 	1
+#define KEY1_PRES		2
+#define KEY2_PRES		3
+#define WKUP_PRES   4
+
 void Key_GPIO_Config(void);
+uint8_t KEY_Scan(void);
 uint8_t Key_Read(GPIO_TypeDef* GPIOx,uint16_t GPIO_Pin);
 
 #endif /* __KEY_H */
