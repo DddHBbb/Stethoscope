@@ -8,9 +8,9 @@
 #include "rtthread.h"
 #include "oled.h"
 #include "key.h"  
-
+#include "image.h"
 /***********************函数声明区*******************************/
-
+void Adjust_Volume(void);
 /***********************声明返回区*******************************/
 //extern rt_mailbox_t AbortWavplay_mb;
 extern rt_event_t AbortWavplay_Event;
@@ -178,6 +178,7 @@ u8 wav_play_song(u8* fname)
   static rt_uint32_t Play_rev=0;
 	static rt_uint32_t Abort_rev=0;
 	static uint8_t Conut_Num=0;
+
 	
 	audiodev.file=(FIL*)rt_malloc(sizeof(FIL));
 	audiodev.saibuf1=(uint8_t *)rt_malloc(WAV_SAI_TX_DMA_BUFSIZE);
@@ -218,13 +219,8 @@ u8 wav_play_song(u8* fname)
 					//上电总会意外的播放，加入此停止事件可修复
 					rt_event_recv(AbortWavplay_Event,1|2,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Abort_rev);//几us
 					rt_event_recv(PlayWavplay_Event, 1,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Play_rev);		//几us
-//						while(1)
-//						{
-//							
-//						}
-//					WM8978_HPvol_Set(50,50);
-//					BluetoothDisp(1);
-//					OLED_Refresh_Gram();
+
+					Adjust_Volume();
 					if(Play_rev == 1)
 					{
 						while(wavtransferend==0);//等待wav传输完成; 
@@ -279,8 +275,59 @@ uint8_t Compare_string(const char *file_name,const char *str_name)
 	return 1;
 }
 
+void Adjust_Volume(void)
+{
+	uint8_t key=0;
+	static uint8_t volume=20;
 
-
+	key = KEY_Scan();
+	while(key)
+	{
+		OLED_Clear();
+		if(key==KEY_UP)
+		{		
+			volume+=10;
+			if(volume>50)
+			 volume=50;
+		}
+		else if(key==KEY_DOWN)
+		{   
+			if(volume==0)
+			 volume=0;
+			else
+			 volume-=10; 
+		}	
+		OLED_ShowNum(0,0,volume*2,3,16);
+		OLED_ShowChar(30,0,'%',16,1);
+		VolumeShow(40,0,48,48,0,gImage_volume_3per);
+		OLED_Fill(16,50,22,62,volume/10);
+		OLED_Fill(26,50,32,62,volume/10);
+		OLED_Fill(36,50,42,62,volume/20);
+		OLED_Fill(46,50,52,62,volume/20);
+		OLED_Fill(56,50,62,62,volume/30);
+		OLED_Fill(66,50,72,62,volume/30);
+		OLED_Fill(76,50,82,62,volume/40);
+		OLED_Fill(86,50,92,62,volume/40);
+		OLED_Fill(96,50,102,62,volume/50);
+		OLED_Fill(106,50,112,62,volume/50);
+		WM8978_HPvol_Set(volume,0);
+		BluetoothDisp(1);
+		BattChek();
+		OLED_Refresh_Gram();
+		rt_kprintf("当前音量 =%d\n\r",volume);
+		break;
+	}
+	if(key == KEY_OK)
+	{
+		/*以下函数是为了从调整音量播放界面调整回正常显示*/
+		OLED_Clear();
+		Show_String(0,0,(uint8_t*)"播放状态：");
+		Show_String(32,32,(uint8_t*)"正在播放");
+		BluetoothDisp(1);
+		BattChek();
+		OLED_Refresh_Gram();
+	}
+}
 
 
 

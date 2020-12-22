@@ -104,7 +104,6 @@ void OLED_Fill(u8 x1,u8 y1,u8 x2,u8 y2,u8 dot)
 	{
 		for(y=y1;y<=y2;y++)OLED_DrawPoint(x,y,dot);
 	}													    
-	OLED_Refresh_Gram();//更新显示
 }
 //在指定位置显示一个字符,包括部分字符
 //x:0~127
@@ -199,7 +198,7 @@ void OLED_Init(void)
 	GPIO_Initure.Pin=GPIO_PIN_15;         //PA15
 	GPIO_Initure.Mode=GPIO_MODE_OUTPUT_PP;//推挽输出
 	GPIO_Initure.Pull=GPIO_PULLUP;        //上拉
-	GPIO_Initure.Speed=GPIO_SPEED_HIGH;   //高速
+	GPIO_Initure.Speed=GPIO_SPEED_FAST;   //高速
 	HAL_GPIO_Init(GPIOA,&GPIO_Initure);   //初始化
 
 	//PB4,7

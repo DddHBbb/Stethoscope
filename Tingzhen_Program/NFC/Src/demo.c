@@ -389,18 +389,18 @@ void demoCycle( void )
 							}	
 						else 
 						{
-								//如果连续10次都未检测到，就判定为没检测到
-								Count_Num++;
-								if(Count_Num == 10)
-								{
-									/*检测不到NFC标签时停止播放，这里需了解RTT的事件*/	
-									rt_event_send(AbortWavplay_Event,1);
-									Count_Num=0;
-								}
+							//如果连续10次都未检测到，就判定为没检测到
+							Count_Num++;
+							if(Count_Num == 10)
+							{
+								/*检测不到NFC标签时停止播放*/	
+								rt_event_send(AbortWavplay_Event,1);
+								Count_Num=0;
+							}
 						}
             break;
 
-        /*******************************************************************************/
+        /**************************************************************************************/
         case DEMO_ST_NOTINIT:
         default:
 				break;

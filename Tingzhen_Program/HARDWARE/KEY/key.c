@@ -27,6 +27,9 @@ void Key_GPIO_Config(void)
 
 	GPIO_Initure.Pin = KEY_DOWN_PIN;
 	HAL_GPIO_Init(KEY_DOWN_PORT,&GPIO_Initure);	
+	
+	GPIO_Initure.Pin = KEY_OK_PIN;
+	HAL_GPIO_Init(KEY_OK_PORT,&GPIO_Initure);	
 
 }
 
@@ -37,9 +40,9 @@ uint8_t KEY_Scan(void)
 	if(key_up&&(KEY0==1||KEY1==1||KEY2==1||WK_UP==1))
 	{
 		key_up=0;
-		if(KEY0==1)       return KEY0_PRES;
-		else if(KEY1==1)  return KEY1_PRES;
-		else if(KEY2==1)  return KEY2_PRES;
+		if(KEY0==1)       return KEY_UP;
+		else if(KEY1==1)  return KEY_DOWN;
+		else if(KEY2==1)  return KEY_OK;
 		else if(WK_UP==1) return WKUP_PRES;          
 	} 
 	else if(KEY0==0&&KEY1==0&&KEY2==0&&WK_UP==0)key_up=1;

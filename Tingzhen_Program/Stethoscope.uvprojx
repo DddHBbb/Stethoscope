@@ -385,6 +385,11 @@
           <GroupName>USER</GroupName>
           <Files>
             <File>
+              <FileName>GPIOConfig.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HARDWARE\GPIOConfig.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\main.c</FilePath>
@@ -413,11 +418,6 @@
               <FileName>Task.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\TASK\Task.c</FilePath>
-            </File>
-            <File>
-              <FileName>GPIOConfig.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\HARDWARE\GPIOConfig.c</FilePath>
             </File>
             <File>
               <FileName>SoftTimer.c</FileName>
