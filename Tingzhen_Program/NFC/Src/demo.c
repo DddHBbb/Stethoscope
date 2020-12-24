@@ -143,6 +143,7 @@ extern rt_mailbox_t NFC_SendMAC_mb;
 extern rt_event_t AbortWavplay_Event;
 extern rt_event_t PlayWavplay_Event;
 extern rt_mailbox_t LOW_PWR_mb;
+extern void LOWPWR_Config(void);
 //extern rt_event_t Prevent_Accidental_Play_Event;
 /*!
  *****************************************************************************
@@ -254,6 +255,7 @@ void demoCycle( void )
     uint8_t Flag=0;
 		static uint8_t Count_Num=0;
 		rt_uint32_t Play_rev=0;
+	//	static uint16_t CountToLowpwr=0;
 	
     rfalNfcWorker();                                    /* Run RFAL worker periodically */   
     switch( state )
@@ -302,7 +304,8 @@ void demoCycle( void )
                                 break;
                                 
                             default:															
-                                platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );	
+                                platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );
+															//	__HAL_RCC_RTC_DISABLE();
 															  rt_mb_send(LOW_PWR_mb,NULL);
 																ConfigManager_TagHunting(TRACK_ALL);															
 																rt_event_send(AbortWavplay_Event,2);
@@ -396,6 +399,15 @@ void demoCycle( void )
 								/*检测不到NFC标签时停止播放*/	
 								rt_event_send(AbortWavplay_Event,1);
 								Count_Num=0;
+//								CountToLowpwr++;
+//								if(CountToLowpwr >= 1200)//上电后一分钟内不进低功耗
+//									CountToLowpwr = 1200;
+//								if(CountToLowpwr == 1200)
+//								{
+//									rt_thread_delay(300);			
+//									__HAL_RCC_RTC_ENABLE();
+//									LOWPWR_Config();				
+//								}									
 							}
 						}
             break;

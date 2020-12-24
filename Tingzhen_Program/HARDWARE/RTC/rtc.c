@@ -39,7 +39,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
     __HAL_RCC_RTC_ENABLE();//RTC时钟使能
 	
 		__HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(&RTC_Handler, RTC_FLAG_WUTF);//清除RTC WAKE UP的标志
-		HAL_RTCEx_SetWakeUpTimer_IT(&RTC_Handler,3,RTC_WAKEUPCLOCK_CK_SPRE_16BITS);    //设置重装载值和时钟 
+		HAL_RTCEx_SetWakeUpTimer_IT(&RTC_Handler,600,RTC_WAKEUPCLOCK_RTCCLK_DIV16);    //设置重装载值和时钟 //1000==500ms
     HAL_NVIC_SetPriority(RTC_WKUP_IRQn,0x09,0); //抢占优先级1,子优先级2
     HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
 //	  __HAL_RCC_RTC_DISABLE();
@@ -49,7 +49,7 @@ void RTC_WKUP_IRQHandler(void)
 {
     HAL_RTCEx_WakeUpTimerIRQHandler(&RTC_Handler); 
 }
-
+ 
 //RTC WAKE UP中断处理
 void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
 {

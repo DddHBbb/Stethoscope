@@ -56,6 +56,7 @@ rt_mailbox_t The_Auido_Name_mb = RT_NULL;
 rt_mailbox_t NFCTag_CustomID_mb = RT_NULL;
 rt_mailbox_t Loop_PlayBack_mb = RT_NULL;
 rt_mailbox_t LOW_PWR_mb = RT_NULL;
+rt_mailbox_t NO_Audio_File_mb = RT_NULL;
 
 //事件句柄
 ///rt_event_t Display_NoAudio = RT_NULL;
@@ -94,12 +95,12 @@ void Wav_Player_Task(void* parameter)
 						//发送当前位置信息
 						rt_sprintf((char*)DataToBT,"Position:%x%x%02x%02x\r\n",NFCTag_CustomID_RECV[0],NFCTag_CustomID_RECV[1],
 																																	 NFCTag_CustomID_RECV[2],NFCTag_CustomID_RECV[3]);//11
-						HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),100); 
+						HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),1000); 
 						while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//等待发送结束
 						rt_kprintf("DataToBT=%s\n",DataToBT);
 						Arry_Clear((uint8_t*)DataToBT,sizeof(DataToBT));
 					}
-				}					
+				}			
 				strcpy((char *)&Last_Audio_Name,(const char*)NFCTag_UID_RECV);
 				//接收音频文件名的邮箱，每次只接受一次
 				if((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO))== RT_EOK)
@@ -109,17 +110,28 @@ void Wav_Player_Task(void* parameter)
 					//不拿开就循环播放
 					while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
 					{
-						WM8978_Write_Reg(2,0x180);	//退出低功耗
-						WM8978_HPvol_Set(5,5);			//先设置低音量，再设置高音量防止pop noise，但好像没用
-						WM8978_HPvol_Set(40,40);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量，然而并没有修改音量的寄存器
+//						WM8978_Write_Reg(2,0x180);	//退出低功耗
+//						WM8978_HPvol_Set(5,5);			//先设置低音量，再设置高音量防止pop noise，但好像没用
+//						WM8978_HPvol_Set(40,40);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量，然而并没有修改音量的寄存器
 						audio_play(The_Auido_Name); //开始播放音频文件
-						WM8978_HPvol_Set(0,0);
-						WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
+//						WM8978_HPvol_Set(0,0);
+//						WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
+						if((rt_mb_recv(NO_Audio_File_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
+						{
+							OLED_Clear();
+							Show_String(16,32,(uint8_t*)"无音频文件!!!");
+							OLED_Refresh_Gram();
+							delay_ms(1500);
+							break;
+						}
 						rt_thread_delay(1);					//必要时切出去执行其他任务
 					}	
+					rt_kprintf("发送信号\n");
 					OLED_Clear();
 					Show_String(0,0,(uint8_t*)"播放状态：");
-					Show_String(32,32,(uint8_t*)"停止播放");	
+					Show_String(32,32,(uint8_t*)"停止播放");
+					BluetoothDisp(1);
+					BattChek();
 					OLED_Refresh_Gram();					
 					rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);                                                                                                                    
 					Pointer_Clear((uint8_t*)The_Auido_Name);
@@ -158,7 +170,7 @@ void USB_Transfer_Task(void* parameter)
 			OLED_Clear();
 			Show_String(0,0,(uint8_t*)"播放状态：");	
 			Show_String(32,32,(uint8_t*)"USB模式");		
-			OLED_Refresh_Gram();
+//			OLED_Refresh_Gram();
 			MSC_BOT_Data=(uint8_t *)rt_malloc(MSC_MEDIA_PACKET);			//申请内存
 			USBD_Init(&USB_OTG_dev,USB_OTG_FS_CORE_ID,&USR_desc,&USBD_MSC_cb,&USR_cb);
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
@@ -193,7 +205,7 @@ static uint8_t DataToPlayer[100];
 static uint8_t BTS=0;
 static uint8_t OLED_Display_Flag=0;
 static uint8_t volume = 85;
-
+	
 while(1)
 {		
 //		rt_kprintf("醒了\n");
@@ -236,7 +248,7 @@ while(1)
 		OLED_Refresh_Gram();
 	}
 	Battery_Capacity_Transmit();//电池电量上传
-	rt_thread_delay(1000);
+	rt_thread_delay(500);
 	}
 }
  /****************************************
@@ -330,6 +342,7 @@ void Mailbox_init(void)
  	 The_Auido_Name_mb = rt_mb_create("The_Auido_Name_mb",1,RT_IPC_FLAG_FIFO);
 	 Loop_PlayBack_mb = rt_mb_create("Loop_PlayBack_mb",1,RT_IPC_FLAG_FIFO);
 	 LOW_PWR_mb = rt_mb_create("LOW_PWR_mb",1,RT_IPC_FLAG_FIFO);
+ 	 NO_Audio_File_mb = rt_mb_create("NO_Audio_File_mb",1,RT_IPC_FLAG_FIFO);
 }
  /****************************************
   * @brief  事件创建函数 

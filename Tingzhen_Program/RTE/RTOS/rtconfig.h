@@ -94,6 +94,7 @@
 // <c1>Using MailBox
 //  <i>Using MailBox
 #define RT_USING_MAILBOX
+
 // </c>
 // <c1>Using Message Queue
 //  <i>Using Message Queue

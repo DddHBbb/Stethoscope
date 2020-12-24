@@ -568,6 +568,7 @@ void Battery_Capacity_Transmit(void)
 	rt_sprintf((char*)aCapacity,"BatteryLevel:%d\r\n",Capacity);//13
 	HAL_UART_Transmit(&UART3_Handler, (uint8_t *)aCapacity,strlen((const char*)(aCapacity)),1000); 	
 	while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//µÈ´ý·¢ËÍ½áÊø
+	
 }
 void VolumeShow(uint8_t x,uint8_t y,uint8_t xsize,uint8_t ysize,uint32_t picx,const uint8_t str[])
 {		uint16_t temp,t,t1;

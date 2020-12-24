@@ -9,12 +9,14 @@
 #include "oled.h"
 #include "key.h"  
 #include "image.h"
+#include "D_delay.h"
 /***********************函数声明区*******************************/
 void Adjust_Volume(void);
 /***********************声明返回区*******************************/
 //extern rt_mailbox_t AbortWavplay_mb;
 extern rt_event_t AbortWavplay_Event;
 extern rt_event_t PlayWavplay_Event;
+extern rt_mailbox_t NO_Audio_File_mb; 
 /***********************全局变量区*******************************/
 uint8_t AbortWavplay_Event_Flag=0;
 
@@ -65,6 +67,7 @@ u8 wav_decode_init(u8* fname,__wavctrl* wavx)
 	u8 *buf; 
 	u32 br=0;
 	u8 res=0;
+	static uint8_t fail_count=0;
 	
 	ChunkRIFF *riff;
 	ChunkFMT *fmt;
@@ -75,6 +78,17 @@ u8 wav_decode_init(u8* fname,__wavctrl* wavx)
 	if(ftemp&&buf)	//内存申请成功
 	{
 		res=f_open(ftemp,(TCHAR*)fname,FA_READ);//打开文件
+		if(res != FR_OK)	
+		{
+			while((fail_count<2) && (res != FR_OK))//连续两次读不到，视为读不到
+			{
+				fail_count++;
+				res=f_open(ftemp,(TCHAR*)fname,FA_READ);//打开文件
+			}
+			fail_count=0;
+			if(res != FR_OK)
+				rt_mb_send(NO_Audio_File_mb,1);		
+		}			
 		if(res==FR_OK)
 		{
 			f_read(ftemp,buf,512,&br);	//读取512字节在数据

@@ -43,8 +43,10 @@ void Stm32_Clock_Init(u32 plln,u32 pllm,u32 pllp,u32 pllq)
     RCC_OscInitStructure.PLL.PLLQ=pllq; //USB/SDIO/随机数产生器等的主PLL分频系数(PLL之后的分频),取值范围:2~15.
     ret=HAL_RCC_OscConfig(&RCC_OscInitStructure);//初始化
 	
-    if(ret!=HAL_OK) while(1);
-    
+//	while(ret!=HAL_OK) 
+//	{
+//		ret=HAL_RCC_OscConfig(&RCC_OscInitStructure);
+//	}  
     ret=HAL_PWREx_EnableOverDrive(); //开启Over-Driver功能
     if(ret!=HAL_OK) while(1);
     
