@@ -105,13 +105,14 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		GPIO_Initure.Pin=GPIO_PIN_10;			//PA9
 		GPIO_Initure.Mode=GPIO_MODE_AF_PP;		//复用推挽输出
 		GPIO_Initure.Pull=GPIO_NOPULL;			//上拉
-		GPIO_Initure.Speed=GPIO_SPEED_FREQ_VERY_HIGH;		//高速
+		GPIO_Initure.Speed=GPIO_SPEED_FAST;		//高速
 		GPIO_Initure.Alternate=GPIO_AF7_USART3;	//复用为USART1
 		HAL_GPIO_Init(GPIOB,&GPIO_Initure);	   	//初始化PA9
 
 		GPIO_Initure.Pin=GPIO_PIN_11;			//PA10
 		HAL_GPIO_Init(GPIOB,&GPIO_Initure);	   	//初始化PA10	
 		
+		__HAL_UART_ENABLE_IT(huart,UART_IT_RXNE);		//开启接收中断
 		HAL_NVIC_EnableIRQ(USART3_IRQn);		//使能USART1中断通道
 		HAL_NVIC_SetPriority(USART3_IRQn, 0,0);	//抢占优先级3，子优先级3
 	}
@@ -152,25 +153,31 @@ void USART3_IRQHandler(void)
 	uint32_t timeout=0;
 	uint32_t maxDelay=0xFFFF;
 	uint8_t t=0;
-	
+	rt_enter_critical();
 	HAL_UART_IRQHandler(&UART3_Handler);	//调用HAL库中断处理公用函数
 	while(HAL_UART_Receive_IT(&UART3_Handler, (uint8_t *)&aRxBuffer, RXBUFFERSIZE) != HAL_OK)//一次处理完成之后，重新开启中断并设置RxXferCount为1
 	{
-		if(__HAL_UART_GET_FLAG(&UART3_Handler, UART_FLAG_ORE) != RESET)
-		{
-			if(UART3_Handler.ErrorCode == HAL_UART_ERROR_ORE)
-			{
-				t= UART3_Handler.Instance->SR;
-				t= UART3_Handler.Instance->DR;
-				printf("发生ORE溢出");
-			}		
-		}
 		printf("UART3_Handler.State = %x\n",UART3_Handler.State);
 		UART3_Handler.State = HAL_UART_STATE_READY;
 		__HAL_UNLOCK(&UART3_Handler);
+		__HAL_UART_CLEAR_IDLEFLAG(&UART3_Handler);
+		__HAL_UART_CLEAR_FEFLAG(&UART3_Handler);
+		__HAL_UART_CLEAR_NEFLAG(&UART3_Handler);
+		t= UART3_Handler.Instance->SR;
+		t= UART3_Handler.Instance->DR;
 	  timeout++; //超时处理
 	  if(timeout>maxDelay) break;	
 	}
+	if(__HAL_UART_GET_FLAG(&UART3_Handler, UART_FLAG_ORE) != RESET)
+	{
+		if(UART3_Handler.ErrorCode == HAL_UART_ERROR_ORE)
+		{
+			t= UART3_Handler.Instance->SR;
+			t= UART3_Handler.Instance->DR;
+			printf("发生ORE溢出");
+		}		
+	}
+	rt_exit_critical();
 //	if((UART3_Handler.Instance->CR1 & 0x20)==0)
 //		HAL_UART_Receive_IT(&UART3_Handler,(u8 *)&aRxBuffer,RXBUFFERSIZE);
 	

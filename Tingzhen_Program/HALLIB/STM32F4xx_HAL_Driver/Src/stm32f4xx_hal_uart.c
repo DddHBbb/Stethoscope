@@ -1651,7 +1651,7 @@ static HAL_StatusTypeDef UART_WaitOnFlagUntilTimeout(UART_HandleTypeDef *huart, 
           __HAL_UART_DISABLE_IT(huart, UART_IT_ERR);
 
           huart->State= HAL_UART_STATE_READY;
-
+					
           /* Process Unlocked */
           __HAL_UNLOCK(huart);
 

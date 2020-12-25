@@ -443,9 +443,9 @@ void ChargeDisplay(void)
 								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);	  	 
 							}
 							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-							rt_thread_delay(300);		
+							rt_thread_delay(200);		
 							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-							rt_thread_delay(300);		
+							rt_thread_delay(200);		
 					}
 					else
 					{	
@@ -454,11 +454,11 @@ void ChargeDisplay(void)
 							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);						
 					}	
 					OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
-					rt_thread_delay(300);		
+					rt_thread_delay(200);		
 					OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-					rt_thread_delay(300);	
+					rt_thread_delay(200);	
 					OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-					rt_thread_delay(300);	
+					rt_thread_delay(200);	
 			}
 			else	
 			{	  
@@ -469,13 +469,13 @@ void ChargeDisplay(void)
 					
 			}
 			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);
-			rt_thread_delay(300);	
+			rt_thread_delay(200);	
 			OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
-			rt_thread_delay(300);		
+			rt_thread_delay(200);		
 			OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-			rt_thread_delay(300);	
+			rt_thread_delay(200);	
 			OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-			rt_thread_delay(300);	
+			rt_thread_delay(200);	
 	}
 	else
 	{   		
@@ -566,8 +566,12 @@ void Battery_Capacity_Transmit(void)
 		Capacity = 0;
 	
 	rt_sprintf((char*)aCapacity,"BatteryLevel:%d\r\n",Capacity);//13
+	rt_enter_critical();
 	HAL_UART_Transmit(&UART3_Handler, (uint8_t *)aCapacity,strlen((const char*)(aCapacity)),1000); 	
 	while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=SET);		//µÈ´ý·¢ËÍ½áÊø
+	rt_exit_critical();
+//	UART3_Handler.State = HAL_UART_STATE_READY;
+//	__HAL_UNLOCK(&UART3_Handler);
 	
 }
 void VolumeShow(uint8_t x,uint8_t y,uint8_t xsize,uint8_t ysize,uint32_t picx,const uint8_t str[])

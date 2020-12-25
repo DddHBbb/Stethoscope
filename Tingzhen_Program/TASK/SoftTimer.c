@@ -37,8 +37,8 @@ void Timer_Init(void)
 }
 void LOWPWR_Config(void)
 {
-	OLED_Clear();
 	rt_kprintf("进入低功耗\n");	
+	OLED_Clear();
 	Show_String(32,12,(uint8_t*)"睡眠模式");
 	Show_String(16,36,(uint8_t*)"按返回键退出");
 	OLED_Refresh_Gram();
@@ -49,6 +49,7 @@ void LOWPWR_Config(void)
 	HAL_PWREx_EnableFlashPowerDown();
 	HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_SLEEPENTRY_WFI);
 	Stm32_Clock_Init(384,25,2,8);
+//	HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 	OLED_Clear();
 	Show_String(0,0,(uint8_t*)"播放状态：");
 	Show_String(32,32,(uint8_t*)"停止播放");

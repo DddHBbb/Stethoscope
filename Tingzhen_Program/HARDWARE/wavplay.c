@@ -11,7 +11,7 @@
 #include "image.h"
 #include "D_delay.h"
 /***********************函数声明区*******************************/
-void Adjust_Volume(void);
+void Adjust_Volume(uint8_t flag);
 /***********************声明返回区*******************************/
 //extern rt_mailbox_t AbortWavplay_mb;
 extern rt_event_t AbortWavplay_Event;
@@ -91,6 +91,8 @@ u8 wav_decode_init(u8* fname,__wavctrl* wavx)
 		}			
 		if(res==FR_OK)
 		{
+			Show_String(32,32,(uint8_t*)"正在播放");	
+			OLED_Refresh_Gram();
 			f_read(ftemp,buf,512,&br);	//读取512字节在数据
 			riff=(ChunkRIFF *)buf;		//获取RIFF块
 			if(riff->Format==0X45564157)//是WAV文件
@@ -234,17 +236,22 @@ u8 wav_play_song(u8* fname)
 					rt_event_recv(AbortWavplay_Event,1|2,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Abort_rev);//几us
 					rt_event_recv(PlayWavplay_Event, 1,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Play_rev);		//几us
 
-					Adjust_Volume();
+					Adjust_Volume(1);
 					if(Play_rev == 1)
 					{
-						while(wavtransferend==0);//等待wav传输完成; 
-						wavtransferend=0;
-						if(fillnum!=WAV_SAI_TX_DMA_BUFSIZE)//播放结束
-							break;
-						if(wavwitchbuf)
-							fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf2
-						else 
-							fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
+//						while(wavtransferend==0);//等待wav传输完成; 
+//						wavtransferend=0;
+						if(wavtransferend == 1)
+						{
+							
+							if(fillnum!=WAV_SAI_TX_DMA_BUFSIZE)//播放结束
+								break;
+							if(wavwitchbuf)
+								fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf2
+							else 
+								fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
+							wavtransferend=0;
+						}
 					}
 					if(Abort_rev == 1)		//1为停止播放，2|1为不停止
 						break;		
@@ -289,7 +296,7 @@ uint8_t Compare_string(const char *file_name,const char *str_name)
 	return 1;
 }
 
-void Adjust_Volume(void)
+void Adjust_Volume(uint8_t flag)
 {
 	uint8_t key=0;
 	static uint8_t volume=20;
@@ -336,12 +343,23 @@ void Adjust_Volume(void)
 		/*以下函数是为了从调整音量播放界面调整回正常显示*/
 		OLED_Clear();
 		Show_String(0,0,(uint8_t*)"播放状态：");
-		Show_String(32,32,(uint8_t*)"正在播放");
+		if(flag == 1)			
+			Show_String(32,32,(uint8_t*)"正在播放");
+		else
+			Show_String(32,32,(uint8_t*)"停止播放");
 		BluetoothDisp(1);
 		BattChek();
 		OLED_Refresh_Gram();
 	}
 }
+
+
+
+
+
+
+
+
 
 
 
