@@ -305,7 +305,7 @@ void demoCycle( void )
                                 break;
                                 
                             default:															
-                                platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );
+//                                platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );
 //																__HAL_RCC_RTC_DISABLE();
 															  rt_mb_send(LOW_PWR_mb,NULL);
 																ConfigManager_TagHunting(TRACK_ALL);															

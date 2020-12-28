@@ -1,5 +1,6 @@
 #include "sai.h"
 #include "D_delay.h"
+#include "rtthread.h"
 
 SAI_HandleTypeDef SAI1A_Handler;        //SAI1 Block A句柄
 DMA_HandleTypeDef SAI1_TXDMA_Handler;   //DMA发送句柄
@@ -101,29 +102,29 @@ void SAIA_DMA_Enable(void)
 //返回值:0,设置成功;1,无法设置.
 u8 SAIA_SampleRate_Set(u32 samplerate)
 {   
-    u8 i=0; 
+	u8 i=0; 
     
-    RCC_PeriphCLKInitTypeDef RCCSAI1_Sture;  
+	RCC_PeriphCLKInitTypeDef RCCSAI1_Sture;  
 	for(i=0;i<(sizeof(SAI_PSC_TBL)/10);i++)//看看改采样率是否可以支持
 	{
 		if((samplerate/10)==SAI_PSC_TBL[i][0])break;
 	}
-    if(i==(sizeof(SAI_PSC_TBL)/10))return 1;//搜遍了也找不到
-    RCCSAI1_Sture.PeriphClockSelection=RCC_PERIPHCLK_SAI_PLLI2S;//外设时钟源选择 
-    RCCSAI1_Sture.PLLI2S.PLLI2SN=(u32)SAI_PSC_TBL[i][1];        //设置PLLI2SN
-    RCCSAI1_Sture.PLLI2S.PLLI2SQ=(u32)SAI_PSC_TBL[i][2];        //设置PLLI2SQ
-    //设置PLLI2SDivQ的时候SAI_PSC_TBL[i][3]要加1，因为HAL库中会在把PLLI2SDivQ赋给寄存器DCKCFGR的时候减1 
-    RCCSAI1_Sture.PLLI2SDivQ=SAI_PSC_TBL[i][3]+1;               //设置PLLI2SDIVQ
-    HAL_RCCEx_PeriphCLKConfig(&RCCSAI1_Sture);                  //设置时钟
-    
-    __HAL_RCC_SAI_BLOCKACLKSOURCE_CONFIG(RCC_SAIACLKSOURCE_PLLI2S); //设置SAI1时钟来源为PLLI2SQ		
+	if(i==(sizeof(SAI_PSC_TBL)/10))return 1;//搜遍了也找不到
+	RCCSAI1_Sture.PeriphClockSelection=RCC_PERIPHCLK_SAI_PLLI2S;//外设时钟源选择 
+	RCCSAI1_Sture.PLLI2S.PLLI2SN=(u32)SAI_PSC_TBL[i][1];        //设置PLLI2SN
+	RCCSAI1_Sture.PLLI2S.PLLI2SQ=(u32)SAI_PSC_TBL[i][2];        //设置PLLI2SQ
+	//设置PLLI2SDivQ的时候SAI_PSC_TBL[i][3]要加1，因为HAL库中会在把PLLI2SDivQ赋给寄存器DCKCFGR的时候减1 
+	RCCSAI1_Sture.PLLI2SDivQ=SAI_PSC_TBL[i][3]+1;               //设置PLLI2SDIVQ
+	HAL_RCCEx_PeriphCLKConfig(&RCCSAI1_Sture);                  //设置时钟
+	
+	__HAL_RCC_SAI_BLOCKACLKSOURCE_CONFIG(RCC_SAIACLKSOURCE_PLLI2S); //设置SAI1时钟来源为PLLI2SQ		
 
-    __HAL_SAI_DISABLE(&SAI1A_Handler);                          //关闭SAI
-    SAI1A_Handler.Init.AudioFrequency=samplerate;               //设置播放频率
-    HAL_SAI_Init(&SAI1A_Handler);                               //初始化SAI
-    SAIA_DMA_Enable();                                          //开启SAI的DMA功能
-    __HAL_SAI_ENABLE(&SAI1A_Handler);                           //开启SAI
-    return 0;
+	__HAL_SAI_DISABLE(&SAI1A_Handler);                          //关闭SAI
+	SAI1A_Handler.Init.AudioFrequency=samplerate;               //设置播放频率
+	HAL_SAI_Init(&SAI1A_Handler);                               //初始化SAI
+	SAIA_DMA_Enable();                                          //开启SAI的DMA功能
+	__HAL_SAI_ENABLE(&SAI1A_Handler);                           //开启SAI
+	return 0;
 }   
 
 //SAIA TX DMA配置
@@ -181,11 +182,12 @@ void (*sai_tx_callback)(void);	//TX回调函数
 //DMA2_Stream3中断服务函数
 void DMA2_Stream3_IRQHandler(void)
 {   
+		//HAL_DMA_IRQHandler(&SAI1_TXDMA_Handler);
     if(__HAL_DMA_GET_FLAG(&SAI1_TXDMA_Handler,DMA_FLAG_TCIF3_7)!=RESET) //DMA传输完成
     {
         __HAL_DMA_CLEAR_FLAG(&SAI1_TXDMA_Handler,DMA_FLAG_TCIF3_7);     //清除DMA传输完成中断标志位
         sai_tx_callback();	//执行回调函数,读取数据等操作在这里面处理  
-    }  											 
+    }  		
 }  
 //SAI开始播放
 void SAI_Play_Start(void)

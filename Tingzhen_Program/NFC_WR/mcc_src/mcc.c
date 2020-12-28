@@ -586,6 +586,8 @@ ReturnCode MifareHalt(uint8_t *response)
 }
 extern rt_mailbox_t NFC_TagID_mb;
 extern rfalNfcDevice *nfcDevice;
+
+
 //#define WRITE
 ReturnCode MifareTest(void)
 {

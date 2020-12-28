@@ -10,15 +10,17 @@
 #include "key.h"  
 #include "image.h"
 #include "D_delay.h"
+
 /***********************函数声明区*******************************/
-void Adjust_Volume(uint8_t flag);
+void Adjust_Volume(void);
 /***********************声明返回区*******************************/
 //extern rt_mailbox_t AbortWavplay_mb;
 extern rt_event_t AbortWavplay_Event;
 extern rt_event_t PlayWavplay_Event;
 extern rt_mailbox_t NO_Audio_File_mb; 
+extern DMA_HandleTypeDef SAI1_TXDMA_Handler;
 /***********************全局变量区*******************************/
-uint8_t AbortWavplay_Event_Flag=0;
+uint8_t Display_Flag=0;
 
 __audiodev audiodev;	//音乐播放控制器
 __wavctrl wavctrl;		//WAV控制结构体
@@ -40,7 +42,6 @@ void audio_stop(void)
 	audiodev.status=0;
 	SAI_Play_Stop();
 }  
-
 //播放音乐
 void audio_play(char *file_name)
 {
@@ -194,7 +195,9 @@ u8 wav_play_song(u8* fname)
   static rt_uint32_t Play_rev=0;
 	static rt_uint32_t Abort_rev=0;
 	static uint8_t Conut_Num=0;
-
+	uint32_t timeout=0;
+	uint32_t maxDelay=0xFFFFF;
+	uint8_t TimeOut_FLAG=0;
 	
 	audiodev.file=(FIL*)rt_malloc(sizeof(FIL));
 	audiodev.saibuf1=(uint8_t *)rt_malloc(WAV_SAI_TX_DMA_BUFSIZE);
@@ -222,12 +225,14 @@ u8 wav_play_song(u8* fname)
 			sai_tx_callback=wav_sai_dma_tx_callback;			//回调函数指wav_sai_dma_callback 
 			audio_stop();
 			res=f_open(audiodev.file,(TCHAR*)fname,FA_READ);	//打开文件
+		
 			if(res==0)
 			{
 				f_lseek(audiodev.file, wavctrl.datastart);		//跳过文件头
 				fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);
 				fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);
 				audio_start();  
+				Display_Flag = 1;//正在播放
 				/*此循环牵扯数据传输，不宜使用RT组件，保证其数据完整性
 					由于系统调度，此死循环不一定为死循环，可能导致播放不完整*/
 				while(1)
@@ -236,22 +241,39 @@ u8 wav_play_song(u8* fname)
 					rt_event_recv(AbortWavplay_Event,1|2,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Abort_rev);//几us
 					rt_event_recv(PlayWavplay_Event, 1,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Play_rev);		//几us
 
-					Adjust_Volume(1);
+					Adjust_Volume();
 					if(Play_rev == 1)
-					{
-//						while(wavtransferend==0);//等待wav传输完成; 
-//						wavtransferend=0;
-						if(wavtransferend == 1)
+					{					
+						while(wavtransferend==0)//等待wav传输完成; 
 						{
-							
-							if(fillnum!=WAV_SAI_TX_DMA_BUFSIZE)//播放结束
+							if((SAI1_TXDMA_Handler.ErrorCode != HAL_DMA_ERROR_NONE) || (SAI1_TXDMA_Handler.State != HAL_DMA_STATE_BUSY_MEM0 ))
+							{
+								rt_kprintf("SAI_ERROR=%d\n\r",SAI1_TXDMA_Handler.ErrorCode);
+								rt_kprintf("SAI_STA=%d\n\r",SAI1_TXDMA_Handler.State);					
+								SAI1_TXDMA_Handler.ErrorCode = HAL_DMA_ERROR_NONE;
+								SAI1_TXDMA_Handler.State = HAL_DMA_STATE_READY_MEM0;			
 								break;
-							if(wavwitchbuf)
-								fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf2
-							else 
-								fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
-							wavtransferend=0;
-						}
+							}
+							timeout++; //超时处理
+							if(timeout>maxDelay) 
+							{
+								TimeOut_FLAG = 1;
+								wav_sai_dma_tx_callback();//发生错误，复位各项参数
+								rt_kprintf("卡死这里\n\r");
+								break;
+							}								
+						}	
+						timeout=0;		
+						if(TimeOut_FLAG == 1)//发生错误，直接跳出
+							break;											
+						wavtransferend=0;						
+						if(fillnum!=WAV_SAI_TX_DMA_BUFSIZE)//播放结束
+							break;
+						if(wavwitchbuf)
+							fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf2
+						else 
+							fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf1
+						wavtransferend=0;
 					}
 					if(Abort_rev == 1)		//1为停止播放，2|1为不停止
 						break;		
@@ -259,6 +281,7 @@ u8 wav_play_song(u8* fname)
 					rt_event_control(AbortWavplay_Event,RT_IPC_CMD_RESET,0);
 					rt_thread_delay(1);
 				}	
+				Display_Flag = 0;//停止播放
 				rt_event_control(AbortWavplay_Event,RT_IPC_CMD_RESET,0);
 				rt_event_control(PlayWavplay_Event,RT_IPC_CMD_RESET,0);
 				audio_stop(); 
@@ -296,7 +319,7 @@ uint8_t Compare_string(const char *file_name,const char *str_name)
 	return 1;
 }
 
-void Adjust_Volume(uint8_t flag)
+void Adjust_Volume(void)
 {
 	uint8_t key=0;
 	static uint8_t volume=20;
@@ -335,7 +358,7 @@ void Adjust_Volume(uint8_t flag)
 		BluetoothDisp(1);
 		BattChek();
 		OLED_Refresh_Gram();
-		rt_kprintf("当前音量 =%d\n\r",volume);
+//		rt_kprintf("当前音量 =%d\n\r",volume);
 		break;
 	}
 	if(key == KEY_OK)
@@ -343,7 +366,7 @@ void Adjust_Volume(uint8_t flag)
 		/*以下函数是为了从调整音量播放界面调整回正常显示*/
 		OLED_Clear();
 		Show_String(0,0,(uint8_t*)"播放状态：");
-		if(flag == 1)			
+		if(Display_Flag == 1)			
 			Show_String(32,32,(uint8_t*)"正在播放");
 		else
 			Show_String(32,32,(uint8_t*)"停止播放");

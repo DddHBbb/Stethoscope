@@ -28,9 +28,8 @@ static void Dispose_Task(void* parameter);
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 extern vu8 USB_STATUS_REG;		//USB状态
 extern vu8 bDeviceState;		//USB连接 情况
-extern uint8_t AbortWavplay_Event_Flag;
 extern rt_timer_t LowPWR_timer;
-extern void Adjust_Volume(uint8_t flag);
+extern void Adjust_Volume(void);
 /***********************全局变量区*******************************/
 static 	char *NFCTag_UID_RECV=NULL;
 static 	char *NFCTag_CustomID_RECV=NULL;
@@ -77,6 +76,7 @@ char dataOut[COM_XFER_SIZE];
 void Wav_Player_Task(void* parameter)
 {	
 	static uint8_t DataToBT[50];
+	uint8_t t=0;
 	printf("Wav_Player_Task\n"); 
 	while(1)
 	{
@@ -118,11 +118,11 @@ void Wav_Player_Task(void* parameter)
 						audio_play(The_Auido_Name); //开始播放音频文件
 //						WM8978_HPvol_Set(0,0);
 //						WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
+						rt_kprintf("播放完%d遍\n\r",++t);
 						if((rt_mb_recv(NO_Audio_File_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)						
 							break;					
 						rt_thread_delay(1);					//必要时切出去执行其他任务
 					}	
-					rt_kprintf("发送信号\n");
 					OLED_Clear();
 					Show_String(0,0,(uint8_t*)"播放状态：");
 					Show_String(32,32,(uint8_t*)"停止播放");
@@ -137,6 +137,7 @@ void Wav_Player_Task(void* parameter)
 			}	
 			rt_thread_delay(100); //1s
 		}
+		rt_mb_control(NFCTag_CustomID_mb,RT_IPC_CMD_RESET,0);//清除邮箱状态
 		rt_thread_yield();
 	}
 }
@@ -203,6 +204,7 @@ static uint8_t volume = 85;
 while(1)
 {		
 //		rt_kprintf("醒了\n");
+	USART_RX_STA=0;	//清除接受状态，否则接收会出问题
 	/*从蓝牙收到的数据，都在这里处理*/
 	if(!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t*)&Rev_From_BT, RT_WAITING_NO)))
 	{
@@ -229,10 +231,10 @@ while(1)
 				BTS=1;				
 			else if(Rev_From_BT[2] == 'D')	
 				BTS=0;
-		}
-		USART_RX_STA=0;	//清除接受状态，否则接收会出问题
+		}	
 		Pointer_Clear((uint8_t*)Rev_From_BT);//清除指针防止溢出			
 		Arry_Clear(USART_RX_BUF,80);
+		rt_mb_control(BuleTooth_Transfer_mb,RT_IPC_CMD_RESET,0);//清除邮箱状态
 	}
 	if(BTS) BluetoothDisp(1);//显示蓝牙连接状态
 	else		BluetoothDisp(0);
@@ -276,7 +278,7 @@ void NFC_Transfer_Task(void* parameter)
 		/*在NFC读取过程中使用低功耗，会使得读取速度变慢，音频文件无法正常播放，所以得另想它招
 			所以低功耗不出现在此任务中*/
 		demoCycle();
-		Adjust_Volume(0);//调整音量
+		Adjust_Volume();//调整音量
 		rt_thread_delay(5); //1ms 
 	}
 }

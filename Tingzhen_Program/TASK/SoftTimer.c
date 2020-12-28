@@ -3,7 +3,7 @@
 #include "board.h"
 #include "st25r95_com.h"
 
-#define TIMEOVER  (6*3)
+#define TIMEOVER  (6*1)
 /***********************函数声明区*******************************/
 static void LowPWR_timer_callback(void* parameter);
 void LOWPWR_Config(void);
@@ -58,6 +58,7 @@ void LOWPWR_Config(void)
 //IWDG_Feed();
 	rt_kprintf("退出低功耗\n");
 }
+
 void SYSCLKConfig_STOP(void)
 {
   /* 使能 HSE */
