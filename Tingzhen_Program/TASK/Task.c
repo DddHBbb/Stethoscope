@@ -130,11 +130,12 @@ void Wav_Player_Task(void* parameter)
 					BattChek();
 					OLED_Refresh_Gram();					
 					rt_kprintf("The_Auido_Name=%s\n",The_Auido_Name);                                                                                                                    
-					Pointer_Clear((uint8_t*)The_Auido_Name);
-					rt_mutex_release(USBorAudioUsingSDIO_Mutex);	
+					Pointer_Clear((uint8_t*)The_Auido_Name);			
+					rt_mutex_release(USBorAudioUsingSDIO_Mutex);
 					break;
-				}			
-			}	
+				}		
+				rt_mutex_release(USBorAudioUsingSDIO_Mutex);
+			}				
 			rt_thread_delay(100); //1s
 		}
 		rt_mb_control(NFCTag_CustomID_mb,RT_IPC_CMD_RESET,0);//清除邮箱状态
@@ -170,9 +171,9 @@ void USB_Transfer_Task(void* parameter)
 			USBD_Init(&USB_OTG_dev,USB_OTG_FS_CORE_ID,&USR_desc,&USBD_MSC_cb,&USR_cb);
 			rt_mutex_take(USBorAudioUsingSDIO_Mutex,RT_WAITING_FOREVER);	
 			while(1)
-			{
-				OLED_Refresh_Gram();//更新显示
-				ChargeDisplay();				
+			{			
+				ChargeDisplay();
+				OLED_Refresh_Gram();//更新显示			
 				if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_SET)
 				{
 					rt_mutex_release(USBorAudioUsingSDIO_Mutex);

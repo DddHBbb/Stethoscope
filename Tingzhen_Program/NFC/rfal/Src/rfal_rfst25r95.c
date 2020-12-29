@@ -832,10 +832,10 @@ static void rfalTransceiveTx(void)
         case RFAL_TXRX_STATE_TX_WAIT_GT:
             /* Wait for GT and FDT Poll */
 
-            if (!rfalIsGTExpired() || !rfalTimerisExpired(gRFAL.tmr.FDTPoll))
-            {
-                break;
-            }
+//            if (!rfalIsGTExpired() || !rfalTimerisExpired(gRFAL.tmr.FDTPoll))
+//            {
+//                break;
+//            }
             gRFAL.tmr.GT = RFAL_TIMING_NONE;
             gRFAL.TxRx.state = RFAL_TXRX_STATE_TX_TRANSMIT;
             /* fall through */
