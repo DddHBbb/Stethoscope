@@ -145,7 +145,6 @@ extern rt_event_t PlayWavplay_Event;
 extern rt_mailbox_t LOW_PWR_mb;
 extern void LOWPWR_Config(void);
 extern char Last_Audio_Name[50];
-//extern rt_event_t Prevent_Accidental_Play_Event;
 /*!
  *****************************************************************************
  * \brief Demo Notification
@@ -401,6 +400,7 @@ void demoCycle( void )
 								rt_event_send(AbortWavplay_Event,1);
 								Last_Audio_Name[0] = '$';   //整体播放完成，改变保存的信息，以便相同位置得以发送
 								Count_Num=0;
+								st25r95Idle(0x64,0x74,0x20);//进入低功耗
 //								CountToLowpwr++;
 //								if(CountToLowpwr >= 1200)//上电后一分钟内不进低功耗
 //									CountToLowpwr = 1200;
