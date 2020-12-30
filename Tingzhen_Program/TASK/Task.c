@@ -56,9 +56,8 @@ rt_mailbox_t BuleTooth_Transfer_mb 		= RT_NULL;
 rt_mailbox_t NFC_SendMAC_mb 					= RT_NULL;
 rt_mailbox_t The_Auido_Name_mb 				= RT_NULL;
 rt_mailbox_t NFCTag_CustomID_mb 			= RT_NULL;
-rt_mailbox_t Loop_PlayBack_mb 				= RT_NULL;
+//rt_mailbox_t Loop_PlayBack_mb 				= RT_NULL;
 rt_mailbox_t LOW_PWR_mb 							= RT_NULL;
-rt_mailbox_t NO_Audio_File_mb 				= RT_NULL;
 
 //事件句柄
 ///rt_event_t Display_NoAudio 				= RT_NULL;
@@ -76,8 +75,8 @@ rt_event_t OLED_Display_Event 				= RT_NULL;
 void Wav_Player_Task(void* parameter)
 {	
 	static uint8_t DataToBT[50]={0};
-	uint8_t t=0;
 	printf("Wav_Player_Task\n"); 
+	
 	while(1)
 	{
 		//加一层while是为抬起nfc不再发送位置信息
@@ -110,20 +109,9 @@ void Wav_Player_Task(void* parameter)
 				if((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t*)&The_Auido_Name, RT_WAITING_NO)) ==  RT_EOK)
 				{	
 					//不拿开就循环播放
-					while((rt_mb_recv(Loop_PlayBack_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)
-					{
-//						WM8978_Write_Reg(2,0x180);	//退出低功耗
-//						WM8978_HPvol_Set(5,5);			//先设置低音量，再设置高音量防止pop noise，但好像没用
-//						WM8978_HPvol_Set(40,40);		//很奇怪的是，退出低功耗，音量需重新设置，不然就是最大音量，然而并没有修改音量的寄存器
-						audio_play(The_Auido_Name); //开始播放音频文件
-//						WM8978_HPvol_Set(0,0);
-//						WM8978_Write_Reg(2,0x40);		//播放完毕进入低功耗 
-						rt_kprintf("播放完%d遍\n\r",++t);
-						if((rt_mb_recv(NO_Audio_File_mb, RT_NULL, RT_WAITING_NO)) == RT_EOK)						
-							break;		
-						rt_mb_control(Loop_PlayBack_mb,RT_IPC_CMD_RESET,0);//清除邮箱状态
-						rt_thread_delay(1);					//必要时切出去执行其他任务
-					}	
+				  audio_play(The_Auido_Name); //开始播放音频文件
+					rt_mb_control(The_Auido_Name_mb,RT_IPC_CMD_RESET,0);//清除邮箱状态
+					
 					//防止闪屏
 					OLED_Clear();
 					Show_String(0,0,(uint8_t*)"播放状态：");
@@ -157,8 +145,8 @@ void USB_Transfer_Task(void* parameter)
 	OLED_Clear();
 	Show_String(0,0,(uint8_t*)"播放状态：");
 	Show_String(32,32,(uint8_t*)"停止播放");
-
 	OLED_Refresh_Gram();
+	
 	while(1)
 	{		
 		if(HAL_GPIO_ReadPin(GPIOC,USB_Connect_Check_PIN) == GPIO_PIN_RESET)
@@ -342,9 +330,9 @@ void Mailbox_init(void)
 	 BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb",1,	RT_IPC_FLAG_FIFO);
 	 NFC_SendMAC_mb 			 = rt_mb_create("NFC_SendMAC_mb",				1,	RT_IPC_FLAG_FIFO);
  	 The_Auido_Name_mb 		 = rt_mb_create("The_Auido_Name_mb",		1,	RT_IPC_FLAG_FIFO);
-	 Loop_PlayBack_mb 		 = rt_mb_create("Loop_PlayBack_mb",			1,	RT_IPC_FLAG_FIFO);
+//	 Loop_PlayBack_mb 		 = rt_mb_create("Loop_PlayBack_mb",			1,	RT_IPC_FLAG_FIFO);
 	 LOW_PWR_mb 				   = rt_mb_create("LOW_PWR_mb",						1,	RT_IPC_FLAG_FIFO);
- 	 NO_Audio_File_mb 		 = rt_mb_create("NO_Audio_File_mb",			1,	RT_IPC_FLAG_FIFO);
+// 	 NO_Audio_File_mb 		 = rt_mb_create("NO_Audio_File_mb",			1,	RT_IPC_FLAG_FIFO);
 }
  /****************************************
   * @brief  事件创建函数 

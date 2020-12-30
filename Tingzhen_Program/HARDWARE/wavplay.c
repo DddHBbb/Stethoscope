@@ -16,12 +16,12 @@ void Adjust_Volume(void);
 /***********************声明返回区*******************************/
 //extern rt_mailbox_t AbortWavplay_mb;
 extern rt_event_t AbortWavplay_Event;
-extern rt_event_t PlayWavplay_Event;
-extern rt_mailbox_t NO_Audio_File_mb; 
+extern rt_event_t PlayWavplay_Event; 
 extern DMA_HandleTypeDef SAI1_TXDMA_Handler;
+//extern rt_mailbox_t Loop_PlayBack_mb;
 /***********************全局变量区*******************************/
 uint8_t Display_Flag=0;
-
+static uint8_t volume=20;
 __audiodev audiodev;	//音乐播放控制器
 __wavctrl wavctrl;		//WAV控制结构体
 vu8 wavtransferend=0;	//sai传输完成标志
@@ -78,21 +78,14 @@ u8 wav_decode_init(u8* fname,__wavctrl* wavx)
 	buf=rt_malloc(512);
 	if(ftemp&&buf)	//内存申请成功
 	{
-		res=f_open(ftemp,(TCHAR*)fname,FA_READ);//打开文件
-		if(res != FR_OK)	
-		{
-			while((fail_count<2) && (res != FR_OK))//连续两次读不到，视为读不到
-			{
-				fail_count++;
-				res=f_open(ftemp,(TCHAR*)fname,FA_READ);//打开文件
-			}
-			fail_count=0;
-			if(res != FR_OK)
-				rt_mb_send(NO_Audio_File_mb,1);		
-		}			
+		res=f_open(ftemp,(TCHAR*)fname,FA_READ);//打开文件	
 		if(res==FR_OK)
 		{
+//			OLED_Clear();
+//			Show_String(0,0,(uint8_t*)"播放状态：");
 			Show_String(32,32,(uint8_t*)"正在播放");	
+//			BluetoothDisp(1);
+//			BattChek();
 			OLED_Refresh_Gram();
 			f_read(ftemp,buf,512,&br);	//读取512字节在数据
 			riff=(ChunkRIFF *)buf;		//获取RIFF块
@@ -191,6 +184,7 @@ void wav_sai_dma_tx_callback(void)
 u8 wav_play_song(u8* fname)
 {
 	u8 res,*flag=NULL;  
+	uint8_t t=0;
 	u32 fillnum=0; 
   static rt_uint32_t Play_rev=0;
 	static rt_uint32_t Abort_rev=0;
@@ -225,7 +219,6 @@ u8 wav_play_song(u8* fname)
 			sai_tx_callback=wav_sai_dma_tx_callback;			//回调函数指wav_sai_dma_callback 
 			audio_stop();
 			res=f_open(audiodev.file,(TCHAR*)fname,FA_READ);	//打开文件
-		
 			if(res==0)
 			{
 				f_lseek(audiodev.file, wavctrl.datastart);		//跳过文件头
@@ -240,7 +233,6 @@ u8 wav_play_song(u8* fname)
 					//上电总会意外的播放，加入此停止事件可修复
 					rt_event_recv(AbortWavplay_Event,1|2,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Abort_rev);//几us
 					rt_event_recv(PlayWavplay_Event, 1,RT_EVENT_FLAG_OR,RT_WAITING_NO,&Play_rev);		//几us
-
 					Adjust_Volume();
 					if(Play_rev == 1)
 					{					
@@ -268,7 +260,14 @@ u8 wav_play_song(u8* fname)
 							break;											
 						wavtransferend=0;						
 						if(fillnum!=WAV_SAI_TX_DMA_BUFSIZE)//播放结束
-							break;
+						{
+							rt_kprintf("播放完%d遍\n\r",++t);		
+							rt_thread_delay(1000);
+							f_open(audiodev.file,(TCHAR*)fname,FA_READ);
+							f_lseek(audiodev.file, wavctrl.datastart);		//跳过文件头
+							fillnum=wav_buffill(audiodev.saibuf1,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);
+							fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);			
+						}
 						if(wavwitchbuf)
 							fillnum=wav_buffill(audiodev.saibuf2,WAV_SAI_TX_DMA_BUFSIZE,wavctrl.bps);//填充buf2
 						else 
@@ -288,6 +287,7 @@ u8 wav_play_song(u8* fname)
 			}else res=0XFF; 
 		}else res=0XFF;
 	}else res=0XFF; 
+	f_close(audiodev.file);//关闭文件
 	rt_free(audiodev.tbuf);	//释放内存
 	rt_free(audiodev.saibuf1);//释放内存
 	rt_free(audiodev.saibuf2);//释放内存 
@@ -322,7 +322,7 @@ uint8_t Compare_string(const char *file_name,const char *str_name)
 void Adjust_Volume(void)
 {
 	uint8_t key=0;
-	static uint8_t volume=20;
+
 
 	key = KEY_Scan();
 	while(key)
