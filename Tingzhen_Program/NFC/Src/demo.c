@@ -48,6 +48,7 @@
 #include "usart.h"
 #include "main.h"
 #include "st25r95_com.h"
+#include "oled.h"
 #if (defined(ST25R3916) || defined(ST25R95)) && RFAL_FEATURE_LISTEN_MODE
 #include "demo_ce.h"
 #endif
@@ -255,7 +256,6 @@ void demoCycle( void )
     uint8_t Flag=0;
 		static uint8_t Count_Num=0;
 		rt_uint32_t Play_rev=0;
-//		static uint16_t CountToLowpwr=0;
 	
     rfalNfcWorker();                                    /* Run RFAL worker periodically */   
     switch( state )
@@ -305,14 +305,12 @@ void demoCycle( void )
                                 
                             default:															
 //                                platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );
-//																__HAL_RCC_RTC_DISABLE();
 															  rt_mb_send(LOW_PWR_mb,NULL);
 																ConfigManager_TagHunting(TRACK_ALL);															
 																rt_event_send(AbortWavplay_Event,2);
 																rt_event_send(PlayWavplay_Event,1);
 																Count_Num=0;//发送成功，则停止检测 
-//																st25r95Idle(0x64,0x74,0x20);
-//																st25r95Idle(0,0,0);
+
                                 break;
                         }
                         break;
@@ -400,16 +398,8 @@ void demoCycle( void )
 								rt_event_send(AbortWavplay_Event,1);
 								Last_Audio_Name[0] = '$';   //整体播放完成，改变保存的信息，以便相同位置得以发送
 								Count_Num=0;
-								st25r95Idle(0x64,0x74,0x20);//进入低功耗
-//								CountToLowpwr++;
-//								if(CountToLowpwr >= 1200)//上电后一分钟内不进低功耗
-//									CountToLowpwr = 1200;
-//								if(CountToLowpwr == 1200)
-//								{
-//									rt_thread_delay(300);			
-//									__HAL_RCC_RTC_ENABLE();
-//									LOWPWR_Config();				
-//								}									
+								OLED_ShowChar(108,32,' ',12,1);
+								OLED_ShowChar(114,32,' ',12,1);									
 							}
 						}
             break;

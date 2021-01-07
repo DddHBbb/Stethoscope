@@ -81,11 +81,7 @@ u8 wav_decode_init(u8* fname,__wavctrl* wavx)
 		res=f_open(ftemp,(TCHAR*)fname,FA_READ);//打开文件	
 		if(res==FR_OK)
 		{
-//			OLED_Clear();
-//			Show_String(0,0,(uint8_t*)"播放状态：");
 			Show_String(32,32,(uint8_t*)"正在播放");	
-//			BluetoothDisp(1);
-//			BattChek();
 			OLED_Refresh_Gram();
 			f_read(ftemp,buf,512,&br);	//读取512字节在数据
 			riff=(ChunkRIFF *)buf;		//获取RIFF块
@@ -323,7 +319,6 @@ void Adjust_Volume(void)
 {
 	uint8_t key=0;
 
-
 	key = KEY_Scan();
 	while(key)
 	{
@@ -341,7 +336,7 @@ void Adjust_Volume(void)
 			else
 			 volume-=10; 
 		}	
-		OLED_ShowNum(0,0,volume*2,3,16);
+		OLED_ShowNum(0,0,volume*2,3,16,1);
 		OLED_ShowChar(30,0,'%',16,1);
 		VolumeShow(40,0,48,48,0,gImage_volume_3per);
 		OLED_Fill(16,50,22,62,volume/10);
@@ -358,7 +353,6 @@ void Adjust_Volume(void)
 		BluetoothDisp(1);
 		BattChek();
 		OLED_Refresh_Gram();
-//		rt_kprintf("当前音量 =%d\n\r",volume);
 		break;
 	}
 	if(key == KEY_OK)

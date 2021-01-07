@@ -118,23 +118,23 @@ void OLED_ShowChar(u8 x,u8 y,u8 chr,u8 size,u8 mode)
 	chr=chr-' ';//得到偏移后的值		 
 	for(t=0;t<csize;t++)
 	{   
-	if(size==12)temp=asc2_1206[chr][t]; 	 	//调用1206字体
-	else if(size==16)temp=asc2_1608[chr][t];	//调用1608字体
-	else if(size==24)temp=asc2_2412[chr][t];	//调用2412字体
-	else return;								//没有的字库
-			for(t1=0;t1<8;t1++)
-	{
-		if(temp&0x80)OLED_DrawPoint(x,y,mode);
-		else OLED_DrawPoint(x,y,!mode);
-		temp<<=1;
-		y++;
-		if((y-y0)==size)
+		if(size==12)temp=asc2_1206[chr][t]; 	 	//调用1206字体
+		else if(size==16)temp=asc2_1608[chr][t];	//调用1608字体
+		else if(size==24)temp=asc2_2412[chr][t];	//调用2412字体
+		else return;								//没有的字库
+		for(t1=0;t1<8;t1++)
 		{
-			y=y0;
-			x++;
-			break;
-		}
-	}  	 
+			if(temp&0x80)OLED_DrawPoint(x,y,mode);
+			else OLED_DrawPoint(x,y,!mode);
+			temp<<=1;
+			y++;
+			if((y-y0)==size)
+			{
+				y=y0;
+				x++;
+				break;
+			}
+		}  	 
 	}          
 }
 //m^n函数
@@ -150,7 +150,7 @@ u32 mypow(u8 m,u8 n)
 //size:字体大小
 //mode:模式	0,填充模式;1,叠加模式
 //num:数值(0~4294967295);	 		  
-void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size)
+void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size,u8 mode)
 {         	
 	u8 t,temp;
 	u8 enshow=0;						   
@@ -161,12 +161,12 @@ void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size)
 		{
 			if(temp==0)
 			{
-				OLED_ShowChar(x+(size/2)*t,y,' ',size,1);
+				OLED_ShowChar(x+(size/2)*t,y,' ',size,mode);
 				continue;
 			}else enshow=1; 
 		 	 
 		}
-	 	OLED_ShowChar(x+(size/2)*t,y,temp+'0',size,1); 
+	 	OLED_ShowChar(x+(size/2)*t,y,temp+'0',size,mode); 
 	}
 } 
 //显示字符串
@@ -423,72 +423,66 @@ void ChargeDisplay(void)
 	uint8_t xpos=106,ypos=2;
 	OLED_Fill(xpos+18,ypos+1,xpos+20,ypos+4,1);
 	OLED_DrawRectangle(xpos,ypos-2,xpos+18,ypos+7);
-	/*为了防止逆向电池电量显示*/
-	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
-	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
-	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
 	
-	if(!HAL_GPIO_ReadPin(GPIOD, Batt_25))
-	{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_50))
-			{	  if(!HAL_GPIO_ReadPin(GPIOB, Batt_75))
-					{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_100))
-							{		
-							  //电量100%
-								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);	
-							}
-							else
-							{   
-								//电量75%
-								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);	  	 
-							}
-							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-							rt_thread_delay(200);		
-							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-							rt_thread_delay(200);		
-					}
-					else
-					{	
-						  //电量50%
-							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);	
-							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);						
-					}	
-					OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
-					rt_thread_delay(200);		
-					OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-					rt_thread_delay(200);	
-					OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-					rt_thread_delay(200);	
-			}
-			else	
-			{	  
-				//电量25%
-				OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
-				OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
-				OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0); 
-					
-			}
-			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);
-			rt_thread_delay(200);	
-			OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
-			rt_thread_delay(200);		
-			OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-			rt_thread_delay(200);	
-			OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-			rt_thread_delay(200);	
+	if(HAL_GPIO_ReadPin(GPIOD, Batt_25))
+	{
+		OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);	
+		OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
+		OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);
+		OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
 	}
 	else
-	{   		
-			//电量0%；
-			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,0);   
-			OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
-			OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
-			OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);			
+	{
+		OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);
 	}
-	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
-	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
-	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+	OLED_Refresh_Gram();
+	rt_thread_delay(500);
+	
+	if(HAL_GPIO_ReadPin(GPIOB, Batt_50))
+	{
+		OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
+		OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);
+		OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
+	}
+	else
+	{
+		OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
+	}
+	OLED_Refresh_Gram();
+	rt_thread_delay(500);
+	
+	if(HAL_GPIO_ReadPin(GPIOB, Batt_75))
+	{
+		OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+		OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
+	}
+	else
+	{
+		OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+	}
+	OLED_Refresh_Gram();
+	rt_thread_delay(500);
+	
+	if(HAL_GPIO_ReadPin(GPIOB, Batt_100))
+	{
+		OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+		OLED_Refresh_Gram();
+		rt_thread_delay(500);
+		OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
+	}
+	else
+	{
+		OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+	}
+
+	
+	
+//	/*为了防止逆向电池电量显示*/
+//	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
+//	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
+//	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+//	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+	
 }
 //这两个参数定义动画每帧的长宽。
 #define MOVIE_XSIZE_1	64
