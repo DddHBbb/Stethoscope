@@ -19,11 +19,11 @@
 #define Creat_Dispose
 
 /***********************函数声明区*******************************/
-static void Wav_Player_Task(void* parameter);
+static void Wav_Player_Task	 (void* parameter);
 static void USB_Transfer_Task(void* parameter);
 static void OLED_Display_Task(void* parameter);
 static void NFC_Transfer_Task(void* parameter);
-static void Dispose_Task(void* parameter);
+static void Dispose_Task		 (void* parameter);
 /***********************声明返回区*******************************/
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 extern vu8 USB_STATUS_REG;		//USB状态
@@ -36,8 +36,8 @@ static 	char *NFCTag_CustomID_RECV		=NULL;
 static 	char *Rev_From_BT							=NULL;
 static 	char *The_Auido_Name					=NULL;
 char Last_Audio_Name[50]							="noway";
-uint8_t TT2Tag[NFCT2_MAX_TAGMEMORY]   ={0};
 char dataOut[COM_XFER_SIZE]						={0};
+uint8_t TT2Tag[NFCT2_MAX_TAGMEMORY]   ={0};
 
 //任务句柄
 static rt_thread_t Wav_Player 				= RT_NULL;
@@ -101,10 +101,6 @@ while(1)
 					HAL_UART_Transmit(&UART3_Handler, (uint8_t *)DataToBT,strlen((const char*)(DataToBT)),1000); 
 					while(__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC) != SET);		//等待发送结束
 					rt_exit_critical();
-					
-					rt_sprintf((char*)DataToBT,"%x",NFCTag_CustomID_RECV[3]);
-					OLED_ShowChar(108,32,DataToBT[0],12,1);
-					OLED_ShowChar(114,32,DataToBT[1],12,1);	
 					rt_kprintf("DataToBT=%s\n",DataToBT);
 					Arry_Clear((uint8_t*)DataToBT,sizeof(DataToBT));
 				}

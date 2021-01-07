@@ -397,9 +397,7 @@ void demoCycle( void )
 								/*检测不到NFC标签时停止播放*/	
 								rt_event_send(AbortWavplay_Event,1);
 								Last_Audio_Name[0] = '$';   //整体播放完成，改变保存的信息，以便相同位置得以发送
-								Count_Num=0;
-								OLED_ShowChar(108,32,' ',12,1);
-								OLED_ShowChar(114,32,' ',12,1);									
+								Count_Num=0;							
 							}
 						}
             break;
