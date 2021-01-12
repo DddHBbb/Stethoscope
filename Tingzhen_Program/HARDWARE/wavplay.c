@@ -10,7 +10,7 @@
 #include "key.h"
 #include "image.h"
 #include "D_delay.h"
-
+#include "GPIOConfig.h"
 /***********************函数声明区*******************************/
 void Adjust_Volume(void);
 /***********************声明返回区*******************************/
@@ -66,7 +66,6 @@ u8 wav_decode_init(u8 *fname, __wavctrl *wavx)
     u8 *buf;
     u32 br = 0;
     u8 res = 0;
-    static uint8_t fail_count = 0;
 
     ChunkRIFF *riff;
     ChunkFMT *fmt;
@@ -185,12 +184,11 @@ void wav_sai_dma_tx_callback(void)
 //其他:错误
 u8 wav_play_song(u8 *fname)
 {
-    u8 res, *flag = NULL;
+    u8 res;
     uint8_t t = 0;
     u32 fillnum = 0;
     static rt_uint32_t Play_rev = 0;
     static rt_uint32_t Abort_rev = 0;
-    static uint8_t Conut_Num = 0;
     uint32_t timeout = 0;
     uint32_t maxDelay = 0xFFFFF;
     uint8_t TimeOut_FLAG = 0;
@@ -237,6 +235,8 @@ u8 wav_play_song(u8 *fname)
                     rt_event_recv(AbortWavplay_Event, 1 | 2, RT_EVENT_FLAG_OR, RT_WAITING_NO, &Abort_rev); //几us
                     rt_event_recv(PlayWavplay_Event, 1, RT_EVENT_FLAG_OR, RT_WAITING_NO, &Play_rev);       //几us
                     Adjust_Volume();
+									if (HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_RESET)//检测到USB直接跳出
+											break;								
                     if (Play_rev == 1)
                     {
                         while (wavtransferend == 0) //等待wav传输完成;
@@ -315,6 +315,7 @@ char *Select_File(char *file_name)
             return (char *)Song_Name[i];
         }
     }
+		return 0;
 }
 
 uint8_t Compare_string(const char *file_name, const char *str_name)

@@ -385,7 +385,7 @@ void drv95HF_SendSPICommand(const uint8_t *pData)
  */
 void drv95HF_ReceiveSPIResponse(uint8_t *pData)
 {
-  uint8_t DummyBuffer[MAX_BUFFER_SIZE];
+//  uint8_t DummyBuffer[MAX_BUFFER_SIZE];
   
   /* Select 95HF transceiver over SPI */
   RFTRANS_95HF_NSS_LOW();
@@ -435,7 +435,7 @@ void drv95HF_ReceiveSPIResponse(uint8_t *pData)
 int8_t drv95HF_SendReceive(const uint8_t *pCommand, uint8_t *pResponse)
 {		
   uint8_t command = *pCommand;
-  uint8_t DummyBuffer[MAX_BUFFER_SIZE];
+//  uint8_t DummyBuffer[MAX_BUFFER_SIZE];
 
 	
   /* if we want to send a command we are not expected a interrupt from RF event */

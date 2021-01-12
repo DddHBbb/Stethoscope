@@ -469,66 +469,75 @@ void BattChek(void)
 }
 void ChargeDisplay(void)
 {
-    uint8_t xpos = 106, ypos = 2;
-    OLED_Fill(xpos + 18, ypos + 1, xpos + 20, ypos + 4, 1);
-    OLED_DrawRectangle(xpos, ypos - 2, xpos + 18, ypos + 7);
-
-    if (HAL_GPIO_ReadPin(GPIOD, Batt_25))
-    {
-        OLED_Fill(xpos + 2, ypos, xpos + 4, ypos + 5, 1);
-        OLED_Fill(xpos + 6, ypos, xpos + 8, ypos + 5, 0);
-        OLED_Fill(xpos + 10, ypos, xpos + 12, ypos + 5, 0);
-        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 0);
-    }
-    else
-    {
-        OLED_Fill(xpos + 2, ypos, xpos + 4, ypos + 5, 1);
-    }
-    OLED_Refresh_Gram();
-    rt_thread_delay(500);
-
-    if (HAL_GPIO_ReadPin(GPIOB, Batt_50))
-    {
-        OLED_Fill(xpos + 6, ypos, xpos + 8, ypos + 5, 1);
-        OLED_Fill(xpos + 10, ypos, xpos + 12, ypos + 5, 0);
-        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 0);
-    }
-    else
-    {
-        OLED_Fill(xpos + 6, ypos, xpos + 8, ypos + 5, 1);
-    }
-    OLED_Refresh_Gram();
-    rt_thread_delay(500);
-
-    if (HAL_GPIO_ReadPin(GPIOB, Batt_75))
-    {
-        OLED_Fill(xpos + 10, ypos, xpos + 12, ypos + 5, 1);
-        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 0);
-    }
-    else
-    {
-        OLED_Fill(xpos + 10, ypos, xpos + 12, ypos + 5, 1);
-    }
-    OLED_Refresh_Gram();
-    rt_thread_delay(500);
-
-    if (HAL_GPIO_ReadPin(GPIOB, Batt_100))
-    {
-        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 1);
-        OLED_Refresh_Gram();
-        rt_thread_delay(500);
-        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 0);
-    }
-    else
-    {
-        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 1);
-    }
-
-    //	/*为了防止逆向电池电量显示*/
-    //	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);
-    //	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
-    //	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-    //	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+	uint8_t xpos=106,ypos=2;
+	OLED_Fill(xpos+18,ypos+1,xpos+20,ypos+4,1);
+	OLED_DrawRectangle(xpos,ypos-2,xpos+18,ypos+7);
+	/*为了防止逆向电池电量显示*/
+	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
+	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
+	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+	
+	if(!HAL_GPIO_ReadPin(GPIOD, Batt_25))
+	{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_50))
+			{	  if(!HAL_GPIO_ReadPin(GPIOB, Batt_75))
+					{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_100))
+							{		
+							  //电量100%
+								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);	
+							}
+							else
+							{   
+								//电量75%
+								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);	  	 
+							}
+							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+							rt_thread_delay(200);		
+							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+							rt_thread_delay(200);		
+					}
+					else
+					{	
+						  //电量50%
+							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);	
+							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);						
+					}	
+					OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
+					rt_thread_delay(200);		
+					OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+					rt_thread_delay(200);	
+					OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+					rt_thread_delay(200);	
+			}
+			else	
+			{	  
+				//电量25%
+				OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
+				OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
+				OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0); 
+					
+			}
+			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);
+			rt_thread_delay(200);	
+			OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
+			rt_thread_delay(200);		
+			OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+			rt_thread_delay(200);	
+			OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+			rt_thread_delay(200);	
+	}
+	else
+	{   		
+			//电量0%；
+			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,0);   
+			OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
+			OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
+			OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);			
+	}
+//	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
+//	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
+//	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
+//	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
 }
 //这两个参数定义动画每帧的长宽。
 #define MOVIE_XSIZE_1 64

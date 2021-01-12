@@ -47,8 +47,8 @@ typedef const uint16_t uc16;  /*!< Read Only */
 typedef const uint8_t  uc8;   /*!< Read Only */
 
 	 
-#define MAX(x,y) 				((x > y)? x : y)
-#define MIN(x,y) 				((x < y)? x : y)  
+//#define MAX(x,y) 				((x > y)? x : y)
+//#define MIN(x,y) 				((x < y)? x : y)  
 #define ABS(x) 					((x)>0 ? (x) : -(x))  
 #define CHECKVAL(val, min,max) 	((val < min || val > max) ? false : true) 
 	 

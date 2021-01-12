@@ -133,3 +133,9 @@ void SPI_SendReceiveBuffer(const uint8_t *pCommand, uint8_t length, uint8_t *pRe
     pResponse[i] = SPI_SendReceiveByte(pCommand[i]);
 
 }
+
+
+
+
+
+

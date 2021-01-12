@@ -120,7 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>d</Name>
+          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -157,18 +157,34 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>339</LineNumber>
+          <LineNumber>392</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134220808</Address>
+          <Address>134258982</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\HARDWARE\wavplay.c</Filename>
+          <Filename>.\NFC\Src\demo.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Stethoscope\HARDWARE/wavplay.c\339</Expression>
+          <Expression>\\Stethoscope\NFC/Src/demo.c\392</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>307</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134258634</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\NFC\Src\demo.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\Stethoscope\NFC/Src/demo.c\307</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -1090,7 +1106,7 @@
 
   <Group>
     <GroupName>USB_OTG</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1282,7 +1298,7 @@
 
   <Group>
     <GroupName>NFC</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

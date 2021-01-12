@@ -591,7 +591,6 @@ extern rfalNfcDevice *nfcDevice;
 //#define WRITE
 ReturnCode MifareTest(void)
 {
-	uint16_t *responseLength=NULL;
 	uint8_t response[0xFF];
 	static char temp[20];
 	ReturnCode err=0;

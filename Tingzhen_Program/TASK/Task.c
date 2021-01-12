@@ -13,14 +13,12 @@
 /*开启任务宏定义*/
 #define Creat_Wav_Player
 #define Creat_USB_Transfer
-//#define Creat_OLED_Display
 #define Creat_NFC_Transfer
 #define Creat_Dispose
 
 /***********************函数声明区*******************************/
 static void Wav_Player_Task  (void *parameter);
 static void USB_Transfer_Task(void *parameter);
-static void OLED_Display_Task(void *parameter);
 static void NFC_Transfer_Task(void *parameter);
 static void Dispose_Task     (void *parameter);
 /***********************声明返回区*******************************/
@@ -41,7 +39,6 @@ uint8_t TT2Tag[NFCT2_MAX_TAGMEMORY] 		= {0};
 //任务句柄
 static rt_thread_t Wav_Player 					= RT_NULL;
 static rt_thread_t USB_Transfer 				= RT_NULL;
-//static rt_thread_t OLED_Display 			= RT_NULL;
 static rt_thread_t NFC_Transfer 				= RT_NULL;
 static rt_thread_t Dispose 							= RT_NULL;
 
@@ -50,16 +47,13 @@ rt_mutex_t USBorAudioUsingSDIO_Mutex 		= RT_NULL;
 
 //邮箱句柄
 rt_mailbox_t NFC_TagID_mb = RT_NULL;
-//rt_mailbox_t AbortWavplay_mb 					= RT_NULL;
 rt_mailbox_t BuleTooth_Transfer_mb 			= RT_NULL;
 rt_mailbox_t NFC_SendMAC_mb 						= RT_NULL;
 rt_mailbox_t The_Auido_Name_mb 					= RT_NULL;
 rt_mailbox_t NFCTag_CustomID_mb 				= RT_NULL;
-//rt_mailbox_t Loop_PlayBack_mb 				= RT_NULL;
 rt_mailbox_t LOW_PWR_mb 								= RT_NULL;
 
 //事件句柄
-///rt_event_t Display_NoAudio 					= RT_NULL;
 rt_event_t AbortWavplay_Event 					= RT_NULL;
 rt_event_t PlayWavplay_Event 						= RT_NULL;
 rt_event_t OLED_Display_Event 					= RT_NULL;
@@ -73,7 +67,6 @@ rt_event_t OLED_Display_Event 					= RT_NULL;
 void Wav_Player_Task(void *parameter)
 {
     static uint8_t DataToBT[50] = {0};
-    static uint8_t tt;
     printf("Wav_Player_Task\n");
 
     while (1)
@@ -192,8 +185,6 @@ void Dispose_Task(void *parameter)
     static uint8_t DataToNFC[50];
     static uint8_t DataToPlayer[100];
     static uint8_t BTS = 0;
-    static uint8_t OLED_Display_Flag = 0;
-    static uint8_t volume = 85;
 
     while (1)
     {
@@ -240,20 +231,6 @@ void Dispose_Task(void *parameter)
         }
         Battery_Capacity_Transmit(); //电池电量上传
         rt_thread_delay(500);
-    }
-}
-/****************************************
-  * @brief  OLED显示函数
-  * @param  无
-  * @retval 无
-  ***************************************/
-void OLED_Display_Task(void *parameter)
-{
-    printf("OLED_Display_Task\n");
-
-    while (1)
-    {
-        rt_thread_delay(1000);
     }
 }
 /****************************************

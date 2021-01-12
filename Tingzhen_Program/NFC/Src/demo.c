@@ -253,9 +253,7 @@ bool demoIni( void )
 rfalNfcDevice *nfcDevice;
 void demoCycle( void )
 { 
-    uint8_t Flag=0;
 		static uint8_t Count_Num=0;
-		rt_uint32_t Play_rev=0;
 	
     rfalNfcWorker();                                    /* Run RFAL worker periodically */   
     switch( state )
@@ -702,3 +700,12 @@ static void Write_NFC( rfalNfcfListenDevice *nfcfDev )
     #endif
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+
+
+
+
+
+
+
+
