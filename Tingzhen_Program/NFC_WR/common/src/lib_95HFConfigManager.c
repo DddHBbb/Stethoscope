@@ -25,7 +25,7 @@
   * limitations under the License.
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------------------ */
 #include "lib_95HFConfigManager.h"
@@ -46,7 +46,7 @@
 /**
  * @brief  This buffer contains the data send/received by xx95HF
  */
-extern uint8_t	u95HFBuffer[RFTRANS_95HF_MAX_BUFFER_SIZE+3];
+extern uint8_t u95HFBuffer[RFTRANS_95HF_MAX_BUFFER_SIZE + 3];
 extern ISO14443A_CARD ISO14443A_Card;
 
 /** @addtogroup Configuration_Manager
@@ -57,21 +57,21 @@ extern ISO14443A_CARD ISO14443A_Card;
 /** @addtogroup lib_ConfigManager_Private_Functions
  * 	@{
  */
-static void ConfigManager_Init( void);
+static void ConfigManager_Init(void);
 static int8_t ConfigManager_IDN(uint8_t *pResponse);
-static void ConfigManager_Start(void );
-static int8_t ConfigManager_PORsequence( void );
+static void ConfigManager_Start(void);
+static int8_t ConfigManager_PORsequence(void);
 
 /* Variables for the different modes */
 DeviceMode_t devicemode = UNDEFINED_MODE;
-TagType_t nfc_tagtype   = UNDEFINED_TAG_TYPE;
+TagType_t nfc_tagtype = UNDEFINED_TAG_TYPE;
 
 /* Variable to know IC version */
-IC_VERSION IcVers       = QJE;  /* default set last IC version */
+IC_VERSION IcVers = QJE; /* default set last IC version */
 
-bool StopProcess        = false;
-bool TargetMode         = true;
-extern volatile bool	uAppliTimeOut;
+bool StopProcess = false;
+bool TargetMode = true;
+extern volatile bool uAppliTimeOut;
 uint8_t TagUID[16];
 
 /**
@@ -79,18 +79,18 @@ uint8_t TagUID[16];
  *  @param  None 
  *  @retval None
  */
-static void ConfigManager_Init( void)
+static void ConfigManager_Init(void)
 {
-  /* initialize the structure of the Rf tranceiver */
-  drv95HF_InitConfigStructure ();
-  
-//#ifdef SPI_INTERRUPT_MODE_ACTIVATED	
-//  /* inform driver to use interrupt mode */
-//  drv95HF_EnableInterrupt ( );
-//#endif /* SPI_INTERRUPT_MODE_ACTIVATED */
-  
-  /* configure the Serial interface to communicate with the RF transceiver */
-  drv95HF_InitilizeSerialInterface ( );
+    /* initialize the structure of the Rf tranceiver */
+    drv95HF_InitConfigStructure();
+
+    //#ifdef SPI_INTERRUPT_MODE_ACTIVATED
+    //  /* inform driver to use interrupt mode */
+    //  drv95HF_EnableInterrupt ( );
+    //#endif /* SPI_INTERRUPT_MODE_ACTIVATED */
+
+    /* configure the Serial interface to communicate with the RF transceiver */
+    drv95HF_InitilizeSerialInterface();
 }
 
 /**
@@ -100,12 +100,12 @@ static void ConfigManager_Init( void)
  */
 static int8_t ConfigManager_IDN(uint8_t *pResponse)
 {
-  uint8_t DataToSend[] = {IDN	,0x00};
-  
-  /* send the command to the PICC and retrieve its response */
-  drv95HF_SendReceive(DataToSend, pResponse);
-  
-  return MANAGER_SUCCESSCODE;
+    uint8_t DataToSend[] = {IDN, 0x00};
+
+    /* send the command to the PICC and retrieve its response */
+    drv95HF_SendReceive(DataToSend, pResponse);
+
+    return MANAGER_SUCCESSCODE;
 }
 
 /**
@@ -113,13 +113,13 @@ static int8_t ConfigManager_IDN(uint8_t *pResponse)
  *  @param  none
  *  @retval none
  */
-static void ConfigManager_Start( void )
+static void ConfigManager_Start(void)
 {
-  StopProcess = false;
-  uAppliTimeOut = false;
-  
-  devicemode = UNDEFINED_MODE;
-  nfc_tagtype = UNDEFINED_TAG_TYPE;
+    StopProcess = false;
+    uAppliTimeOut = false;
+
+    devicemode = UNDEFINED_MODE;
+    nfc_tagtype = UNDEFINED_TAG_TYPE;
 }
 
 /**
@@ -128,54 +128,54 @@ static void ConfigManager_Start( void )
  *  @retval MANAGER_ERRORCODE_PORERROR : the POR sequence doesn't succeded
  *  @retval MANAGER_SUCCESSCODE : chip is ready
  */
-static int8_t ConfigManager_PORsequence( void )
+static int8_t ConfigManager_PORsequence(void)
 {
-  uint16_t NthAttempt=0;
-  uint8_t command[]= {ECHO};
-  
-  /* Power up sequence: Pulse on IRQ_IN to select UART or SPI mode */
-  drv95HF_SendIRQINPulse();
-  
-  /* SPI Reset */
-  if(drv95HF_GetSerialInterface() == RFTRANS_95HF_INTERFACE_SPI)
-  {
-    drv95HF_ResetSPI();		
-  }
-  
-  do
-  {
-    /* send an ECHO command and checks response */
-    drv95HF_SendReceive(command, u95HFBuffer);
-    
-    if (u95HFBuffer[0]==ECHORESPONSE)
-      return MANAGER_SUCCESSCODE;	
-    
-    /* if the SPI interface is selected then send a reset command*/
-    if(drv95HF_GetSerialInterface() == RFTRANS_95HF_INTERFACE_SPI)
-    {	
-      drv95HF_ResetSPI();				
-    }	
-    /* if the UART interface is selected then send 255 ECHO commands*/
-    else if(drv95HF_GetSerialInterface() == RFTRANS_95HF_INTERFACE_UART)
+    uint16_t NthAttempt = 0;
+    uint8_t command[] = {ECHO};
+
+    /* Power up sequence: Pulse on IRQ_IN to select UART or SPI mode */
+    drv95HF_SendIRQINPulse();
+
+    /* SPI Reset */
+    if (drv95HF_GetSerialInterface() == RFTRANS_95HF_INTERFACE_SPI)
     {
-      do {
+        drv95HF_ResetSPI();
+    }
+
+    do
+    {
         /* send an ECHO command and checks response */
         drv95HF_SendReceive(command, u95HFBuffer);
-        if (u95HFBuffer[0] == ECHORESPONSE)
-          return MANAGER_SUCCESSCODE;	
-      }while(NthAttempt++ < RFTRANS_95HF_MAX_ECHO);
-    }
-  } while (u95HFBuffer[0]!=ECHORESPONSE && NthAttempt++ <5);
-  
-  return MANAGER_ERRORCODE_PORERROR;
-}
 
+        if (u95HFBuffer[0] == ECHORESPONSE)
+            return MANAGER_SUCCESSCODE;
+
+        /* if the SPI interface is selected then send a reset command*/
+        if (drv95HF_GetSerialInterface() == RFTRANS_95HF_INTERFACE_SPI)
+        {
+            drv95HF_ResetSPI();
+        }
+        /* if the UART interface is selected then send 255 ECHO commands*/
+        else if (drv95HF_GetSerialInterface() == RFTRANS_95HF_INTERFACE_UART)
+        {
+            do
+            {
+                /* send an ECHO command and checks response */
+                drv95HF_SendReceive(command, u95HFBuffer);
+                if (u95HFBuffer[0] == ECHORESPONSE)
+                    return MANAGER_SUCCESSCODE;
+            } while (NthAttempt++ < RFTRANS_95HF_MAX_ECHO);
+        }
+    } while (u95HFBuffer[0] != ECHORESPONSE && NthAttempt++ < 5);
+
+    return MANAGER_ERRORCODE_PORERROR;
+}
 
 /**
   * @}
-  */ 
+  */
 
- /** @addtogroup lib_ConfigManager_Public_Functions
+/** @addtogroup lib_ConfigManager_Public_Functions
  * 	@{
  */
 
@@ -184,9 +184,9 @@ static int8_t ConfigManager_PORsequence( void )
  *  @param  none
  *  @retval none
  */
-void ConfigManager_Stop(void )
+void ConfigManager_Stop(void)
 {
-  StopProcess = true;
+    StopProcess = true;
 }
 
 /**
@@ -195,24 +195,23 @@ void ConfigManager_Stop(void )
  * @param  None
  * @retval None
  */
-void ConfigManager_HWInit (void)
+void ConfigManager_HWInit(void)
 {
-  
-  /* Initialize HW according to protocol to use */
-  ConfigManager_Init();
-  
-  /* initilialize the RF transceiver */
-  if (ConfigManager_PORsequence( ) != MANAGER_SUCCESSCODE)
-  {
-    /* nothing to do, this is a trap for debug purpose you can use it to detect HW issue */
-    /* or GPIO config issue */
-  }
-  
-  /* Retrieve the IC version of the chip */
-  ConfigManager_IDN(u95HFBuffer);
-  
-  IcVers = (IC_VERSION) (u95HFBuffer[ROM_CODE_REVISION_OFFSET]);
-  
+
+    /* Initialize HW according to protocol to use */
+    ConfigManager_Init();
+
+    /* initilialize the RF transceiver */
+    if (ConfigManager_PORsequence() != MANAGER_SUCCESSCODE)
+    {
+        /* nothing to do, this is a trap for debug purpose you can use it to detect HW issue */
+        /* or GPIO config issue */
+    }
+
+    /* Retrieve the IC version of the chip */
+    ConfigManager_IDN(u95HFBuffer);
+
+    IcVers = (IC_VERSION)(u95HFBuffer[ROM_CODE_REVISION_OFFSET]);
 }
 
 /**  
@@ -227,15 +226,13 @@ void ConfigManager_HWInit (void)
 * @retval 	TRACK_NFCTYPE4B : A NFC type4B tag is present in the RF field
 * @retval 	TRACK_NFCTYPE5 : A ISO/IEC 15693 type A tag is present in the RF field
 */
-void ConfigManager_TagHunting ( uint8_t tagsToFind )
+void ConfigManager_TagHunting(uint8_t tagsToFind)
 {
     PCD_FieldOff();
     ISO14443A_Init();
-		ISO14443A_IsPresent();
-		ISO14443A_Anticollision();
-		MifareTest();
+    ISO14443A_IsPresent();
+    ISO14443A_Anticollision();
+    MifareTest();
     /* Turn off the field if no tag has been detected*/
-		PCD_FieldOff();
-} 
-
-
+    PCD_FieldOff();
+}

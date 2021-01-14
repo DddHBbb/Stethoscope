@@ -41,20 +41,16 @@ void LOWPWR_Config(void)
     Show_String(32, 12, (uint8_t *)"睡眠模式");
     Show_String(16, 36, (uint8_t *)"按返回键退出");
     OLED_Refresh_Gram();
-    //IWDG_Feed();
-    //__HAL_RCC_RTC_ENABLE();
     SysTick->CTRL = 0x00; //关闭定时器
     SysTick->VAL = 0x00;  //清空val,清空定时器
     HAL_PWREx_EnableFlashPowerDown();
     HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_SLEEPENTRY_WFI);
     Stm32_Clock_Init(384, 25, 2, 8);
-    //	HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
     OLED_Clear();
     Show_String(0, 0, (uint8_t *)"播放状态：");
     Show_String(32, 32, (uint8_t *)"停止播放");
+		BattChek();
     OLED_Refresh_Gram();
-    //__HAL_RCC_RTC_DISABLE();
-    //IWDG_Feed();
     rt_kprintf("退出低功耗\n");
 }
 
@@ -64,8 +60,7 @@ void SYSCLKConfig_STOP(void)
     __HAL_RCC_HSE_CONFIG(RCC_HSE_ON);
 
     /* 等待 HSE 准备就绪 */
-    while (__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) == RESET)
-        ;
+    while (__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) == RESET);
 
     /* 使能 PLL */
     __HAL_RCC_PLL_ENABLE();
@@ -83,3 +78,11 @@ void SYSCLKConfig_STOP(void)
     {
     }
 }
+
+
+
+
+
+
+
+

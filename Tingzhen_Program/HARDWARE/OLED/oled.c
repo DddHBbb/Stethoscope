@@ -469,75 +469,64 @@ void BattChek(void)
 }
 void ChargeDisplay(void)
 {
-	uint8_t xpos=106,ypos=2;
-	OLED_Fill(xpos+18,ypos+1,xpos+20,ypos+4,1);
-	OLED_DrawRectangle(xpos,ypos-2,xpos+18,ypos+7);
-	/*为了防止逆向电池电量显示*/
-	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
-	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
-	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-	
-	if(!HAL_GPIO_ReadPin(GPIOD, Batt_25))
-	{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_50))
-			{	  if(!HAL_GPIO_ReadPin(GPIOB, Batt_75))
-					{		if(!HAL_GPIO_ReadPin(GPIOB, Batt_100))
-							{		
-							  //电量100%
-								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);	
-							}
-							else
-							{   
-								//电量75%
-								 OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);	  	 
-							}
-							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-							rt_thread_delay(200);		
-							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-							rt_thread_delay(200);		
-					}
-					else
-					{	
-						  //电量50%
-							OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);	
-							OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);						
-					}	
-					OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
-					rt_thread_delay(200);		
-					OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-					rt_thread_delay(200);	
-					OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-					rt_thread_delay(200);	
-			}
-			else	
-			{	  
-				//电量25%
-				OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
-				OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
-				OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0); 
-					
-			}
-			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);
-			rt_thread_delay(200);	
-			OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);
-			rt_thread_delay(200);		
-			OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
-			rt_thread_delay(200);	
-			OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-			rt_thread_delay(200);	
-	}
-	else
-	{   		
-			//电量0%；
-			OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,0);   
-			OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,0);	
-			OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,0);
-			OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,0);			
-	}
-//	OLED_Fill(xpos+2,ypos,xpos+4,ypos+5,1);   
-//	OLED_Fill(xpos+6,ypos,xpos+8,ypos+5,1);	
-//	OLED_Fill(xpos+14,ypos,xpos+16,ypos+5,1);
-//	OLED_Fill(xpos+10,ypos,xpos+12,ypos+5,1);
+    uint8_t xpos = 106, ypos = 2;
+    OLED_Fill(xpos + 18, ypos + 1, xpos + 20, ypos + 4, 1);
+    OLED_DrawRectangle(xpos, ypos - 2, xpos + 18, ypos + 7);
+
+    if (HAL_GPIO_ReadPin(GPIOD, Batt_25))
+    {
+        OLED_Fill(xpos + 2, ypos, xpos + 4, ypos + 5, 1);
+        OLED_Fill(xpos + 6, ypos, xpos + 8, ypos + 5, 0);
+        OLED_Fill(xpos + 10, ypos, xpos + 12, ypos + 5, 0);
+        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 0);
+    }
+    else
+    {
+        OLED_Fill(xpos + 2, ypos, xpos + 4, ypos + 5, 1);
+    }
+    OLED_Refresh_Gram();
+    delay_ms(500);
+
+    if (HAL_GPIO_ReadPin(GPIOB, Batt_50))
+    {
+        OLED_Fill(xpos + 6, ypos, xpos + 8, ypos + 5, 1);
+        OLED_Fill(xpos + 10, ypos, xpos + 12, ypos + 5, 0);
+        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 0);
+    }
+    else
+    {
+        OLED_Fill(xpos + 6, ypos, xpos + 8, ypos + 5, 1);
+    }
+    OLED_Refresh_Gram();
+    delay_ms(500);
+
+    if (HAL_GPIO_ReadPin(GPIOB, Batt_75))
+    {
+        OLED_Fill(xpos + 10, ypos, xpos + 12, ypos + 5, 1);
+        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 0);
+    }
+    else
+    {
+        OLED_Fill(xpos + 10, ypos, xpos + 12, ypos + 5, 1);
+    }
+    OLED_Refresh_Gram();
+    delay_ms(500);
+
+    if (!(HAL_GPIO_ReadPin(GPIOB, Batt_75)) && (HAL_GPIO_ReadPin(GPIOB, Batt_100))) //充满75但未满100
+    {
+        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 1);
+        OLED_Refresh_Gram();
+        delay_ms(500);
+        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 0);
+        OLED_Refresh_Gram();
+        delay_ms(500);
+    }
+    else if (HAL_GPIO_ReadPin(GPIOB, Batt_100) || (!HAL_GPIO_ReadPin(GPIOB, Batt_100))) //未充满做充电显示用，充满做固定显示用 
+    {
+        OLED_Fill(xpos + 14, ypos, xpos + 16, ypos + 5, 1);
+        OLED_Refresh_Gram();
+        delay_ms(500);
+    }
 }
 //这两个参数定义动画每帧的长宽。
 #define MOVIE_XSIZE_1 64
@@ -592,12 +581,12 @@ void DispCurrentPosition(const uint8_t *pbuf)
 void BluetoothDisp(u8 t)
 {
     uint8_t xpos = 95, ypos = 0;
-    OLED_DrawLine(xpos, 		ypos + 3, xpos + 6, ypos + 9, t);
-    OLED_DrawLine(xpos, 		ypos + 9, xpos + 6, ypos + 3, t);
-    OLED_DrawLine(xpos + 3, ypos, 		xpos + 3, ypos + 12,t);
-    OLED_DrawLine(xpos + 3, ypos, 		xpos + 6, ypos + 3, t);
-    OLED_DrawLine(xpos + 3, ypos + 12,xpos + 6, ypos + 9, t);
-    OLED_DrawLine(xpos, 		ypos + 2, xpos + 4, ypos + 6, t);
+    OLED_DrawLine(xpos, ypos + 3, xpos + 6, ypos + 9, t);
+    OLED_DrawLine(xpos, ypos + 9, xpos + 6, ypos + 3, t);
+    OLED_DrawLine(xpos + 3, ypos, xpos + 3, ypos + 12, t);
+    OLED_DrawLine(xpos + 3, ypos, xpos + 6, ypos + 3, t);
+    OLED_DrawLine(xpos + 3, ypos + 12, xpos + 6, ypos + 9, t);
+    OLED_DrawLine(xpos, ypos + 2, xpos + 4, ypos + 6, t);
     OLED_Refresh_Gram();
 }
 extern UART_HandleTypeDef UART3_Handler;
@@ -621,7 +610,8 @@ void Battery_Capacity_Transmit(void)
     rt_sprintf((char *)aCapacity, "BatteryLevel:%d\r\n", Capacity); //13
     rt_enter_critical();
     HAL_UART_Transmit(&UART3_Handler, (uint8_t *)aCapacity, strlen((const char *)(aCapacity)), 1000);
-    while (__HAL_UART_GET_FLAG(&UART3_Handler, UART_FLAG_TC) != SET); //等待发送结束
+    while (__HAL_UART_GET_FLAG(&UART3_Handler, UART_FLAG_TC) != SET)
+        ; //等待发送结束
     rt_exit_critical();
 }
 void VolumeShow(uint8_t x, uint8_t y, uint8_t xsize, uint8_t ysize, uint32_t picx, const uint8_t str[])
@@ -650,6 +640,7 @@ void VolumeShow(uint8_t x, uint8_t y, uint8_t xsize, uint8_t ysize, uint32_t pic
         }
     }
 }
+
 
 const uint8_t gImage_12[504] = { /* 0X01,0X01,0X3F,0X00,0X40,0X00, */
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,

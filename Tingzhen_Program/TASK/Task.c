@@ -151,13 +151,14 @@ void USB_Transfer_Task(void *parameter)
             OLED_Clear();
             Show_String(0, 0, (uint8_t *)"播放状态：");
             Show_String(32, 32, (uint8_t *)"USB模式");
+						OLED_Refresh_Gram();
             MSC_BOT_Data = (uint8_t *)rt_malloc(MSC_MEDIA_PACKET); //申请内存
             USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &USR_desc, &USBD_MSC_cb, &USR_cb);
             rt_mutex_take(USBorAudioUsingSDIO_Mutex, RT_WAITING_FOREVER);
             while (1)
             {
-                ChargeDisplay();
-                OLED_Refresh_Gram(); //更新显示
+                ChargeDisplay();  
+							  rt_thread_delay(100);
                 if (HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_SET)
                 {
                     rt_mutex_release(USBorAudioUsingSDIO_Mutex);
@@ -262,21 +263,15 @@ void Task_init(void)
 
 #ifdef Creat_Wav_Player
     /*音乐播放器任务*/
-    Wav_Player = rt_thread_create("Wav_Player_Task", Wav_Player_Task, RT_NULL, 2048, 1, 100);
+    Wav_Player = rt_thread_create	 ("Wav_Player_Task", 	 Wav_Player_Task, 	RT_NULL, 2048, 1, 100);
     if (Wav_Player != RT_NULL)
         rt_thread_startup(Wav_Player);
 #endif
 #ifdef Creat_USB_Transfer
     /*USB大容量存储任务*/
-    USB_Transfer = rt_thread_create("USB_Transfer_Task", USB_Transfer_Task, RT_NULL, 512, 0, 20);
+    USB_Transfer = rt_thread_create("USB_Transfer_Task", USB_Transfer_Task, RT_NULL, 512,  0, 20);
     if (USB_Transfer != RT_NULL)
         rt_thread_startup(USB_Transfer);
-#endif
-#ifdef Creat_OLED_Display
-    /*OLED显示任务*/
-    OLED_Display = rt_thread_create("OLED_Display_Task", OLED_Display_Task, RT_NULL, 512, 1, 20);
-    if (OLED_Display != RT_NULL)
-        rt_thread_startup(OLED_Display);
 #endif
 #ifdef Creat_NFC_Transfer
     /*NFC任务*/
@@ -285,7 +280,7 @@ void Task_init(void)
         rt_thread_startup(NFC_Transfer);
 #endif
 #ifdef Creat_Dispose
-    Dispose = rt_thread_create("Status_Reflash", Dispose_Task, RT_NULL, 1024, 2, 20);
+    Dispose = rt_thread_create		 ("Status_Reflash", 	 Dispose_Task, 			RT_NULL, 1024, 2, 20);
     if (Dispose != RT_NULL)
         rt_thread_startup(Dispose);
 #endif
@@ -306,14 +301,12 @@ void Semaphore_init(void)
   ***************************************/
 void Mailbox_init(void)
 {
-    NFCTag_CustomID_mb = rt_mb_create("NFCTag_CustomID_mb", 1, RT_IPC_FLAG_FIFO);
-    NFC_TagID_mb = rt_mb_create("NFC_TagID_mb", 1, RT_IPC_FLAG_FIFO);
+    NFCTag_CustomID_mb 		= rt_mb_create("NFCTag_CustomID_mb", 		1, RT_IPC_FLAG_FIFO);
+    NFC_TagID_mb 			 		= rt_mb_create("NFC_TagID_mb", 					1, RT_IPC_FLAG_FIFO);
     BuleTooth_Transfer_mb = rt_mb_create("BuleTooth_Transfer_mb", 1, RT_IPC_FLAG_FIFO);
-    NFC_SendMAC_mb = rt_mb_create("NFC_SendMAC_mb", 1, RT_IPC_FLAG_FIFO);
-    The_Auido_Name_mb = rt_mb_create("The_Auido_Name_mb", 1, RT_IPC_FLAG_FIFO);
-    //	 Loop_PlayBack_mb 		 = rt_mb_create("Loop_PlayBack_mb",			1,	RT_IPC_FLAG_FIFO);
-    LOW_PWR_mb = rt_mb_create("LOW_PWR_mb", 1, RT_IPC_FLAG_FIFO);
-    // 	 NO_Audio_File_mb 		 = rt_mb_create("NO_Audio_File_mb",			1,	RT_IPC_FLAG_FIFO);
+    NFC_SendMAC_mb 				= rt_mb_create("NFC_SendMAC_mb", 				1, RT_IPC_FLAG_FIFO);
+    The_Auido_Name_mb 		= rt_mb_create("The_Auido_Name_mb", 		1, RT_IPC_FLAG_FIFO);
+    LOW_PWR_mb 						= rt_mb_create("LOW_PWR_mb", 						1, RT_IPC_FLAG_FIFO);
 }
 /****************************************
   * @brief  事件创建函数 
@@ -322,7 +315,20 @@ void Mailbox_init(void)
   ***************************************/
 void Event_init(void)
 {
-    AbortWavplay_Event = rt_event_create("AbortWavplay_Event", RT_IPC_FLAG_FIFO);
-    PlayWavplay_Event = rt_event_create("PlaytWavplay_Event", RT_IPC_FLAG_FIFO);
-    OLED_Display_Event = rt_event_create("OLED_Display_Event", RT_IPC_FLAG_FIFO);
+    AbortWavplay_Event = rt_event_create("AbortWavplay_Event",  RT_IPC_FLAG_FIFO);
+    PlayWavplay_Event  = rt_event_create("PlaytWavplay_Event",  RT_IPC_FLAG_FIFO);
+    OLED_Display_Event = rt_event_create("OLED_Display_Event",  RT_IPC_FLAG_FIFO);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
