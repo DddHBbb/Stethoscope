@@ -67,7 +67,7 @@
 #endif
 
 
-#define MSC_MEDIA_PACKET             32*1024		//定义包大小为32KB,越大,速度越快
+#define MSC_MEDIA_PACKET             52*1024		//定义包大小为32KB,越大,速度越快
 
 /**
   * @}

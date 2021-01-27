@@ -21,7 +21,7 @@ int main(void)
     Task_init();
 }
 void ALL_Init(void)
-{
+{	
     OLED_Clear();
     delay_ms(100); //延时100ms为了让各个模块初始化完成
     W25QXX_Init(); //初始化W25Q128

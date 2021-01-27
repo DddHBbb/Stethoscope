@@ -28,46 +28,12 @@ const int8_t  STORAGE_Inquirydata[] = {
 	0x00,	
 	0x00,
     /* Vendor Identification */
-    'A', 'L', 'I', 'E', 'N', 'T', 'E', 'K', ' ',//9字节
+    'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', ' ',//9字节
     /* Product Identification */
-    'S', 'P', 'I', ' ', 'F', 'l', 'a', 's', 'h',//15字节
-    ' ','D', 'i', 's', 'k', ' ',
+    'H', 'H', 'H', ' ', 'H', 'H', 'H', 'H', 'H',//15字节
+    ' ','B', 'B', 'B', 'B', ' ',
     /* Product Revision Level */	
-    '1', '.', '0', ' ',							//4字节		
-	
-	/* LUN 1 */
-	0x00,
-	0x80,		
-	0x02,		
-	0x02,
-	(USBD_STD_INQUIRY_LENGTH - 4),
-	0x00,
-	0x00,	
-	0x00,
-	/* Vendor Identification */
-	'A', 'L', 'I', 'E', 'N', 'T', 'E', 'K',' ',	//9字节
-	/* Product Identification */				
-    'N', 'A', 'N', 'D', ' ', 'F', 'l', 'a', 's', 'h',//15字节
-	' ','D', 'i', 's', 'k', 
-    /* Product Revision Level */
-	'1', '.', '0' ,' ',                      	//4字节
-	
-	/* LUN 2 */
-	0x00,
-	0x80,		
-	0x02,		
-	0x02,
-	(USBD_STD_INQUIRY_LENGTH - 4),
-	0x00,
-	0x00,	
-	0x00,
-	/* Vendor Identification */
-	'A', 'L', 'I', 'E', 'N', 'T', 'E', 'K',' ',	//9字节
-	/* Product Identification */				
-	'S', 'D', ' ', 'F', 'l', 'a', 's', 'h', ' ',//15字节
-	'D', 'i', 's', 'k', ' ', ' ',  
-    /* Product Revision Level */
-	'1', '.', '0' ,' ',                      	//4字节
+    'B', 'B', 'B', ' ',							//4字节		
 }; 
 
 int8_t STORAGE_Init (uint8_t lun);

@@ -14,16 +14,14 @@
 /***********************函数声明区*******************************/
 void Adjust_Volume(void);
 /***********************声明返回区*******************************/
-//extern rt_mailbox_t AbortWavplay_mb;
 extern rt_event_t AbortWavplay_Event;
 extern rt_event_t PlayWavplay_Event;
 extern DMA_HandleTypeDef SAI1_TXDMA_Handler;
-//extern rt_mailbox_t Loop_PlayBack_mb;
 /***********************全局变量区*******************************/
-__audiodev audiodev;    //音乐播放控制器
-__wavctrl wavctrl;      //WAV控制结构体
+__audiodev audiodev;    			//音乐播放控制器
+__wavctrl wavctrl;      			//WAV控制结构体
 uint8_t Display_Flag 	= 0;
-vu8 wavtransferend 		= 0; //sai传输完成标志
+vu8 wavtransferend 		= 0; 		//sai传输完成标志
 vu8 wavwitchbuf 			= 0;    //saibufx指示标志
 static uint8_t volume = 20;
 /****************************************************************/
@@ -90,17 +88,17 @@ u8 wav_decode_init(u8 *fname, __wavctrl *wavx)
                     wavx->datastart = 12 + 8 + fmt->ChunkSize + 8 + fact->ChunkSize; //具有fact/LIST块的时候(未测试)
                 else
                     wavx->datastart = 12 + 8 + fmt->ChunkSize;
-                data = (ChunkDATA *)(buf + wavx->datastart); //读取DATA块
-                if (data->ChunkID == 0X61746164)             //解析成功!
+                data = (ChunkDATA *)(buf + wavx->datastart);  //读取DATA块
+                if (data->ChunkID == 0X61746164)              //解析成功!
                 {
-                    wavx->audioformat = fmt->AudioFormat; //音频格式
-                    wavx->nchannels = fmt->NumOfChannels; //通道数
-                    wavx->samplerate = fmt->SampleRate;   //采样率  fmt->SampleRate
-                    wavx->bitrate = fmt->ByteRate * 8;    //得到位速
-                    wavx->blockalign = fmt->BlockAlign;   //块对齐
-                    wavx->bps = fmt->BitsPerSample;       //位数,16/24/32位
-                    wavx->datasize = data->ChunkSize;      //数据块大小
-                    wavx->datastart = wavx->datastart + 8; //数据流开始的地方.
+                    wavx->audioformat = fmt->AudioFormat; 		//音频格式
+                    wavx->nchannels   = fmt->NumOfChannels; 	//通道数
+                    wavx->samplerate  = fmt->SampleRate;   		//采样率  fmt->SampleRate
+                    wavx->bitrate     = fmt->ByteRate * 8;    //得到位速
+                    wavx->blockalign  = fmt->BlockAlign;   		//块对齐
+                    wavx->bps         = fmt->BitsPerSample;   //位数,16/24/32位
+                    wavx->datasize    = data->ChunkSize;      //数据块大小
+                    wavx->datastart   = wavx->datastart + 8;  //数据流开始的地方.
                 }
                 else
                     res = 3; //data区域未找到.
@@ -353,7 +351,7 @@ void Adjust_Volume(void)
         }
         OLED_ShowNum(0, 0, volume * 2, 3, 16, 1);
         OLED_ShowChar(30, 0, '%', 16, 1);
-        VolumeShow(40, 0, 48, 48, 0, gImage_volume_3per);
+        VolumeShow(40, 0, 48, 48, 0,  gImage_volume_3per);
         OLED_Fill(16,  50, 22, 	62, 	volume / 10);
         OLED_Fill(26,  50, 32, 	62, 	volume / 10);
         OLED_Fill(36,  50, 42, 	62, 	volume / 20);
@@ -384,3 +382,26 @@ void Adjust_Volume(void)
         OLED_Refresh_Gram();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

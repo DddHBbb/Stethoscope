@@ -4,6 +4,7 @@
 extern rt_mailbox_t BuleTooth_Transfer_mb;
 #pragma import(__use_no_semihosting)
 //标准库需要的支持函数
+
 struct __FILE
 {
     int handle;
@@ -18,10 +19,8 @@ void _sys_exit(int x)
 //重定义fputc函数
 int fputc(int ch, FILE *f)
 {
-
     USART1->DR = (u8)ch;
-    while ((USART1->SR & 0X40) == 0)
-        ; //循环发送,直到发送完毕
+    while ((USART1->SR & 0X40) == 0); //循环发送,直到发送完毕
     return ch;
 }
 
@@ -102,15 +101,15 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         __HAL_RCC_USART3_CLK_ENABLE(); //使能USART1时钟
         __HAL_RCC_GPIOB_CLK_ENABLE();  //使能GPIOA时钟
 
-        GPIO_Initure.Pin = GPIO_PIN_10;           //PA9
-        GPIO_Initure.Mode = GPIO_MODE_AF_PP;      //复用推挽输出
-        GPIO_Initure.Pull = GPIO_NOPULL;          //上拉
-        GPIO_Initure.Speed = GPIO_SPEED_FAST;     //高速
-        GPIO_Initure.Alternate = GPIO_AF7_USART3; //复用为USART1
-        HAL_GPIO_Init(GPIOB, &GPIO_Initure);      //初始化PA9
+        GPIO_Initure.Pin = GPIO_PIN_10;            //PA9
+        GPIO_Initure.Mode = GPIO_MODE_AF_PP;       //复用推挽输出
+        GPIO_Initure.Pull = GPIO_NOPULL;           //上拉
+        GPIO_Initure.Speed = GPIO_SPEED_FAST;      //高速
+        GPIO_Initure.Alternate = GPIO_AF7_USART3;  //复用为USART1
+        HAL_GPIO_Init(GPIOB, &GPIO_Initure);       //初始化PA9
 
-        GPIO_Initure.Pin = GPIO_PIN_11;      //PA10
-        HAL_GPIO_Init(GPIOB, &GPIO_Initure); //初始化PA10
+        GPIO_Initure.Pin = GPIO_PIN_11;      			 //PA10
+        HAL_GPIO_Init(GPIOB, &GPIO_Initure); 			 //初始化PA10
 
         __HAL_UART_ENABLE_IT(huart, UART_IT_RXNE); //开启接收中断
         HAL_NVIC_EnableIRQ(USART3_IRQn);           //使能USART1中断通道

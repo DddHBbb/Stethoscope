@@ -159,7 +159,7 @@ void USB_Transfer_Task(void *parameter)
             {
                 ChargeDisplay();  
 							  rt_thread_delay(100);
-                if (HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_SET)
+                if (bDeviceState == GPIO_PIN_RESET && (HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_SET))
                 {
                     rt_mutex_release(USBorAudioUsingSDIO_Mutex);
                     usbd_CloseMassStorage(&USB_OTG_dev);
