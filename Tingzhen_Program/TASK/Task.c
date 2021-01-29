@@ -35,6 +35,7 @@ static char *The_Auido_Name 						= NULL;
 char Last_Audio_Name[50] 								= "noway";
 char dataOut[COM_XFER_SIZE] 						= {0};
 uint8_t TT2Tag[NFCT2_MAX_TAGMEMORY] 		= {0};
+const char ARM[][9]										  = {"24270042","24270043"};
 
 //任务句柄
 static rt_thread_t Wav_Player 					= RT_NULL;
@@ -52,6 +53,8 @@ rt_mailbox_t NFC_SendMAC_mb 						= RT_NULL;
 rt_mailbox_t The_Auido_Name_mb 					= RT_NULL;
 rt_mailbox_t NFCTag_CustomID_mb 				= RT_NULL;
 rt_mailbox_t LOW_PWR_mb 								= RT_NULL;
+rt_mailbox_t Start_Playing_mb 					= RT_NULL;
+rt_mailbox_t Stop_Playing_mb 						= RT_NULL;
 
 //事件句柄
 rt_event_t AbortWavplay_Event 					= RT_NULL;
@@ -101,14 +104,30 @@ void Wav_Player_Task(void *parameter)
                 //接收音频文件名的邮箱，每次只接受一次
                 if ((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t *)&The_Auido_Name, RT_WAITING_NO)) == RT_EOK)
                 {
-                    //不拿开就循环播放
-                    audio_play(The_Auido_Name);                            //开始播放音频文件
+										//配合血压手臂播放状态
+										if (Compare_string(hex2Str((unsigned char*)NFCTag_CustomID_RECV,4),ARM[0]) == 1 || 
+												Compare_string(hex2Str((unsigned char*)NFCTag_CustomID_RECV,4),ARM[1]) == 1)
+										{ 
+											while(1)
+											{
+												if ((rt_mb_recv(Start_Playing_mb, NULL, RT_WAITING_NO)) == RT_EOK)
+												{													
+													audio_play(The_Auido_Name); //不拿开就循环播放
+													break;
+												}
+												rt_thread_delay(500);
+											}
+										}
+										//正常播放状态
+										else									
+											audio_play(The_Auido_Name);//不拿开就循环播放   
+										
                     rt_mb_control(The_Auido_Name_mb, RT_IPC_CMD_RESET, 0); //清除邮箱状态
                     //防止闪屏
                     OLED_Clear();
-                    Show_String(0, 0, (uint8_t *)"播放状态：");
+                    Show_String(0, 0,   (uint8_t *)"播放状态：");
                     Show_String(32, 32, (uint8_t *)"停止播放");
-                    BluetoothDisp(1);
+                    BluetoothDisp(1); 
                     BattChek();
                     OLED_Refresh_Gram();
 
@@ -217,6 +236,13 @@ void Dispose_Task(void *parameter)
                 else if (Rev_From_BT[2] == 'D')
                     BTS = 0;
             }
+						else if (Rev_From_BT[0] == 'P' || Rev_From_BT[1] == 'l')//接收停止开始命令
+						{
+								if (Rev_From_BT[12] == 'P')
+										rt_mb_send(Start_Playing_mb, 1);
+								else if (Rev_From_BT[12] == 'S')
+									  rt_mb_send(Stop_Playing_mb,  1);				
+						}
             Pointer_Clear((uint8_t *)Rev_From_BT); //清除指针防止溢出
             Arry_Clear(USART_RX_BUF, 80);
             rt_mb_control(BuleTooth_Transfer_mb, RT_IPC_CMD_RESET, 0); //清除邮箱状态
@@ -231,7 +257,7 @@ void Dispose_Task(void *parameter)
             OLED_Refresh_Gram();
         }
         Battery_Capacity_Transmit(); //电池电量上传
-        rt_thread_delay(500);
+        rt_thread_delay(500); 
     }
 }
 /****************************************
@@ -307,6 +333,8 @@ void Mailbox_init(void)
     NFC_SendMAC_mb 				= rt_mb_create("NFC_SendMAC_mb", 				1, RT_IPC_FLAG_FIFO);
     The_Auido_Name_mb 		= rt_mb_create("The_Auido_Name_mb", 		1, RT_IPC_FLAG_FIFO);
     LOW_PWR_mb 						= rt_mb_create("LOW_PWR_mb", 						1, RT_IPC_FLAG_FIFO);
+		Start_Playing_mb 			= rt_mb_create("Start_Playing_mb", 			1, RT_IPC_FLAG_FIFO);
+	  Stop_Playing_mb 			= rt_mb_create("Stop_Playing_mb", 			1, RT_IPC_FLAG_FIFO);
 }
 /****************************************
   * @brief  事件创建函数 

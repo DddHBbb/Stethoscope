@@ -17,6 +17,7 @@ void Adjust_Volume(void);
 extern rt_event_t AbortWavplay_Event;
 extern rt_event_t PlayWavplay_Event;
 extern DMA_HandleTypeDef SAI1_TXDMA_Handler;
+extern rt_mailbox_t Stop_Playing_mb;
 /***********************全局变量区*******************************/
 __audiodev audiodev;    			//音乐播放控制器
 __wavctrl wavctrl;      			//WAV控制结构体
@@ -234,7 +235,9 @@ u8 wav_play_song(u8 *fname)
                     rt_event_recv(PlayWavplay_Event, 1, RT_EVENT_FLAG_OR, RT_WAITING_NO, &Play_rev);       //几us
                     Adjust_Volume();
 									if (HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_RESET)//检测到USB直接跳出
-											break;								
+											break;		
+									if ((rt_mb_recv(Stop_Playing_mb, NULL, RT_WAITING_NO)) == RT_EOK)//收到停止播放的命令
+											break;
                     if (Play_rev == 1)
                     {
                         while (wavtransferend == 0) //等待wav传输完成;
@@ -318,7 +321,7 @@ char *Select_File(char *file_name)
 
 uint8_t Compare_string(const char *file_name, const char *str_name)
 {
-    if (strlen(file_name) != strlen(file_name))
+    if (strlen(file_name) != strlen(str_name))
         return 0;
     for (int i = 0; i < strlen(file_name); i++)
     {
