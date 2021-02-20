@@ -234,6 +234,7 @@ u8 wav_play_song(u8 *fname)
                     rt_event_recv(AbortWavplay_Event, 1 | 2, RT_EVENT_FLAG_OR, RT_WAITING_NO, &Abort_rev); //几us
                     rt_event_recv(PlayWavplay_Event, 1, RT_EVENT_FLAG_OR, RT_WAITING_NO, &Play_rev);       //几us
                     Adjust_Volume();
+									
 									if (HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_RESET)//检测到USB直接跳出
 											break;		
 									if ((rt_mb_recv(Stop_Playing_mb, NULL, RT_WAITING_NO)) == RT_EOK)//收到停止播放的命令

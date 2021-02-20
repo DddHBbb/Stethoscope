@@ -103,7 +103,7 @@ void Wav_Player_Task(void *parameter)
 								
                 //接收音频文件名的邮箱，每次只接受一次
                 if ((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t *)&The_Auido_Name, RT_WAITING_NO)) == RT_EOK)
-                {
+                {	
 										//配合血压手臂播放状态
 										if (Compare_string(hex2Str((unsigned char*)NFCTag_CustomID_RECV,4),ARM[0]) == 1 || 
 												Compare_string(hex2Str((unsigned char*)NFCTag_CustomID_RECV,4),ARM[1]) == 1)
@@ -118,8 +118,8 @@ void Wav_Player_Task(void *parameter)
 												rt_thread_delay(500);
 											}
 										}
-										//正常播放状态
-										else									
+										else						
+											//正常播放状态
 											audio_play(The_Auido_Name);//不拿开就循环播放   
 										
                     rt_mb_control(The_Auido_Name_mb, RT_IPC_CMD_RESET, 0); //清除邮箱状态
@@ -276,7 +276,7 @@ void NFC_Transfer_Task(void *parameter)
     {
         demoCycle();
         Adjust_Volume();    //调整音量
-        rt_thread_delay(5); //5ms
+        rt_thread_delay(1); //5ms
     }
 }
 /****************************************
