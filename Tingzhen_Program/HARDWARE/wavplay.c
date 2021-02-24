@@ -337,7 +337,7 @@ void Adjust_Volume(void)
     uint8_t key = 0;
 
     key = KEY_Scan();
-    while (key)
+    while (key !=0 && key != 4)
     {
         OLED_Clear();
         if (key == KEY_UP)

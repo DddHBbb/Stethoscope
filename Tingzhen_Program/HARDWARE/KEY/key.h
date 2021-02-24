@@ -21,7 +21,7 @@
 #define KEY0       					 HAL_GPIO_ReadPin(KEY_UP_PORT,KEY_UP_PIN)  //KEY0按键PH3
 #define KEY1        				 HAL_GPIO_ReadPin(KEY_DOWN_PORT,KEY_DOWN_PIN)  //KEY1按键PH2
 #define KEY2       					 HAL_GPIO_ReadPin(KEY_OK_PORT,KEY_OK_PIN) //KEY2按键PC13
-#define WK_UP     				   HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0)  //WKUP按键PA0
+#define WK_UP     				   HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)  //WKUP按键PA0
 
 #define KEY_UP 							1
 #define KEY_DOWN						2

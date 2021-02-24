@@ -15,6 +15,7 @@
 #define Creat_USB_Transfer
 #define Creat_NFC_Transfer
 #define Creat_Dispose
+#define Creat_Write_Card
 
 /***********************函数声明区*******************************/
 static void Wav_Player_Task  (void *parameter);
@@ -111,11 +112,22 @@ void Wav_Player_Task(void *parameter)
 											while(1)
 											{
 												if ((rt_mb_recv(Start_Playing_mb, NULL, RT_WAITING_NO)) == RT_EOK)
-												{													
-													audio_play(The_Auido_Name); //不拿开就循环播放
-													break;
-												}
-												rt_thread_delay(500);
+												{					
+													audio_play(The_Auido_Name); //不拿开就循环播放		
+													rt_mb_control(Start_Playing_mb, RT_IPC_CMD_RESET, 0);
+													Show_String(32, 32, (uint8_t *)"停止播放");
+													OLED_Refresh_Gram();
+												}													
+												if ((rt_mb_recv(NFC_TagID_mb, (rt_uint32_t *)&NFCTag_UID_RECV, RT_WAITING_NO)) == RT_EOK)
+												{
+													if ((Compare_string((const char *)Last_Audio_Name, (const char *)NFCTag_UID_RECV) != 1) && 
+															(Compare_string((const char *)Last_Audio_Name, (const char *)NFCTag_UID_RECV) != 1))
+													{
+														break;
+													}
+												}												
+												
+												rt_thread_delay(100);
 											}
 										}
 										else						
@@ -257,6 +269,11 @@ void Dispose_Task(void *parameter)
             OLED_Refresh_Gram();
         }
         Battery_Capacity_Transmit(); //电池电量上传
+				
+//				uint8_t *p1 = (uint8_t *)(0X20001000 + 1024*150);
+//				rt_kprintf("p1 = %d\n",*p1 );
+//				rt_kprintf("p2 = %p\n", p1 );
+
         rt_thread_delay(500); 
     }
 }
@@ -276,7 +293,7 @@ void NFC_Transfer_Task(void *parameter)
     {
         demoCycle();
         Adjust_Volume();    //调整音量
-        rt_thread_delay(1); //5ms
+        rt_thread_delay(5); //5ms
     }
 }
 /****************************************
@@ -286,7 +303,6 @@ void NFC_Transfer_Task(void *parameter)
   ***************************************/
 void Task_init(void)
 {
-
 #ifdef Creat_Wav_Player
     /*音乐播放器任务*/
     Wav_Player = rt_thread_create	 ("Wav_Player_Task", 	 Wav_Player_Task, 	RT_NULL, 2048, 1, 100);

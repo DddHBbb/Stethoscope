@@ -65,7 +65,7 @@ RT_WEAK void *rt_heap_end_get(void)
 void rt_hw_board_init()
 {
     /* System Clock Update */
-	 // SCB->VTOR = FLASH_BASE | 0x10000;//设置偏移量
+	  SCB->VTOR = FLASH_BASE | 0x10000;//设置偏移量
     SystemCoreClockUpdate();
 		HAL_Init();                     //初始化HAL库   
     Stm32_Clock_Init(384,25,2,8);   //设置时钟,180Mhz

@@ -20,6 +20,7 @@ void Key_GPIO_Config(void)
     GPIO_Initure.Mode = GPIO_MODE_INPUT;
     GPIO_Initure.Pull = GPIO_PULLUP;
     HAL_GPIO_Init(WAKEUP_PORT, &GPIO_Initure);
+	
 
     GPIO_Initure.Pin = KEY_UP_PIN;
     GPIO_Initure.Pull = GPIO_PULLDOWN;
