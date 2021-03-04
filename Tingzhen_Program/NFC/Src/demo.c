@@ -295,11 +295,12 @@ void demoCycle(void)
 
                 default:
                     //                                platformLog("ISO14443A/NFC-A card found. UID: %s\r\n", hex2Str( nfcDevice->nfcid, nfcDevice->nfcidLen ) );
-                    rt_mb_send(LOW_PWR_mb, NULL);
+                    Count_Num = 0;
+										rt_mb_send(LOW_PWR_mb, NULL);
                     ConfigManager_TagHunting(TRACK_ALL);
                     rt_event_send(AbortWavplay_Event, 2);
                     rt_event_send(PlayWavplay_Event, 1);
-                    Count_Num = 0; //发送成功，则停止检测
+                     //发送成功，则停止检测
 
                     break;
                 }
@@ -379,7 +380,7 @@ void demoCycle(void)
         else
         {
             
-            Count_Num++;															//如果连续10次都未检测到，就判定为没检测到
+            Count_Num++;															//如果连续20次都未检测到，就判定为没检测到
             if (Count_Num == 10)
             {         
                 rt_event_send(AbortWavplay_Event, 1); //检测不到NFC标签时停止播放

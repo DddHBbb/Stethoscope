@@ -117,24 +117,24 @@ void Wav_Player_Task(void *parameter)
 													rt_mb_control(Start_Playing_mb, RT_IPC_CMD_RESET, 0);
 													Show_String(32, 32, (uint8_t *)"停止播放");
 													OLED_Refresh_Gram();
-												}													
+												}					
+												// 若检测到新的标签不为手臂标签，则退出
 												if ((rt_mb_recv(NFC_TagID_mb, (rt_uint32_t *)&NFCTag_UID_RECV, RT_WAITING_NO)) == RT_EOK)
 												{
-													if ((Compare_string((const char *)Last_Audio_Name, (const char *)NFCTag_UID_RECV) != 1) && 
-															(Compare_string((const char *)Last_Audio_Name, (const char *)NFCTag_UID_RECV) != 1))
-													{
-														break;
-													}
-												}												
+														if ((Compare_string((const char *)Last_Audio_Name, (const char *)NFCTag_UID_RECV) != 1))												
+																break;												
+												}
+												//检测到USB直接跳出
+												if ((bDeviceState == GPIO_PIN_RESET) && HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_RESET)
+														break;		
 												
 												rt_thread_delay(100);
 											}
 										}
 										else						
 											//正常播放状态
-											audio_play(The_Auido_Name);//不拿开就循环播放   
-										
-                    rt_mb_control(The_Auido_Name_mb, RT_IPC_CMD_RESET, 0); //清除邮箱状态
+											audio_play(The_Auido_Name);//不拿开就循环播放   									
+                    
                     //防止闪屏
                     OLED_Clear();
                     Show_String(0, 0,   (uint8_t *)"播放状态：");
@@ -146,6 +146,7 @@ void Wav_Player_Task(void *parameter)
                     rt_kprintf("The_Auido_Name=%s\n", The_Auido_Name);
                     Pointer_Clear((uint8_t *)The_Auido_Name);
                     rt_mutex_release(USBorAudioUsingSDIO_Mutex);
+										rt_mb_control(The_Auido_Name_mb, RT_IPC_CMD_RESET, 0); //清除邮箱状态
                     break;
                 }
                 rt_mutex_release(USBorAudioUsingSDIO_Mutex);

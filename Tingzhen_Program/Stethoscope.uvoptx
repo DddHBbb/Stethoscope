@@ -120,7 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>d</Name>
+          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -157,34 +157,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>254</LineNumber>
+          <LineNumber>387</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134290344</Address>
+          <Address>134327590</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\TASK\Task.c</Filename>
+          <Filename>.\NFC\Src\demo.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Stethoscope\TASK/Task.c\254</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>256</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134290354</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\TASK\Task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\Stethoscope\TASK/Task.c\256</Expression>
+          <Expression>\\Stethoscope\NFC/Src/demo.c\387</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -196,7 +180,7 @@
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>NFCTag_CustomID_RECV</ItemText>
+          <ItemText>Count_Num,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
@@ -486,7 +470,7 @@
 
   <Group>
     <GroupName>HardWare</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1746,7 +1730,7 @@
 
   <Group>
     <GroupName>::RTOS</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>1</RteFlg>
