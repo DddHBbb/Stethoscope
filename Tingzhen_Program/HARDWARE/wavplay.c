@@ -24,7 +24,7 @@ __wavctrl wavctrl;      			//WAV控制结构体
 uint8_t Display_Flag 	= 0;
 vu8 wavtransferend 		= 0; 		//sai传输完成标志
 vu8 wavwitchbuf 			= 0;    //saibufx指示标志
-static uint8_t volume = 20;
+static uint8_t volume = 40;
 /****************************************************************/
 const char UID_Num[][8] 	 = {"B6C89A2B", "B6A49C2B", "D6E69C2B", "C6EC9C2B", "964E9D2B"};
 const char Song_Name[][20] = {"音频一", "音频二", "音频三", "音频四", "音频五"};
@@ -266,8 +266,10 @@ u8 wav_play_song(u8 *fname)
                         wavtransferend = 0;
                         if (fillnum != WAV_SAI_TX_DMA_BUFSIZE) //播放结束
                         {
+														audio_stop();											
                             rt_kprintf("播放完%d遍\n\r", ++t);
                             rt_thread_delay(1000);
+														audio_start();
                             f_open(audiodev.file, (TCHAR *)fname, FA_READ);
                             f_lseek(audiodev.file, wavctrl.datastart); //跳过文件头
                             fillnum = wav_buffill(audiodev.saibuf1, WAV_SAI_TX_DMA_BUFSIZE, wavctrl.bps);
@@ -283,7 +285,7 @@ u8 wav_play_song(u8 *fname)
                         break;
                     //状态清0
                     rt_event_control(AbortWavplay_Event, RT_IPC_CMD_RESET, 0);
-                    rt_thread_delay(1);
+                    rt_thread_delay(30);
                 }
                 Display_Flag = 0; //停止播放
                 rt_event_control(AbortWavplay_Event, RT_IPC_CMD_RESET, 0);
@@ -367,7 +369,7 @@ void Adjust_Volume(void)
         OLED_Fill(96,  50, 102, 62,   volume / 50);
         OLED_Fill(106, 50, 112, 62, 	volume / 50);
         WM8978_HPvol_Set(volume, 0);
-        BluetoothDisp(1);
+
         BattChek();
         OLED_Refresh_Gram();
         break;
@@ -381,7 +383,6 @@ void Adjust_Volume(void)
             Show_String(32, 32, (uint8_t *)"正在播放");
         else
             Show_String(32, 32, (uint8_t *)"停止播放");
-        BluetoothDisp(1);
         BattChek();
         OLED_Refresh_Gram();
     }

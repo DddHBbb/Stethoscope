@@ -155,7 +155,7 @@ void USART3_IRQHandler(void)
     uint32_t timeout = 0;
     uint32_t maxDelay = 0xFFFF;
 		uint8_t t=0;
-    rt_enter_critical();
+//    rt_enter_critical();
     HAL_UART_IRQHandler(&UART3_Handler);                                                       //调用HAL库中断处理公用函数
     while (HAL_UART_Receive_IT(&UART3_Handler, (uint8_t *)&aRxBuffer, RXBUFFERSIZE) != HAL_OK) //一次处理完成之后，重新开启中断并设置RxXferCount为1
     {
@@ -180,7 +180,7 @@ void USART3_IRQHandler(void)
             printf("发生ORE溢出");
         }
     }
-    rt_exit_critical();
+//    rt_exit_critical();
     //	if((UART3_Handler.Instance->CR1 & 0x20)==0)
     //		HAL_UART_Receive_IT(&UART3_Handler,(u8 *)&aRxBuffer,RXBUFFERSIZE);
 
@@ -234,3 +234,22 @@ void Pointer_Clear(uint8_t *buf)
         buf = RT_NULL;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

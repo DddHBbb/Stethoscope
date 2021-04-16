@@ -45,6 +45,7 @@ void ALL_GPIO_init(void)
 		
 		DISABLE_ALL_SWITCH();
 		
+	
 		 /*¿ª¹Ø»ú */
 		GPIO_Initure.Pin=PBout_Pin|INT_Pin;
     GPIO_Initure.Mode=GPIO_MODE_INPUT;              

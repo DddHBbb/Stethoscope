@@ -72,8 +72,10 @@ void rt_hw_board_init()
 		delay_init(192);
 		ALL_GPIO_init();	
 		uart_init();  						//≥ı ºªØUSART
+		DISABLE_ALL_SWITCH();
 		Key_GPIO_Config();
 		OLED_Init();
+		
 		
 	   /* System Tick Configuration */
 

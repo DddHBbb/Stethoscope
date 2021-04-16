@@ -14,14 +14,16 @@
 #define Creat_Wav_Player
 #define Creat_USB_Transfer
 #define Creat_NFC_Transfer
-#define Creat_Dispose
+#define Creat_UART_Dispose
 #define Creat_Write_Card
+#define Creat_Others
 
 /***********************函数声明区*******************************/
-static void Wav_Player_Task  (void *parameter);
-static void USB_Transfer_Task(void *parameter);
-static void NFC_Transfer_Task(void *parameter);
-static void Dispose_Task     (void *parameter);
+static void Wav_Player_Task  		 (void *parameter);
+static void USB_Transfer_Task		 (void *parameter);
+static void NFC_Transfer_Task		 (void *parameter);
+static void Dispose_Task     		 (void *parameter);
+static void Dispose_Others_Task	 (void *parameter);
 /***********************声明返回区*******************************/
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 extern vu8 USB_STATUS_REG; //USB状态
@@ -37,12 +39,15 @@ char Last_Audio_Name[50] 								= "noway";
 char dataOut[COM_XFER_SIZE] 						= {0};
 uint8_t TT2Tag[NFCT2_MAX_TAGMEMORY] 		= {0};
 const char ARM[][9]										  = {"24270042","24270043"};
+const char PlayStatus[]									= "PlayStatus:Stop\r\n";
+static uint8_t BTS                      = 0;
 
 //任务句柄
 static rt_thread_t Wav_Player 					= RT_NULL;
 static rt_thread_t USB_Transfer 				= RT_NULL;
 static rt_thread_t NFC_Transfer 				= RT_NULL;
-static rt_thread_t Dispose 							= RT_NULL;
+static rt_thread_t UART_Dispose 				= RT_NULL;
+static rt_thread_t Others 							= RT_NULL;
 
 //信号量句柄
 rt_mutex_t USBorAudioUsingSDIO_Mutex 		= RT_NULL;
@@ -114,6 +119,7 @@ void Wav_Player_Task(void *parameter)
 												if ((rt_mb_recv(Start_Playing_mb, NULL, RT_WAITING_NO)) == RT_EOK)
 												{					
 													audio_play(The_Auido_Name); //不拿开就循环播放		
+													HAL_UART_Transmit(&UART3_Handler, (uint8_t *)PlayStatus, strlen((const char *)(PlayStatus)), 1000);//向主机发送停止状态
 													rt_mb_control(Start_Playing_mb, RT_IPC_CMD_RESET, 0);
 													Show_String(32, 32, (uint8_t *)"停止播放");
 													OLED_Refresh_Gram();
@@ -126,20 +132,21 @@ void Wav_Player_Task(void *parameter)
 												}
 												//检测到USB直接跳出
 												if ((bDeviceState == GPIO_PIN_RESET) && HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_RESET)
-														break;		
-												
+														break;														
 												rt_thread_delay(100);
 											}
 										}
 										else						
 											//正常播放状态
-											audio_play(The_Auido_Name);//不拿开就循环播放   									
+										{
+											audio_play(The_Auido_Name);//不拿开就循环播放   	
+											HAL_UART_Transmit(&UART3_Handler, (uint8_t *)PlayStatus, strlen((const char *)(PlayStatus)), 1000);//向主机发送停止状态
+										}											
                     
                     //防止闪屏
                     OLED_Clear();
                     Show_String(0, 0,   (uint8_t *)"播放状态：");
                     Show_String(32, 32, (uint8_t *)"停止播放");
-                    BluetoothDisp(1); 
                     BattChek();
                     OLED_Refresh_Gram();
 
@@ -151,7 +158,6 @@ void Wav_Player_Task(void *parameter)
                 }
                 rt_mutex_release(USBorAudioUsingSDIO_Mutex);
             }
-
             rt_thread_delay(100); //1s
         }
         rt_mb_control(NFCTag_CustomID_mb, RT_IPC_CMD_RESET, 0); //清除邮箱状态
@@ -210,20 +216,21 @@ void USB_Transfer_Task(void *parameter)
                 }
             }
         }
-        rt_thread_delay(1000); //1000ms
+        rt_thread_delay(2000); //1000ms
     }
 }
 void Dispose_Task(void *parameter)
 {
     static uint8_t DataToNFC[50];
     static uint8_t DataToPlayer[100];
-    static uint8_t BTS = 0;
-
+		int i=0;
+	  HAL_GPIO_WritePin(GPIOE, BUlETHOOTH_SWITCH_PIN, GPIO_PIN_RESET); //开启蓝牙
+	
     while (1)
-    {
-        USART_RX_STA = 0; //清除接受状态，否则接收会出问题
+    { 
+					USART_RX_STA = 0; //清除接受状态，否则接收会出问题
         /*从蓝牙收到的数据，都在这里处理*/
-        if (!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t *)&Rev_From_BT, RT_WAITING_NO)))
+        if (!(rt_mb_recv(BuleTooth_Transfer_mb, (rt_uint32_t *)&Rev_From_BT, RT_WAITING_FOREVER)))
         {
             rt_kprintf("Rev_From_BT =%s\n", Rev_From_BT);
             if (Rev_From_BT[0] == 'M' || Rev_From_BT[1] == 'a') //mac地址
@@ -254,28 +261,13 @@ void Dispose_Task(void *parameter)
 								if (Rev_From_BT[12] == 'P')
 										rt_mb_send(Start_Playing_mb, 1);
 								else if (Rev_From_BT[12] == 'S')
-									  rt_mb_send(Stop_Playing_mb,  1);				
-						}
+									  rt_mb_send(Stop_Playing_mb,  1);	
+								rt_kprintf("发送次数=%d\n",++i);
+						}					
             Pointer_Clear((uint8_t *)Rev_From_BT); //清除指针防止溢出
             Arry_Clear(USART_RX_BUF, 80);
             rt_mb_control(BuleTooth_Transfer_mb, RT_IPC_CMD_RESET, 0); //清除邮箱状态
         }
-        if (BTS)
-            BluetoothDisp(1); //显示蓝牙连接状态
-        else
-            BluetoothDisp(0);
-        if (HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_SET)
-        {
-            BattChek();
-            OLED_Refresh_Gram();
-        }
-        Battery_Capacity_Transmit(); //电池电量上传
-				
-//				uint8_t *p1 = (uint8_t *)(0X20001000 + 1024*150);
-//				rt_kprintf("p1 = %d\n",*p1 );
-//				rt_kprintf("p2 = %p\n", p1 );
-
-        rt_thread_delay(500); 
     }
 }
 /****************************************
@@ -288,13 +280,31 @@ void NFC_Transfer_Task(void *parameter)
     printf("NFC_Transfer_Task\n");
     if (!demoIni()) //初始化cr95hf
         platformLog("Initialization failed..\r\n");
-    HAL_GPIO_WritePin(GPIOE, BUlETHOOTH_SWITCH_PIN, GPIO_PIN_RESET); //开启蓝牙
     ConfigManager_HWInit();                                          //初始化读卡
     while (1)
     {
         demoCycle();
         Adjust_Volume();    //调整音量
         rt_thread_delay(5); //5ms
+    }
+}
+void Dispose_Others_Task(void *parameter)
+{
+	printf("Dispose_Others_Task\n");
+	while (1)
+    {
+				if (BTS)
+            BluetoothDisp(1); //显示蓝牙连接状态
+        else
+            BluetoothDisp(0);
+        if (HAL_GPIO_ReadPin(GPIOC, USB_Connect_Check_PIN) == GPIO_PIN_SET)
+        {
+            BattChek();
+            OLED_Refresh_Gram();
+        }
+        Battery_Capacity_Transmit(); //电池电量上传
+				
+        rt_thread_delay(500); //5ms
     }
 }
 /****************************************
@@ -306,26 +316,33 @@ void Task_init(void)
 {
 #ifdef Creat_Wav_Player
     /*音乐播放器任务*/
-    Wav_Player = rt_thread_create	 ("Wav_Player_Task", 	 Wav_Player_Task, 	RT_NULL, 2048, 1, 100);
+    Wav_Player = rt_thread_create	 ("Wav_Player_Task", 	 Wav_Player_Task, 	 RT_NULL, 2048, 1, 100);
     if (Wav_Player != RT_NULL)
         rt_thread_startup(Wav_Player);
 #endif
 #ifdef Creat_USB_Transfer
     /*USB大容量存储任务*/
-    USB_Transfer = rt_thread_create("USB_Transfer_Task", USB_Transfer_Task, RT_NULL, 512,  0, 20);
+    USB_Transfer = rt_thread_create("USB_Transfer_Task", USB_Transfer_Task,  RT_NULL, 512,  0, 20);
     if (USB_Transfer != RT_NULL)
         rt_thread_startup(USB_Transfer);
 #endif
 #ifdef Creat_NFC_Transfer
     /*NFC任务*/
-    NFC_Transfer = rt_thread_create("NFC_Transfer_Task", NFC_Transfer_Task, RT_NULL, 1024, 1, 20);
+    NFC_Transfer = rt_thread_create("NFC_Transfer_Task", NFC_Transfer_Task,  RT_NULL, 1024, 1, 20);
     if (NFC_Transfer != RT_NULL)
         rt_thread_startup(NFC_Transfer);
 #endif
-#ifdef Creat_Dispose
-    Dispose = rt_thread_create		 ("Status_Reflash", 	 Dispose_Task, 			RT_NULL, 1024, 2, 20);
-    if (Dispose != RT_NULL)
-        rt_thread_startup(Dispose);
+		/*串口数据处理任务*/
+#ifdef Creat_UART_Dispose
+    UART_Dispose = rt_thread_create	("Status_Reflash", 	 Dispose_Task, 			 RT_NULL, 1024, 2, 20);
+    if (UART_Dispose != RT_NULL)
+        rt_thread_startup(UART_Dispose);
+#endif
+		/*其他数据处理任务*/
+#ifdef Creat_Others
+    Others = rt_thread_create		    ("Dipose_Others", 	 Dispose_Others_Task, RT_NULL, 512,  3, 20);
+    if (Others != RT_NULL)
+        rt_thread_startup(Others);
 #endif
 }
 /****************************************
