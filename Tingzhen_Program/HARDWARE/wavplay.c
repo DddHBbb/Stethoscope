@@ -18,6 +18,8 @@ extern rt_event_t AbortWavplay_Event;
 extern rt_event_t PlayWavplay_Event;
 extern DMA_HandleTypeDef SAI1_TXDMA_Handler;
 extern rt_mailbox_t Stop_Playing_mb;
+extern rt_sem_t   Start_Play_sem;	
+extern rt_sem_t   Stop_Play_sem	;			
 /***********************全局变量区*******************************/
 __audiodev audiodev;    			//音乐播放控制器
 __wavctrl wavctrl;      			//WAV控制结构体
@@ -226,6 +228,7 @@ u8 wav_play_song(u8 *fname)
                 fillnum = wav_buffill(audiodev.saibuf2, WAV_SAI_TX_DMA_BUFSIZE, wavctrl.bps);
                 audio_start();
                 Display_Flag = 1; //正在播放
+							
                 /*此循环牵扯数据传输，不宜使用RT组件，保证其数据完整性
 									由于系统调度，此死循环不一定为死循环，可能导致播放不完整*/
                 while (1)
@@ -263,9 +266,8 @@ u8 wav_play_song(u8 *fname)
                         timeout = 0;
                         if (TimeOut_FLAG == 1) //发生错误，直接跳出
                             break;
-                        wavtransferend = 0;
-                        if (fillnum != WAV_SAI_TX_DMA_BUFSIZE) //播放结束
-                        {
+                        if ((fillnum != WAV_SAI_TX_DMA_BUFSIZE) && (wavtransferend == 1)) //播放结束
+                        {																				
 														audio_stop();											
                             rt_kprintf("播放完%d遍\n\r", ++t);
                             rt_thread_delay(1000);
@@ -339,7 +341,7 @@ void Adjust_Volume(void)
     uint8_t key = 0;
 
     key = KEY_Scan();
-    while (key !=0 && key != 4)
+    while (key == 1 || key == 2 )
     {
         OLED_Clear();
         if (key == KEY_UP)
@@ -369,22 +371,16 @@ void Adjust_Volume(void)
         OLED_Fill(96,  50, 102, 62,   volume / 50);
         OLED_Fill(106, 50, 112, 62, 	volume / 50);
         WM8978_HPvol_Set(volume, 0);
-
-        BattChek();
         OLED_Refresh_Gram();
         break;
     }
-    if (key == KEY_OK)
+    if ((key == KEY_OK) || ( 1 == WK_UP))
     {
         /*以下函数是为了从调整音量播放界面调整回正常显示*/
-        OLED_Clear();
-        Show_String(0, 0, (uint8_t *)"播放状态：");
         if (Display_Flag == 1)
-            Show_String(32, 32, (uint8_t *)"正在播放");
+            rt_sem_release(Start_Play_sem);
         else
-            Show_String(32, 32, (uint8_t *)"停止播放");
-        BattChek();
-        OLED_Refresh_Gram();
+            rt_sem_release(Stop_Play_sem);
     }
 }
 

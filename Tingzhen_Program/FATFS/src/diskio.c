@@ -73,7 +73,7 @@ DRESULT disk_read(
         {
             SD_Init(); //重新初始化SD卡
             res = SD_ReadDisk(buff, sector, count);
-            //printf("sd rd error:%d\r\n",res);
+            printf("sd rd error:%d\r\n",res);
         }
         break;
     case EX_FLASH: //外部flash

@@ -51,6 +51,9 @@ static rt_thread_t Others 							= RT_NULL;
 
 //信号量句柄
 rt_mutex_t USBorAudioUsingSDIO_Mutex 		= RT_NULL;
+rt_sem_t   Start_Play_sem								= RT_NULL;
+rt_sem_t   Stop_Play_sem								= RT_NULL;
+rt_sem_t   USB_Mode_sem								  = RT_NULL;
 
 //邮箱句柄
 rt_mailbox_t NFC_TagID_mb = RT_NULL;
@@ -65,7 +68,7 @@ rt_mailbox_t Stop_Playing_mb 						= RT_NULL;
 //事件句柄
 rt_event_t AbortWavplay_Event 					= RT_NULL;
 rt_event_t PlayWavplay_Event 						= RT_NULL;
-rt_event_t OLED_Display_Event 					= RT_NULL;
+
 /****************************************************************/
 
 /****************************************
@@ -105,8 +108,7 @@ void Wav_Player_Task(void *parameter)
                         Arry_Clear((uint8_t *)DataToBT, sizeof(DataToBT));
                     }
                 }
-                strcpy((char *)&Last_Audio_Name, (const char *)NFCTag_UID_RECV);
-								
+                strcpy((char *)&Last_Audio_Name, (const char *)NFCTag_UID_RECV);								
                 //接收音频文件名的邮箱，每次只接受一次
                 if ((rt_mb_recv(The_Auido_Name_mb, (rt_uint32_t *)&The_Auido_Name, RT_WAITING_NO)) == RT_EOK)
                 {	
@@ -117,12 +119,12 @@ void Wav_Player_Task(void *parameter)
 											while(1)
 											{
 												if ((rt_mb_recv(Start_Playing_mb, NULL, RT_WAITING_NO)) == RT_EOK)
-												{					
+												{			
+													rt_mb_control(Stop_Playing_mb, RT_IPC_CMD_RESET, 0);//防止多次发送stop导致播放失败
 													audio_play(The_Auido_Name); //不拿开就循环播放		
 													HAL_UART_Transmit(&UART3_Handler, (uint8_t *)PlayStatus, strlen((const char *)(PlayStatus)), 1000);//向主机发送停止状态
 													rt_mb_control(Start_Playing_mb, RT_IPC_CMD_RESET, 0);
-													Show_String(32, 32, (uint8_t *)"停止播放");
-													OLED_Refresh_Gram();
+													rt_sem_release(Stop_Play_sem);
 												}					
 												// 若检测到新的标签不为手臂标签，则退出
 												if ((rt_mb_recv(NFC_TagID_mb, (rt_uint32_t *)&NFCTag_UID_RECV, RT_WAITING_NO)) == RT_EOK)
@@ -142,14 +144,7 @@ void Wav_Player_Task(void *parameter)
 											audio_play(The_Auido_Name);//不拿开就循环播放   	
 											HAL_UART_Transmit(&UART3_Handler, (uint8_t *)PlayStatus, strlen((const char *)(PlayStatus)), 1000);//向主机发送停止状态
 										}											
-                    
-                    //防止闪屏
-                    OLED_Clear();
-                    Show_String(0, 0,   (uint8_t *)"播放状态：");
-                    Show_String(32, 32, (uint8_t *)"停止播放");
-                    BattChek();
-                    OLED_Refresh_Gram();
-
+										rt_sem_release(Stop_Play_sem);
                     rt_kprintf("The_Auido_Name=%s\n", The_Auido_Name);
                     Pointer_Clear((uint8_t *)The_Auido_Name);
                     rt_mutex_release(USBorAudioUsingSDIO_Mutex);
@@ -172,10 +167,6 @@ void Wav_Player_Task(void *parameter)
 void USB_Transfer_Task(void *parameter)
 {
     printf("USB_Transfer_Task\n");
-    OLED_Clear();
-    Show_String(0, 0, (uint8_t *)"播放状态：");
-    Show_String(32, 32, (uint8_t *)"停止播放");
-    OLED_Refresh_Gram();
 
     while (1)
     {
@@ -186,10 +177,7 @@ void USB_Transfer_Task(void *parameter)
             rt_timer_stop(LowPWR_timer);
 
             SD_Init();
-            OLED_Clear();
-            Show_String(0, 0, (uint8_t *)"播放状态：");
-            Show_String(32, 32, (uint8_t *)"USB模式");
-						OLED_Refresh_Gram();
+						rt_sem_release(USB_Mode_sem);
             MSC_BOT_Data = (uint8_t *)rt_malloc(MSC_MEDIA_PACKET); //申请内存
             USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &USR_desc, &USBD_MSC_cb, &USR_cb);
             rt_mutex_take(USBorAudioUsingSDIO_Mutex, RT_WAITING_FOREVER);
@@ -206,17 +194,13 @@ void USB_Transfer_Task(void *parameter)
                     rt_thread_resume(Wav_Player);
                     rt_thread_resume(NFC_Transfer);
                     rt_timer_start(LowPWR_timer);
-
-                    OLED_Clear();
-                    BattChek(); //防止闪烁
-                    Show_String(0, 0, (uint8_t *)"播放状态：");
-                    Show_String(32, 32, (uint8_t *)"停止播放");
-                    OLED_Refresh_Gram();
+										rt_sem_release(Stop_Play_sem);
+										rt_sem_control(USB_Mode_sem,RT_IPC_CMD_RESET,0);
                     break;
                 }
             }
         }
-        rt_thread_delay(2000); //1000ms
+        rt_thread_delay(1000); //1000ms
     }
 }
 void Dispose_Task(void *parameter)
@@ -285,7 +269,7 @@ void NFC_Transfer_Task(void *parameter)
     {
         demoCycle();
         Adjust_Volume();    //调整音量
-        rt_thread_delay(5); //5ms
+        rt_thread_delay(1); //5ms
     }
 }
 void Dispose_Others_Task(void *parameter)
@@ -302,9 +286,32 @@ void Dispose_Others_Task(void *parameter)
             BattChek();
             OLED_Refresh_Gram();
         }
+				if (rt_sem_take(Start_Play_sem,RT_WAITING_NO) == RT_EOK)
+				{
+						OLED_Clear();
+						Show_String(0, 0,   (uint8_t *)"播放状态：");
+						Show_String(32, 32, (uint8_t *)"正在播放");
+						OLED_Refresh_Gram();
+						rt_sem_control(Start_Play_sem,RT_IPC_CMD_RESET,0);
+				}
+				if (rt_sem_take(Stop_Play_sem, RT_WAITING_NO) == RT_EOK)
+				{
+						OLED_Clear();
+						Show_String(0, 0,   (uint8_t *)"播放状态：");
+						Show_String(32, 32, (uint8_t *)"停止播放");
+						OLED_Refresh_Gram();
+						rt_sem_control(Stop_Play_sem,RT_IPC_CMD_RESET,0);
+				}
+				if (rt_sem_take(USB_Mode_sem,  RT_WAITING_NO) == RT_EOK)
+				{
+						OLED_Clear();
+            Show_String(0, 0, (uint8_t *)"播放状态：");
+            Show_String(32, 32, (uint8_t *)"USB模式");
+						OLED_Refresh_Gram();
+				}
         Battery_Capacity_Transmit(); //电池电量上传
 				
-        rt_thread_delay(500); //5ms
+        rt_thread_delay(50); //5ms
     }
 }
 /****************************************
@@ -316,7 +323,7 @@ void Task_init(void)
 {
 #ifdef Creat_Wav_Player
     /*音乐播放器任务*/
-    Wav_Player = rt_thread_create	 ("Wav_Player_Task", 	 Wav_Player_Task, 	 RT_NULL, 2048, 1, 100);
+    Wav_Player = rt_thread_create	 ("Wav_Player_Task", 	 Wav_Player_Task, 	 RT_NULL, 2048, 1, 50);
     if (Wav_Player != RT_NULL)
         rt_thread_startup(Wav_Player);
 #endif
@@ -334,7 +341,7 @@ void Task_init(void)
 #endif
 		/*串口数据处理任务*/
 #ifdef Creat_UART_Dispose
-    UART_Dispose = rt_thread_create	("Status_Reflash", 	 Dispose_Task, 			 RT_NULL, 1024, 2, 20);
+    UART_Dispose = rt_thread_create	("Dispose_Task", 	 Dispose_Task, 			 	 RT_NULL, 1024, 1, 20);
     if (UART_Dispose != RT_NULL)
         rt_thread_startup(UART_Dispose);
 #endif
@@ -353,6 +360,13 @@ void Task_init(void)
 void Semaphore_init(void)
 {
     USBorAudioUsingSDIO_Mutex = rt_mutex_create("USBorAudioUsingSDIO_Mutex", RT_IPC_FLAG_PRIO);
+		Start_Play_sem						=	rt_sem_create("Start_Play_sem",1,RT_IPC_FLAG_PRIO);
+		Stop_Play_sem             = rt_sem_create("Stop_Play_sem", 1,RT_IPC_FLAG_PRIO);
+		USB_Mode_sem              = rt_sem_create("USB_Mode_sem",  1,RT_IPC_FLAG_PRIO);
+	
+		rt_sem_control(Start_Play_sem,RT_IPC_CMD_RESET,0);
+//		rt_sem_control(Stop_Play_sem,RT_IPC_CMD_RESET,0);
+		rt_sem_control(USB_Mode_sem,RT_IPC_CMD_RESET,0);
 }
 /****************************************
 	* @brief  邮箱创建函数  
@@ -379,7 +393,7 @@ void Event_init(void)
 {
     AbortWavplay_Event = rt_event_create("AbortWavplay_Event",  RT_IPC_FLAG_FIFO);
     PlayWavplay_Event  = rt_event_create("PlaytWavplay_Event",  RT_IPC_FLAG_FIFO);
-    OLED_Display_Event = rt_event_create("OLED_Display_Event",  RT_IPC_FLAG_FIFO);
+
 }
 
 

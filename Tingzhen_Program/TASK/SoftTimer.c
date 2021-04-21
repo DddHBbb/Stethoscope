@@ -52,7 +52,7 @@ void LOWPWR_Config(void)
     OLED_Clear();
     Show_String(0, 0, (uint8_t *)"²¥·Å×´Ì¬£º");
     Show_String(32, 32, (uint8_t *)"Í£Ö¹²¥·Å");
-		BattChek();
+	//	BattChek();
     OLED_Refresh_Gram();
     rt_kprintf("ÍË³öµÍ¹¦ºÄ\n");
 		//Ñ¯ÎÊÀ¶ÑÀ×´Ì¬

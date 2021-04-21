@@ -378,11 +378,10 @@ void demoCycle(void)
             state = DEMO_ST_START_DISCOVERY;
         }
         else
-        {
-            
-            Count_Num++;															//如果连续20次都未检测到，就判定为没检测到
-            if (Count_Num == 10)
-            {         
+        {         
+            Count_Num++;															
+            if (Count_Num == 20)											//如果连续20次都未检测到，就判定为没检测到
+            {     
                 rt_event_send(AbortWavplay_Event, 1); //检测不到NFC标签时停止播放
                 Last_Audio_Name[0] = '$'; 						//整体播放完成，改变保存的信息，以便相同位置得以发送
                 Count_Num = 0;
